@@ -1,8 +1,5 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
-
-// MOCK: Definição do plano atual do usuário
-const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
 ---
 
 <DashboardLayout title="Assinatura & Planos">
@@ -15,11 +12,11 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
 
     <!-- GRID DE PLANOS -->
     <div class="plans-grid">
-      <!-- PLANO FREE -->
-      <div class={`plan-card ${currentPlan === 'FREE' ? 'active' : ''}`}>
-        {currentPlan === 'FREE' && <div class="current-label">Plano atual</div>}
+      <!-- PLANO GRATUITO -->
+      <div class="plan-card" id="card-Gratuito">
+        <div class="current-label" id="label-Gratuito" style="display: none;">Plano atual</div>
         <div class="plan-content">
-          <h2 class="plan-name">FREE</h2>
+          <h2 class="plan-name">GRATUITO</h2>
           <div class="plan-price">
             <span class="currency">R$</span>
             <span class="amount">0</span>
@@ -46,24 +43,24 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
           </ul>
 
           <button 
+            id="btn-Gratuito"
             class="btn-plan outline" 
-            disabled={currentPlan === 'FREE'}
-            onclick="selectPlan('FREE')"
+            onclick="selectPlan('Gratuito')"
           >
-            {currentPlan === 'FREE' ? 'Plano Ativo' : 'Começar grátis'}
+            Começar grátis
           </button>
         </div>
       </div>
 
       <!-- PLANO PRO (DESTAQUE) -->
-      <div class={`plan-card featured ${currentPlan === 'PRO' ? 'active' : ''}`}>
+      <div class="plan-card featured" id="card-Pro">
         <div class="popular-badge">Mais popular</div>
-        {currentPlan === 'PRO' && <div class="current-label">Plano atual</div>}
+        <div class="current-label" id="label-Pro" style="display: none;">Plano atual</div>
         <div class="plan-content">
           <h2 class="plan-name">PRO</h2>
           <div class="plan-price">
             <span class="currency">R$</span>
-            <span class="amount">39</span>
+            <span class="amount">59</span>
             <span class="period">/mês</span>
           </div>
           <p class="plan-description">Otimize seu fluxo de trabalho</p>
@@ -75,7 +72,7 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
             </li>
             <li>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Até 3 tatuadores</span>
+              <span>Tatuadores ilimitados</span>
             </li>
             <li>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -96,55 +93,15 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
           </ul>
 
           <button 
+            id="btn-Pro"
             class="btn-plan solid" 
-            disabled={currentPlan === 'PRO'}
-            onclick="selectPlan('PRO')"
+            onclick="selectPlan('Pro')"
           >
-            {currentPlan === 'PRO' ? 'Plano Ativo' : 'Assinar agora'}
+            Assinar agora
           </button>
         </div>
       </div>
 
-      <!-- PLANO STUDIO -->
-      <div class={`plan-card ${currentPlan === 'STUDIO' ? 'active' : ''}`}>
-        {currentPlan === 'STUDIO' && <div class="current-label">Plano atual</div>}
-        <div class="plan-content">
-          <h2 class="plan-name">STUDIO</h2>
-          <div class="plan-price">
-            <span class="currency">R$</span>
-            <span class="amount">79</span>
-            <span class="period">/mês</span>
-          </div>
-          <p class="plan-description">Escala total para o seu estúdio</p>
-          
-          <ul class="features-list">
-            <li>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Tudo do PRO</span>
-            </li>
-            <li>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Tatuadores ilimitados</span>
-            </li>
-            <li>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Prioridade de envio</span>
-            </li>
-            <li>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Analytics avançado</span>
-            </li>
-          </ul>
-
-          <button 
-            class="btn-plan outline" 
-            disabled={currentPlan === 'STUDIO'}
-            onclick="selectPlan('STUDIO')"
-          >
-            {currentPlan === 'STUDIO' ? 'Plano Ativo' : 'Assinar plano'}
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- FAQ SECTION -->
@@ -153,7 +110,7 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
       <div class="faq-grid">
         <div class="faq-item">
           <h3>Posso cancelar quando quiser?</h3>
-          <p>Sim, você pode cancelar sua assinatura Pro ou Studio a qualquer momento sem taxas de cancelamento.</p>
+          <p>Sim, você pode cancelar sua assinatura Pro a qualquer momento sem taxas de cancelamento.</p>
         </div>
         <div class="faq-item">
           <h3>Preciso de cartão no plano gratuito?</h3>
@@ -161,7 +118,7 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
         </div>
         <div class="faq-item">
           <h3>O WhatsApp já está incluso?</h3>
-          <p>Sim, a integração e o motor de disparo de mensagens já estão inclusos nos planos PRO e STUDIO.</p>
+          <p>Sim, a integração e o motor de disparo de mensagens já estão inclusos no plano PRO.</p>
         </div>
       </div>
     </section>
@@ -203,7 +160,7 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
     /* GRID */
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
       align-items: stretch;
       margin-bottom: 8rem;
@@ -431,9 +388,6 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
 
     /* RESPONSIVITY */
     @media (max-width: 1024px) {
-      .plans-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
       .faq-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -455,10 +409,137 @@ const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
     }
   </style>
 
-  <script is:inline>
-    function selectPlan(plan) {
-      console.log(`Selecionou plano ${plan}`);
-      window.showToast?.(`Você selecionou o plano ${plan}! (Redirecionamento para pagamento em breve)`, 'info');
+  <script>
+    import { supabase } from '../lib/supabase';
+
+    // Tornar disponível globalmente para o onclick no HTML
+    window.selectPlan = async (plan) => {
+      if (plan === 'Gratuito') {
+        window.showToast?.('Você já está no plano Gratuito!', 'info');
+        return;
+      }
+
+      if (plan === 'Pro') {
+        const btn = document.getElementById('btn-Pro');
+        if (!btn) return;
+        const originalText = btn.innerText;
+        
+        try {
+          // 1) Feedback visual
+          btn.disabled = true;
+          btn.innerText = 'Gerando pagamento...';
+
+          // 2) Obter dados do usuário/estúdio
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) throw new Error('Usuário não autenticado');
+
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('estudio_id')
+            .eq('id', user.id)
+            .single();
+
+          if (userError || !userData) throw new Error('Não foi possível localizar seu estúdio');
+
+          const { data: studioData, error: studioError } = await supabase
+            .from('estudios')
+            .select('id, nome, email, cnpj')
+            .eq('id', userData.estudio_id)
+            .single();
+
+          if (studioError || !studioData) throw new Error('Erro ao buscar dados do estúdio');
+
+          // 3) Requisição Webhook
+          const response = await fetch('https://workflows-mvp.marcosdev.xyz/webhook/checkout-assinatura', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Key': 'inkbook_secret_2026'
+            },
+            body: JSON.stringify({
+              estudio_id: studioData.id,
+              nome: studioData.nome,
+              email: studioData.email,
+              cpf_cnpj: studioData.cnpj
+            })
+          });
+
+          if (!response.ok) throw new Error('Falha ao gerar o link de pagamento. Tente novamente.');
+
+          const result = await response.json();
+          
+          if (result.checkoutUrl) {
+            window.open(result.checkoutUrl, '_blank');
+            window.showToast?.('Link de pagamento gerado! Finalize sua assinatura na aba aberta.', 'success');
+          } else {
+            throw new Error('URL de checkout não retornada pelo servidor');
+          }
+
+        } catch (err) {
+          console.error('Erro no checkout:', err);
+          window.showToast?.(err.message || 'Erro ao processar sua solicitação', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerText = originalText;
+        }
+      }
+    };
+
+    async function fetchCurrentPlan() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // 1) Pegar o estudio_id do usuário
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('estudio_id')
+          .eq('id', user.id)
+          .single();
+
+        if (userError || !userData) return;
+
+        // 2) Pegar o plano do estúdio
+        const { data: studioData, error: studioError } = await supabase
+          .from('estudios')
+          .select('plano')
+          .eq('id', userData.estudio_id)
+          .single();
+
+        if (studioError || !studioData) return;
+
+        const currentPlan = studioData.plano; // 'Gratuito' ou 'Pro'
+        updatePlanUI(currentPlan);
+      } catch (err) {
+        console.error('Erro ao carregar plano:', err);
+      }
     }
+
+    function updatePlanUI(plan) {
+      const plans = ['Gratuito', 'Pro'];
+      
+      plans.forEach(p => {
+        const card = document.getElementById(`card-${p}`);
+        const label = document.getElementById(`label-${p}`);
+        const btn = document.getElementById(`btn-${p}`);
+
+        if (!card || !btn) return;
+
+        if (p === plan) {
+          card.classList.add('active');
+          if (label) label.style.display = 'flex';
+          btn.disabled = true;
+          btn.innerText = 'Plano Ativo';
+        } else {
+          card.classList.remove('active');
+          if (label) label.style.display = 'none';
+          btn.disabled = false;
+          btn.innerText = p === 'Gratuito' ? 'Começar grátis' : 'Assinar agora';
+        }
+      });
+    }
+
+    // Inicializar
+    fetchCurrentPlan();
   </script>
 </DashboardLayout>
