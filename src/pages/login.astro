@@ -1,0 +1,677 @@
+---
+title: "Login | InkBook Tattoo"
+---
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Login | InkBook Tattoo</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body class="auth-page">
+    <!-- Tela de Carregamento Inicial (Prevenção de Flicker) -->
+    <div id="initial-loading" class="loading-screen">
+      <div class="ink-loader"></div>
+    </div>
+
+    <main id="login-main" class="login-container" style="display: none;">
+      <div class="login-card">
+        <div class="card-header">
+          <img src="/imagens/inkbook-logo.png.png" alt="InkBook Logo" class="logo" />
+          <p class="card-subtitle-premium">Gestão inteligente para estúdios de tatuagem</p>
+        </div>
+
+        <!-- Login Social -->
+        <div class="social-auth" id="socialAuth">
+          <button type="button" class="google-btn" id="googleLoginBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            <span>Entrar com Google</span>
+          </button>
+
+          <div class="divider">
+            <span>ou entrar com e-mail</span>
+          </div>
+        </div>
+
+        <!-- Abas (Login / Cadastro) -->
+        <nav class="auth-tabs" id="authTabs">
+          <button class="tab-btn active" data-tab="login">Login</button>
+          <button class="tab-btn" data-tab="signup">Cadastro</button>
+        </nav>
+
+        <!-- Formulário de Login -->
+        <form id="loginForm" class="auth-form">
+          <div class="input-group">
+            <label for="loginEmail">E-mail</label>
+            <input type="email" id="loginEmail" required placeholder="seu@email.com" />
+          </div>
+          <div class="input-group">
+            <label for="loginPassword">Senha</label>
+            <input type="password" id="loginPassword" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="cta-btn" id="loginBtn">
+            <span class="btn-text">Entrar</span>
+            <div class="loader hidden"></div>
+          </button>
+          <div class="form-footer">
+            <button type="button" class="link-btn" id="toResetBtn">Esqueci minha senha</button>
+          </div>
+        </form>
+
+        <!-- Formulário de Cadastro -->
+        <form id="signupForm" class="auth-form hidden">
+          <div class="input-group">
+            <label for="signupEmail">E-mail</label>
+            <input type="email" id="signupEmail" required placeholder="seu@email.com" />
+          </div>
+          <div class="input-group">
+            <label for="signupPassword">Senha</label>
+            <input type="password" id="signupPassword" required placeholder="Mínimo 6 caracteres" minlength="6" />
+          </div>
+          <div class="input-group">
+            <label for="confirmPassword">Confirmar Senha</label>
+            <input type="password" id="confirmPassword" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="cta-btn" id="signupBtn">
+            <span class="btn-text">Criar conta</span>
+            <div class="loader hidden"></div>
+          </button>
+          <div class="form-footer">
+            <button type="button" class="link-btn" data-to-tab="login">Já tenho conta</button>
+          </div>
+        </form>
+
+        <!-- Formulário de Reset de Senha -->
+        <form id="resetForm" class="auth-form hidden">
+          <div class="card-subtitle">Recuperar Senha</div>
+          <p class="reset-info">Insira seu e-mail para receber o link de recuperação.</p>
+          <div class="input-group">
+            <label for="resetEmail">E-mail</label>
+            <input type="email" id="resetEmail" required placeholder="seu@email.com" />
+          </div>
+          <button type="submit" class="cta-btn" id="resetBtn">
+            <span class="btn-text">Enviar link de recuperação</span>
+            <div class="loader hidden"></div>
+          </button>
+          <div class="form-footer">
+            <button type="button" class="link-btn" data-to-tab="login">Voltar para Login</button>
+          </div>
+        </form>
+
+        <div id="messageBox" class="message-box hidden"></div>
+      </div>
+    </main>
+
+    <style>
+      body {
+        background: radial-gradient(circle at center, #1A1A1A 0%, #0F0F0F 100%);
+        overflow-x: hidden;
+      }
+
+      .login-container {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        position: relative;
+      }
+
+      /* Glow Suave Dourado */
+      .login-container::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(201, 162, 77, 0.05) 0%, rgba(201, 162, 77, 0) 70%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .login-card {
+        background-color: #1A1A1A;
+        width: 100%;
+        max-width: 440px;
+        padding: 3rem 2.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(201, 162, 77, 0.15);
+        box-shadow: var(--shadow-soft);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+      }
+
+      .social-auth {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .google-btn {
+        background-color: #2A2A2A;
+        color: var(--text);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        transition: all var(--transition-fast);
+      }
+
+      .google-btn:hover {
+        background-color: #333333;
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .google-btn:active {
+        transform: translateY(0);
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .divider span {
+        padding: 0 1rem;
+      }
+
+      .card-header {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .logo {
+        height: 100px;
+        width: auto;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+      }
+
+      .card-subtitle-premium {
+        font-family: var(--font-text);
+        font-size: 1rem;
+        font-weight: 300;
+        color: rgba(245, 245, 245, 0.7);
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+
+      .card-subtitle {
+        font-family: var(--font-title);
+        font-size: 1.75rem;
+        text-align: center;
+        color: var(--text);
+        letter-spacing: 1px;
+      }
+
+      .reset-info {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        margin-top: -1rem;
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+      }
+
+      .auth-tabs {
+        display: flex;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: -0.5rem;
+      }
+
+      .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        padding: 1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-normal);
+        border-bottom: 2px solid transparent;
+        letter-spacing: 0.5px;
+      }
+
+      .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+
+      .tab-btn:hover:not(.active) {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .input-group label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .input-group input {
+        background-color: #333333;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 0.85rem 1rem;
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 400;
+        transition: var(--transition-fast);
+      }
+
+      .input-group input::placeholder {
+        color: rgba(255, 255, 255, 0.2);
+      }
+
+      .input-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background-color: #383838;
+        box-shadow: 0 0 0 4px rgba(201, 162, 77, 0.1);
+      }
+
+      /* Classes de validação simuladas */
+      .input-group input:not(:placeholder-shown):valid {
+        border-color: rgba(39, 174, 96, 0.3);
+      }
+
+      .cta-btn {
+        background-color: var(--primary);
+        color: #0F0F0F;
+        border: none;
+        border-radius: 6px;
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 52px;
+        margin-top: 0.5rem;
+        box-shadow: 0 4px 15px rgba(201, 162, 77, 0.2);
+      }
+
+      .cta-btn:hover:not(:disabled) {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(201, 162, 77, 0.3);
+      }
+
+      .cta-btn:active:not(:disabled) {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .cta-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .link-btn {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        padding: 0.5rem;
+        text-decoration: none;
+      }
+
+      .link-btn:hover {
+        color: var(--primary);
+      }
+
+      .form-footer {
+        text-align: center;
+        margin-top: 0.25rem;
+      }
+
+      .message-box {
+        padding: 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        text-align: center;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .message-box.error {
+        background-color: rgba(192, 57, 43, 0.1);
+        color: #ff6b6b;
+        border: 1px solid rgba(192, 57, 43, 0.3);
+      }
+
+      .message-box.success {
+        background-color: rgba(39, 174, 96, 0.1);
+        color: #71d09b;
+        border: 1px solid rgba(39, 174, 96, 0.3);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .loader {
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(15, 15, 15, 0.2);
+        border-top-color: #0F0F0F;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Estilos para a tela de carregamento inicial */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0F0F0F;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .ink-loader {
+        width: 48px;
+        height: 48px;
+        border: 2px solid rgba(201, 162, 77, 0.1);
+        border-top: 2px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+
+      /* Responsividade */
+      @media (max-width: 480px) {
+        .login-card {
+          padding: 2rem 1.5rem;
+          margin: 1rem;
+        }
+        
+        .card-subtitle-premium {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+
+    <script>
+      import { supabase } from '../lib/supabase';
+
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const resetForm = document.getElementById('resetForm');
+      const authTabs = document.getElementById('authTabs');
+      const socialAuth = document.getElementById('socialAuth');
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const messageBox = document.getElementById('messageBox');
+
+      // Alternância de Abas
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-tab');
+          showTab(tab);
+        });
+      });
+
+      // Links internos
+      document.querySelectorAll('[data-to-tab]').forEach(link => {
+        link.addEventListener('click', () => {
+          const tab = link.getAttribute('data-to-tab');
+          showTab(tab);
+        });
+      });
+
+      document.getElementById('toResetBtn').addEventListener('click', () => {
+        showTab('reset');
+      });
+
+      // Lógica de Login Social (Google)
+      const googleLoginBtn = document.getElementById('googleLoginBtn');
+      googleLoginBtn?.addEventListener('click', async () => {
+        try {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: `${window.location.origin}/dashboard`,
+            },
+          });
+          if (error) throw error;
+        } catch (error) {
+          showMessage(error.message, 'error');
+        }
+      });
+
+      function showTab(tab) {
+        messageBox.classList.add('hidden');
+        
+        if (tab === 'login') {
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          resetForm.classList.add('hidden');
+          authTabs.classList.remove('hidden');
+          socialAuth.classList.remove('hidden');
+          document.querySelector('[data-tab="login"]').classList.add('active');
+          document.querySelector('[data-tab="signup"]').classList.remove('active');
+        } else if (tab === 'signup') {
+          loginForm.classList.add('hidden');
+          signupForm.classList.remove('hidden');
+          resetForm.classList.add('hidden');
+          authTabs.classList.remove('hidden');
+          socialAuth.classList.remove('hidden');
+          document.querySelector('[data-tab="login"]').classList.remove('active');
+          document.querySelector('[data-tab="signup"]').classList.add('active');
+        } else if (tab === 'reset') {
+          loginForm.classList.add('hidden');
+          signupForm.classList.add('hidden');
+          resetForm.classList.remove('hidden');
+          authTabs.classList.add('hidden');
+          socialAuth.classList.add('hidden');
+        }
+      }
+
+      function showMessage(text, type) {
+        messageBox.textContent = text;
+        messageBox.className = `message-box ${type}`;
+        messageBox.classList.remove('hidden');
+      }
+
+      function setThrobber(formId, isLoading) {
+        const btn = document.querySelector(`#${formId} button[type="submit"]`);
+        const text = btn?.querySelector('.btn-text');
+        const loader = btn?.querySelector('.loader');
+        
+        if (btn) btn.disabled = isLoading;
+        if (isLoading) {
+          text?.classList.add('hidden');
+          loader?.classList.remove('hidden');
+        } else {
+          text?.classList.remove('hidden');
+          loader?.classList.add('hidden');
+        }
+      }
+
+      // Lógica de Login
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        setThrobber('loginForm', true);
+        messageBox.classList.add('hidden');
+
+        try {
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (error) throw error;
+          
+          window.location.href = '/dashboard';
+        } catch (error) {
+          showMessage(error.message, 'error');
+          setThrobber('loginForm', false);
+        }
+      });
+
+      // Lógica de Cadastro (Refatorada para Login Automático)
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+          showMessage('As senhas não coincidem.', 'error');
+          return;
+        }
+
+        setThrobber('signupForm', true);
+        messageBox.classList.add('hidden');
+
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password
+          });
+
+          if (error) throw error;
+          
+          // Se a sessão já vier no data (email confirmation OFF), redireciona
+          if (data.session) {
+            window.location.href = '/dashboard';
+            return;
+          }
+
+          // Caso contrário, tenta o login automático imediatamente
+          const { error: loginError } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (loginError) throw loginError;
+
+          window.location.href = '/dashboard';
+        } catch (error) {
+          showMessage(error.message, 'error');
+          setThrobber('signupForm', false);
+        }
+      });
+
+      // Lógica de Reset de Senha
+      resetForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value;
+
+        setThrobber('resetForm', true);
+        messageBox.classList.add('hidden');
+
+        try {
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/reset-password`,
+          });
+
+          if (error) throw error;
+          
+          showMessage('Link de recuperação enviado para o seu e-mail.', 'success');
+          setThrobber('resetForm', false);
+        } catch (error) {
+          showMessage(error.message, 'error');
+          setThrobber('resetForm', false);
+        }
+      });
+
+      // Redirecionamento se já logado
+      async function checkUser() {
+        const loading = document.getElementById('initial-loading');
+        const main = document.getElementById('login-main');
+
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (session) {
+            window.location.href = '/dashboard';
+            return;
+          }
+
+          // Se não estiver logado, mostra o formulário e remove o loading
+          if (main) main.style.display = 'flex';
+          if (loading) loading.style.display = 'none';
+        } catch (error) {
+          console.error('Erro ao verificar sessão:', error);
+          if (main) main.style.display = 'flex';
+          if (loading) loading.style.display = 'none';
+        }
+      }
+      
+      // Executa imediatamente
+      checkUser();
+    </script>
+  </body>
+</html>

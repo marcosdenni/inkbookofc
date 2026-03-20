@@ -1,0 +1,1642 @@
+---
+interface Props {
+  clientes: { id: string; nome: string }[];
+  tatuadores: { id: string; nome: string }[];
+}
+
+const { clientes, tatuadores } = Astro.props;
+---
+
+<div id="new-appointment-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Novo Agendamento</h2>
+      <button id="close-modal" class="close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <form id="appointment-form" class="appointment-form">
+      <input type="hidden" id="editing-id" name="id" />
+      <div class="form-grid">
+        <div class="form-group">
+          <div class="label-header">
+            <label for="cliente">Cliente</label>
+            <button type="button" id="btn-add-new-client" class="btn-text-action">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Novo cliente
+            </button>
+          </div>
+          <div class="custom-select-container" id="cliente-custom-container">
+            <button type="button" class="custom-select-trigger" id="cliente-trigger">
+              <span class="trigger-text">Selecione um cliente</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-options" id="cliente-options">
+              <!-- Opções serão inseridas via JS -->
+            </div>
+            <select id="cliente" name="cliente_id" required class="hidden-native-select">
+              <option value="">Selecione um cliente</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tatuador">Tatuador</label>
+          <div class="custom-select-container" id="tatuador-custom-container">
+            <button type="button" class="custom-select-trigger" id="tatuador-trigger">
+              <span class="trigger-text">Selecione um tatuador</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-options" id="tatuador-options">
+              <!-- Opções serão inseridas via JS -->
+            </div>
+            <select id="tatuador" name="tatuador_id" required class="hidden-native-select">
+              <option value="">Selecione um tatuador</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="data">Data</label>
+          <input type="date" id="data" name="data" required />
+        </div>
+
+        <div class="form-group">
+          <label for="hora">Hora</label>
+          <input type="time" id="hora" name="hora" required />
+        </div>
+
+        <div class="form-group">
+          <label for="duracao">Duração (minutos)</label>
+          <input type="number" id="duracao" name="duracao_minutos" min="1" value="60" required />
+        </div>
+
+        <div class="form-group">
+          <label for="hora_fim">Horário Final (calculado)</label>
+          <input type="time" id="hora_fim" readonly class="readonly-input" />
+        </div>
+      </div>
+
+      <div id="session-summary" class="session-summary hidden">
+        <div class="summary-item">
+          <span class="label">Início:</span>
+          <span id="summary-start" class="value">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Fim:</span>
+          <span id="summary-end" class="value">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Duração:</span>
+          <span id="summary-duration" class="value">-</span>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="valor_total">Valor Total (R$)</label>
+          <input type="number" id="valor_total" name="valor_total" step="0.01" min="0" placeholder="0,00" required />
+        </div>
+
+        <div class="form-group">
+          <label for="valor_sinal">Valor Sinal (R$)</label>
+          <input type="number" id="valor_sinal" name="valor_sinal" step="0.01" min="0" placeholder="0,00" />
+        </div>
+
+        <div class="form-group flex-row">
+          <label class="checkbox-label">
+            <input type="checkbox" name="sinal_pago" id="sinal_pago">
+            <span>Sinal pago</span>
+          </label>
+        </div>
+
+        <div class="form-group flex-row">
+          <label class="checkbox-label">
+            <input type="checkbox" name="pago" id="pago">
+            <span>Tatuagem paga</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status do Agendamento</label>
+          <div class="custom-select-container" id="status-custom-container">
+            <button type="button" class="custom-select-trigger" id="status-trigger">
+              <span class="trigger-text">Pendente</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-options" id="status-options">
+              <!-- Opções serão inseridas via JS -->
+            </div>
+            <select id="status" name="status" required class="hidden-native-select">
+              <option value="Pendente">Pendente</option>
+              <option value="Confirmado">Confirmado</option>
+              <option value="Cancelado">Cancelado</option>
+              <option value="Falta">Falta</option>
+            </select>
+          </div>
+        </div>
+
+      <div class="form-group full-width">
+        <label>Referências Visuais (Imagens)</label>
+        <div class="upload-container" id="upload-dropzone">
+          <input type="file" id="referencias-input" name="referencias_files" accept="image/*" multiple class="hidden-input" />
+          <div class="upload-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p>Clique ou arraste imagens para upload</p>
+            <span>Máximo 5MB por imagem</span>
+          </div>
+        </div>
+        <div id="preview-container" class="preview-container"></div>
+      </div>
+      </div>
+
+      <!-- LIGHTBOX PARA ZOOM -->
+      <div id="modal-zoom" class="modal-overlay hidden" style="z-index: 5000; background: rgba(0,0,0,0.95);">
+        <div class="zoom-content">
+          <img id="zoom-img" src="" alt="Zoom" />
+          <button type="button" id="close-zoom" class="close-zoom">&times;</button>
+        </div>
+      </div>
+
+
+
+      <div class="modal-footer">
+        <button type="button" id="cancel-btn" class="btn-secondary">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Agendamento</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .modal-content {
+    background-color: #121212;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(201, 162, 77, 0.2);
+    padding: 2rem;
+    box-sizing: border-box;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    /* Estilização da scrollbar para ser premium e discreta */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+  }
+
+  .modal-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .modal-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-content::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 20px;
+  }
+
+  .modal-overlay:not(.hidden) .modal-content {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .modal-header h2 {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .flex-row {
+    flex-direction: row;
+    align-items: center;
+    padding-top: 1.5rem;
+  }
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  select, input, textarea {
+    color-scheme: dark;
+    background-color: #1A1A1A;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(201, 162, 77, 0.15);
+  }
+
+  /* Custom Select Component */
+  .custom-select-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .custom-select-trigger {
+    width: 100%;
+    background-color: #232323;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    color: #F5F5F5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+  }
+
+  .custom-select-container:focus-within .custom-select-trigger {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(201, 162, 77, 0.15);
+    background-color: rgba(201, 162, 77, 0.02);
+  }
+
+  .custom-select-trigger .trigger-text {
+    opacity: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .custom-select-trigger.placeholder .trigger-text {
+    opacity: 0.5;
+  }
+
+  .custom-select-trigger .chevron {
+    color: var(--primary);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .custom-select-container.open .custom-select-trigger .chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Classes Globais para itens gerados dinamicamente via JS */
+  :global(.custom-options) {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background-color: #2A2A2A;
+    border: 1px solid rgba(201, 162, 77, 0.25);
+    border-radius: 12px;
+    z-index: 1100;
+    max-height: 280px;
+    overflow-y: auto;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: all !important;
+  }
+
+  :global(.custom-select-container.open .custom-options) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  :global(.custom-option) {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    min-height: 48px;
+    color: #F5F5F5;
+    cursor: pointer !important;
+    transition: all 150ms ease;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    background-color: transparent;
+    user-select: none;
+    border: 1px solid transparent;
+    border-left: 3px solid transparent;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 100;
+    pointer-events: auto !important;
+  }
+
+  :global(.custom-option:hover) {
+    background-color: #3D3D3D !important;
+    color: #FFFFFF !important;
+    border-left-color: var(--primary) !important;
+    transform: translateX(4px);
+  }
+
+  :global(.custom-option.selected) {
+    background-color: rgba(201, 162, 77, 0.12) !important;
+    color: var(--primary) !important;
+    border-color: rgba(201, 162, 77, 0.3) !important;
+    border-left-color: var(--primary) !important;
+    font-weight: 600;
+  }
+
+  :global(.custom-option.selected:hover) {
+    background-color: rgba(201, 162, 77, 0.2) !important;
+    transform: translateX(4px);
+  }
+
+  :global(.custom-option.selected::after) {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    margin-left: auto;
+    box-shadow: 0 0 12px var(--primary);
+    flex-shrink: 0;
+  }
+
+  :global(.custom-options::-webkit-scrollbar) {
+    width: 4px;
+  }
+
+  :global(.custom-options::-webkit-scrollbar-thumb) {
+    background-color: var(--primary);
+    border-radius: 10px;
+  }
+
+  .hidden-native-select {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .readonly-input {
+    background-color: rgba(255, 255, 255, 0.01);
+    border-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    cursor: default;
+  }
+
+  .session-summary {
+    background: rgba(201, 162, 77, 0.05);
+    border: 1px solid rgba(201, 162, 77, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .summary-item .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .summary-item .value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 0.875rem;
+    user-select: none;
+  }
+
+  .checkbox-label input {
+    accent-color: var(--primary);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .radio-group {
+    display: flex;
+    gap: 2rem;
+    padding: 0.5rem 0;
+  }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 0.875rem;
+  }
+
+  .radio-label input {
+    accent-color: var(--primary);
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Novas Estilizações para Upload */
+  .upload-container {
+    border: 2px dashed rgba(201, 162, 77, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .upload-container:hover {
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  .hidden-input {
+    display: none;
+  }
+
+  .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .upload-placeholder svg {
+    color: var(--primary);
+    opacity: 0.8;
+  }
+
+  .upload-placeholder span {
+    font-size: 0.75rem;
+  }
+
+  .preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .preview-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    cursor: zoom-in;
+    transition: all 0.2s ease;
+    background: #1a1a1a;
+  }
+
+  .preview-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  }
+
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ZOOM MODAL STYLES */
+  .zoom-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  .zoom-content img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  }
+
+  .close-zoom {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+  }
+
+  .remove-preview {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .remove-preview:hover {
+    background: #e74c3c;
+    transform: scale(1.1);
+  }
+
+  .remove-preview svg {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    stroke: white;
+    stroke-width: 3;
+  }
+
+  .uploading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: black;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(201, 162, 77, 0.2);
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 162, 77, 0.3);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.875rem 1.75rem;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .form-group .label-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-text-action {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .btn-text-action:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 640px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .full-width {
+      grid-column: span 1;
+    }
+  }
+
+  .whatsapp-status-info {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .whatsapp-status-info.status-enviado {
+    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.1);
+    border-color: rgba(46, 204, 113, 0.2);
+  }
+
+  .whatsapp-status-info.status-erro {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.2);
+  }
+
+  .whatsapp-status-info svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const modal = document.getElementById('new-appointment-modal');
+  const closeBtn = document.getElementById('close-modal');
+  const cancelBtn = document.getElementById('cancel-btn');
+  const btnNewClient = document.getElementById('btn-add-new-client');
+  const form = document.getElementById('appointment-form') as HTMLFormElement;
+  const clienteSelect = document.getElementById('cliente') as HTMLSelectElement;
+  const tatuadorSelect = document.getElementById('tatuador') as HTMLSelectElement;
+  const WEBHOOK_N8N = 'https://webhooks-mvp.marcosdev.xyz/webhook/enviar-whatsapp-agendamento';
+
+  async function sendWhatsAppConfirmation(appointmentId: string, estudioId: string) {
+    try {
+      console.log(`[n8n] Iniciando processo de notificação para agendamento: ${appointmentId}`);
+      
+      // 1. Buscar dados completos do agendamento com relações
+      const { data: appt, error: apptError } = await supabase
+        .from('agendamentos')
+        .select(`
+          *,
+          cliente:clientes(nome, whatsapp),
+          tatuador:tatuadores(nome),
+          estudio:estudios(nome)
+        `)
+        .eq('id', appointmentId)
+        .single();
+      
+      if (apptError || !appt) {
+        console.error('[n8n] Erro ao buscar dados do agendamento:', apptError);
+        return;
+      }
+
+      // 2. Buscar template de confirmação (Valor exato do Enum: 'agendamento_criado')
+      const { data: template, error: tempError } = await supabase
+        .from('template_mensagens')
+        .select('conteudo')
+        .eq('estudio_id', estudioId)
+        .eq('tipo', 'agendamento_criado')
+        .single();
+      
+      if (tempError || !template) {
+        console.log('[n8n] Template de confirmação não encontrado ou erro na busca:', tempError);
+        return;
+      }
+
+      // 2.1 Buscar nome da instância e STATUS do WhatsApp
+      const { data: conexao, error: conError } = await supabase
+        .from('conexao_whatsapp')
+        .select('instance_name, status')
+        .eq('estudio_id', estudioId)
+        .single();
+      
+      if (conError || !conexao) {
+        console.warn('[n8n] Instância do WhatsApp não encontrada para este estúdio:', conError);
+        // Popup informativo para o usuário
+        if (typeof window !== 'undefined' && (window as any).showToast) {
+          (window as any).showToast('WhatsApp não configurado. A mensagem de confirmação não será enviada.', 'info');
+        }
+        return;
+      }
+
+      if (conexao.status !== 'connected') {
+        console.warn('[n8n] WhatsApp desconectado. Status:', conexao.status);
+        if (typeof window !== 'undefined' && (window as any).showToast) {
+          (window as any).showToast('WhatsApp desconectado! Vá em "Mensagens" para reconectar e enviar confirmações.', 'error');
+        }
+        return;
+      }
+
+      // 3. Formatar variáveis para substituição
+      const dt = new Date(appt.data_hora);
+      const dataStr = dt.toLocaleDateString('pt-BR');
+      const horaStr = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const valorStr = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(appt.valor_total);
+      
+      let mensagem = template.conteudo
+        .replace(/{cliente_nome}/g, appt.cliente?.nome || '')
+        .replace(/{tatuador_nome}/g, appt.tatuador?.nome || '')
+        .replace(/{data}/g, dataStr)
+        .replace(/{hora}/g, horaStr)
+        .replace(/{valor}/g, valorStr)
+        .replace(/{estudio_nome}/g, appt.estudio?.nome || '');
+
+      // 4. Formatar telefone para padrão internacional (apenas dígitos, prefixo 55)
+      let telefone = (appt.cliente?.whatsapp || '').replace(/\D/g, '');
+      if (telefone && !telefone.startsWith('55') && telefone.length >= 10) {
+        telefone = '55' + telefone;
+      }
+
+      if (!telefone) {
+        console.warn('[n8n] Cliente sem telefone válido para envio.');
+        return;
+      }
+
+      // 5. Montar payload e disparar webhook
+      const payload = {
+        agendamento_id: appointmentId,
+        estudio_id: estudioId,
+        tipo_mensagem: 'agendamento_criado',
+        instancia: conexao?.instance_name || '',
+        cliente_nome: appt.cliente?.nome || '',
+        telefone: telefone,
+        tatuador_nome: appt.tatuador?.nome || '',
+        data: dataStr,
+        hora: horaStr,
+        estudio_nome: appt.estudio?.nome || '',
+        mensagem: mensagem
+      };
+
+      console.log('[n8n] Enviando payload para webhook:', payload);
+
+      fetch(WEBHOOK_N8N, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true // Garante que a requisição continue mesmo se a página recarregar
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(`Status HTTP: ${res.status}`);
+        console.log('[n8n] Webhook disparado com sucesso!');
+      })
+      .catch(err => console.error('[n8n] Erro na resposta do webhook:', err));
+
+    } catch (err) {
+      console.error('[n8n] Erro inesperado na integração WhatsApp:', err);
+    }
+  }
+
+  async function loadFormData() {
+    const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
+    const { data: tatuadores } = await supabase.from('tatuadores').select('id, nome').order('nome');
+
+    if (clientes) {
+      updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
+    }
+
+    if (tatuadores) {
+      updateCustomDropdown('tatuador', tatuadores, 'Selecione um tatuador');
+    }
+
+    const statuses = [
+      { id: 'Pendente', nome: 'Pendente' },
+      { id: 'Confirmado', nome: 'Confirmado' },
+      { id: 'Cancelado', nome: 'Cancelado' },
+      { id: 'Falta', nome: 'Falta' }
+    ];
+    updateCustomDropdown('status', statuses, 'Pendente');
+  }
+
+  function updateCustomDropdown(id: string, items: any[], placeholder: string) {
+    const container = document.getElementById(`${id}-custom-container`);
+    const trigger = document.getElementById(`${id}-trigger`);
+    const optionsList = document.getElementById(`${id}-options`);
+    const nativeSelect = document.getElementById(id) as HTMLSelectElement;
+    const triggerText = trigger?.querySelector('.trigger-text');
+
+    if (!container || !trigger || !optionsList || !nativeSelect || !triggerText) return;
+
+    // 1. Sincronizar Select Nativo
+    nativeSelect.innerHTML = `<option value="">${placeholder}</option>` + 
+      items.map(item => `<option value="${item.id}">${item.nome}</option>`).join('');
+
+    // 2. Sincronizar UI do Trigger Inicial
+    if (nativeSelect.value) {
+      const selected = items.find(i => i.id === nativeSelect.value);
+      if (selected && triggerText) {
+        triggerText.textContent = selected.nome;
+        trigger.classList.remove('placeholder');
+      }
+    } else {
+      triggerText.textContent = placeholder;
+      trigger.classList.add('placeholder');
+    }
+
+    // 3. Renderizar Opções Customizadas
+    renderOptions(optionsList, items, nativeSelect.value);
+
+    // 4. Configurar Trigger (APENAS UMA VEZ)
+    if (!trigger.dataset.initialized) {
+      trigger.dataset.initialized = 'true';
+      trigger.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
+        const isOpen = container.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) container.classList.add('open');
+      });
+
+      // 5. Lógica de Seleção (Delegação de Evento)
+      optionsList.addEventListener('click', (e: Event) => {
+        const target = e.target as HTMLElement;
+        const option = target.closest('.custom-option') as HTMLElement;
+        if (!option) return;
+
+        e.stopPropagation();
+        const value = option.dataset.value || '';
+        const name = option.textContent?.trim() || '';
+
+        // Atualizar Select Nativo
+        nativeSelect.value = value;
+        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Atualizar UI do Trigger
+        triggerText.textContent = name;
+        trigger.classList.remove('placeholder');
+
+        // Marcar selecionado visualmente
+        const allOpts = optionsList.querySelectorAll('.custom-option');
+        allOpts.forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+
+        // Fechar
+        container.classList.remove('open');
+      });
+    }
+}
+
+  function renderOptions(optionsList: HTMLElement, items: any[], selectedValue: string) {
+    optionsList.innerHTML = items.map(item => `
+      <div class="custom-option ${selectedValue === item.id ? 'selected' : ''}" data-value="${item.id}">
+        ${item.nome}
+      </div>
+    `).join('');
+  }
+
+  function closeAllDropdowns(exceptId?: string) {
+    document.querySelectorAll('.custom-select-container').forEach(container => {
+      if (exceptId && container.id === `${exceptId}-custom-container`) return;
+      container.classList.remove('open');
+    });
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', () => closeAllDropdowns());
+
+  function closeModal() {
+    modal?.classList.add('hidden');
+    form?.reset();
+    (document.getElementById('editing-id') as HTMLInputElement).value = '';
+    const modalTitle = modal?.querySelector('h2');
+    if (modalTitle) modalTitle.innerText = 'Novo Agendamento';
+    
+    // Resetar botão de salvar
+    const saveBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerText = 'Salvar Agendamento';
+    }
+
+    // Limpar status de WhatsApp
+    const statusInfo = document.getElementById('whatsapp-status-info');
+    if (statusInfo) {
+      statusInfo.classList.add('hidden');
+      statusInfo.innerHTML = '';
+    }
+  }
+
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+
+  btnNewClient?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('open-new-client-modal'));
+  });
+
+  window.addEventListener('client-created', async (e: any) => {
+    const newClient = e.detail;
+    if (newClient) {
+      // Recarregar dados para garantir que temos a lista mais recente
+      const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
+      if (clientes) {
+        updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
+        
+        // Selecionar o cliente recém criado
+        const nativeSelect = document.getElementById('cliente') as HTMLSelectElement;
+        const trigger = document.getElementById('cliente-trigger');
+        const triggerText = trigger?.querySelector('.trigger-text');
+        const optionsList = document.getElementById('cliente-options');
+        
+        if (nativeSelect) nativeSelect.value = newClient.id;
+        if (triggerText) {
+          triggerText.textContent = newClient.nome;
+          trigger?.classList.remove('placeholder');
+        }
+        if (optionsList) {
+          renderOptions(optionsList, clientes, newClient.id);
+        }
+      }
+    }
+  });
+
+  const dropzone = document.getElementById('upload-dropzone');
+  const fileInput = document.getElementById('referencias-input') as HTMLInputElement;
+  const previewContainer = document.getElementById('preview-container');
+  let selectedFiles: File[] = [];
+  let existingReferences: any[] = [];
+
+  // Dropzone events
+  dropzone?.addEventListener('click', () => fileInput.click());
+
+  fileInput?.addEventListener('change', () => {
+    if (fileInput.files) {
+      handleFiles(Array.from(fileInput.files));
+    }
+  });
+
+  function handleFiles(files: File[]) {
+    const validFiles = files.filter(file => {
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name} não é uma imagem válida.`);
+        return false;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} excede o limite de 5MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    selectedFiles = [...selectedFiles, ...validFiles];
+    renderPreviews();
+  }
+
+  function renderPreviews() {
+    if (!previewContainer) return;
+    previewContainer.innerHTML = '';
+    
+    const deleteIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>`;
+
+    // 1. Renderizar imagens já no servidor (se houver)
+    existingReferences.forEach((ref) => {
+      const { data } = supabase.storage.from('referencias').getPublicUrl(ref.storage_path);
+      const publicUrl = data.publicUrl;
+      const div = document.createElement('div');
+      div.className = 'preview-item existing';
+      div.innerHTML = `
+        <img src="${publicUrl}" alt="Ref" />
+        <button type="button" class="remove-preview delete-existing" data-id="${ref.id}" data-path="${ref.storage_path}" title="Excluir Referência">${deleteIcon}</button>
+      `;
+      div.onclick = (e) => {
+        if ((e.target as HTMLElement).closest('.remove-preview')) return;
+        openZoom(publicUrl);
+      };
+      previewContainer.appendChild(div);
+    });
+
+    // 2. Renderizar novas imagens selecionadas
+    selectedFiles.forEach((file, index) => {
+      const url = URL.createObjectURL(file);
+      const div = document.createElement('div');
+      div.className = 'preview-item';
+      div.innerHTML = `
+        <img src="${url}" alt="Preview" />
+        <button type="button" class="remove-preview delete-new" data-index="${index}" title="Remover">${deleteIcon}</button>
+      `;
+      div.onclick = (e) => {
+        if ((e.target as HTMLElement).closest('.remove-preview')) return;
+        openZoom(url);
+      };
+      previewContainer.appendChild(div);
+    });
+
+    // Listeners para novas imagens
+    document.querySelectorAll('.delete-new').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const index = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
+        selectedFiles.splice(index, 1);
+        renderPreviews();
+      };
+    });
+
+    // Listeners para imagens existentes
+    document.querySelectorAll('.delete-existing').forEach(btn => {
+        btn.onclick = async (e) => {
+            e.stopPropagation();
+            const btnEl = e.currentTarget as HTMLButtonElement;
+            const refId = btnEl.dataset.id;
+            const refPath = btnEl.dataset.path;
+            
+            if (!confirm('Deseja excluir permanentemente esta referência?')) return;
+
+            // 1. Deletar do banco
+            const { error: dbError } = await supabase.from('agendamento_referencias').delete().eq('id', refId);
+            if (dbError) { alert('Erro ao excluir do banco.'); return; }
+
+            // 2. Deletar do storage
+            if (refPath) {
+                await supabase.storage.from('referencias').remove([refPath]);
+            }
+
+            // 3. Atualizar localmente
+            existingReferences = existingReferences.filter(r => r.id !== refId);
+            renderPreviews();
+        };
+    });
+  }
+
+  function openZoom(url: string) {
+    const zoomModal = document.getElementById('modal-zoom');
+    const zoomImg = document.getElementById('zoom-img') as HTMLImageElement;
+    if (zoomModal && zoomImg) {
+      zoomImg.src = url;
+      zoomModal.classList.remove('hidden');
+    }
+  }
+
+  document.getElementById('close-zoom')?.addEventListener('click', () => {
+    document.getElementById('modal-zoom')?.classList.add('hidden');
+  });
+
+  // Session calculation logic
+  const inputData = document.getElementById('data') as HTMLInputElement;
+  const inputHora = document.getElementById('hora') as HTMLInputElement;
+  const inputDuracao = document.getElementById('duracao') as HTMLInputElement;
+  const inputHoraFim = document.getElementById('hora_fim') as HTMLInputElement;
+  const sessionSummary = document.getElementById('session-summary');
+  const summaryStart = document.getElementById('summary-start');
+  const summaryEnd = document.getElementById('summary-end');
+  const summaryDuration = document.getElementById('summary-duration');
+
+  function updateEndTime() {
+    if (!inputHora.value || !inputDuracao.value) {
+      inputHoraFim.value = "";
+      sessionSummary?.classList.add('hidden');
+      return;
+    }
+
+    const [hours, minutes] = inputHora.value.split(':').map(Number);
+    const duracao = parseInt(inputDuracao.value);
+    
+    const startTime = new Date();
+    startTime.setHours(hours, minutes, 0);
+    
+    const endTime = new Date(startTime.getTime() + duracao * 60000);
+    
+    const endHours = String(endTime.getHours()).padStart(2, '0');
+    const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
+    
+    const formattedEndTime = `${endHours}:${endMinutes}`;
+    inputHoraFim.value = formattedEndTime;
+
+    // Update summary
+    if (sessionSummary && summaryStart && summaryEnd && summaryDuration) {
+      sessionSummary.classList.remove('hidden');
+      summaryStart.innerText = inputHora.value;
+      summaryEnd.innerText = formattedEndTime;
+      
+      const hoursCount = Math.floor(duracao / 60);
+      const minsCount = duracao % 60;
+      summaryDuration.innerText = `${hoursCount}h${minsCount > 0 ? ` ${minsCount}m` : ''}`;
+    }
+  }
+
+  inputHora?.addEventListener('input', updateEndTime);
+  inputDuracao?.addEventListener('input', updateEndTime);
+
+  // Financial validation
+  const inputTotal = document.getElementById('valor_total') as HTMLInputElement;
+  const inputSinal = document.getElementById('valor_sinal') as HTMLInputElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Validations
+    const total = parseFloat(inputTotal.value || '0');
+    const sinal = parseFloat(inputSinal.value || '0');
+    const duracao = parseInt(inputDuracao.value || '0');
+
+    if (duracao <= 0) {
+      alert('A duração deve ser maior que 0 minutos.');
+      return;
+    }
+
+        if (sinal > total) {
+      alert('O valor do sinal não pode ser maior que o valor total.');
+      return;
+    }
+
+    const saveBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = saveBtn.innerText;
+    
+    try {
+      saveBtn.disabled = true;
+      saveBtn.innerText = 'Salvando...';
+
+      const formData = new FormData(form);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('estudio_id')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) throw new Error('Perfil não encontrado');
+
+      const editingId = (document.getElementById('editing-id') as HTMLInputElement).value;
+      
+      // --- LÓGICA FINANCEIRA ---
+      const tatuador_id = formData.get('tatuador_id') as string;
+      const valor_total = parseFloat(formData.get('valor_total') as string || '0');
+      
+      let valor_estudio = 0;
+      let valor_tatuador = valor_total;
+
+      if (tatuador_id) {
+        // 1. Buscar dados do tatuador
+        const { data: tatuador } = await supabase
+          .from('tatuadores')
+          .select('*, estudio:estudios(id)')
+          .eq('id', tatuador_id)
+          .single();
+
+        if (tatuador) {
+          let configFinanceira;
+          
+          if (tatuador.usa_modelo_padrao) {
+            // 2. Buscar config padrão do estúdio
+            const { data: configPadrao } = await supabase
+              .from('configuracoes_financeiras')
+              .select('*')
+              .eq('estudio_id', profile.estudio_id)
+              .single();
+            
+            configFinanceira = configPadrao ? {
+              modelo: configPadrao.modelo_pagamento_padrao,
+              percent_estudio: configPadrao.percentual_estudio_padrao,
+              percent_tatuador: configPadrao.percentual_tatuador_padrao
+            } : null;
+          } else {
+            configFinanceira = {
+              modelo: tatuador.modelo_pagamento,
+              percent_estudio: tatuador.percentual_estudio,
+              percent_tatuador: tatuador.percentual_tatuador
+            };
+          }
+
+          // 3. Aplicar Cálculo
+          if (configFinanceira) {
+            const modelo = configFinanceira.modelo || 'percentual';
+            
+            if (modelo === 'percentual' || modelo === 'hibrido') {
+              const pEstudio = Number(configFinanceira.percent_estudio) || 0;
+              const pTatuador = Number(configFinanceira.percent_tatuador) || 100;
+              
+              valor_estudio = (valor_total * pEstudio) / 100;
+              valor_tatuador = (valor_total * pTatuador) / 100;
+            } else if (modelo === 'aluguel_fixo') {
+              valor_estudio = 0;
+              valor_tatuador = valor_total;
+            }
+          }
+        }
+      }
+
+      // 4. Salvar Agendamento
+      const dataStr = formData.get('data') as string;
+      const horaStr = formData.get('hora') as string;
+      
+      // Calcular data_hora_fim para o banco
+      const dur = parseInt(formData.get('duracao_minutos') as string);
+      const dInicio = new Date(`${dataStr}T${horaStr}:00`);
+      const dFim = new Date(dInicio.getTime() + dur * 60000);
+
+      const appointmentData = {
+        cliente_id: formData.get('cliente_id'),
+        tatuador_id: formData.get('tatuador_id'),
+        data_hora: dInicio.toISOString(),
+        data_hora_fim: dFim.toISOString(),
+        duracao_minutos: dur,
+        valor_total: valor_total,
+        valor_sinal: parseFloat(formData.get('valor_sinal') as string || '0'),
+        valor_estudio: valor_estudio,
+        valor_tatuador: valor_tatuador,
+        pago: formData.get('pago') === 'on',
+        sinal_pago: formData.get('sinal_pago') === 'on',
+        estudio_id: profile.estudio_id,
+        status: formData.get('status') || 'Pendente'
+      };
+
+      // --- VALIDAÇÃO DE SOBREPOSIÇÃO (MESMO TATUADOR) ---
+      if (appointmentData.tatuador_id) {
+        // Buscar agendamentos do mesmo tatuador no mesmo dia
+        const startOfDay = new Date(dataStr + 'T00:00:00Z').toISOString();
+        const endOfDay = new Date(dataStr + 'T23:59:59Z').toISOString();
+
+        let query = supabase
+          .from('agendamentos')
+          .select('id, data_hora, data_hora_fim, status')
+          .eq('tatuador_id', appointmentData.tatuador_id)
+          .neq('status', 'Cancelado') // Ignorar cancelados
+          .gte('data_hora', startOfDay)
+          .lte('data_hora', endOfDay);
+        
+        if (editingId) {
+          query = query.neq('id', editingId);
+        }
+
+        const { data: conflicts, error: conflictError } = await query;
+
+        if (conflictError) throw conflictError;
+
+        const hasOverlap = conflicts?.some(existing => {
+          const exStart = new Date(existing.data_hora).getTime();
+          const exEnd = new Date(existing.data_hora_fim).getTime();
+          const newStart = dInicio.getTime();
+          const newEnd = dFim.getTime();
+
+          return (newStart < exEnd) && (newEnd > exStart);
+        });
+
+        if (hasOverlap) {
+          alert('Conflito de Horário! Este tatuador já possui um agendamento que se sobrepõe ao horário selecionado.');
+          saveBtn.disabled = false;
+          saveBtn.innerText = originalText;
+          return;
+        }
+      }
+
+      let newAppointmentId = '';
+
+      if (editingId) {
+        const { data: updatedAppt, error: appError } = await supabase
+          .from('agendamentos')
+          .update(appointmentData)
+          .eq('id', editingId)
+          .select()
+          .single();
+        
+        if (appError) throw appError;
+        newAppointmentId = editingId;
+      } else {
+        const { data: newAppointment, error: appError } = await supabase
+          .from('agendamentos')
+          .insert([appointmentData])
+          .select()
+          .single();
+
+        if (appError) throw appError;
+        newAppointmentId = newAppointment.id;
+        
+        // DISPARAR NOTIFICAÇÃO WHATSAPP (Aguardar disparo antes do reload)
+        await sendWhatsAppConfirmation(newAppointmentId, profile.estudio_id);
+      }
+
+      // 2. Upload das imagens
+      if (selectedFiles.length > 0) {
+        saveBtn.innerText = 'Enviando imagens...';
+        
+        for (const file of selectedFiles) {
+          const fileExt = file.name.split('.').pop() || 'jpg';
+          const fileName = `${crypto.randomUUID()}.${fileExt}`;
+          const storagePath = `${profile.estudio_id}/${newAppointmentId}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('referencias')
+            .upload(storagePath, file);
+
+          if (uploadError) {
+            console.error('Erro no upload:', uploadError);
+            continue;
+          }
+
+          // 3. Salvar referência no banco
+          await supabase
+            .from('agendamento_referencias')
+            .insert({
+              agendamento_id: newAppointmentId,
+              storage_path: storagePath
+            });
+        }
+      }
+
+      closeModal();
+      window.dispatchEvent(new CustomEvent('appointment-saved'));
+      // Só recarrega se não estiver na agenda (agenda usa event-driven)
+      if (!window.location.pathname.includes('/agenda')) {
+        window.location.reload();
+      }
+    } catch (err: any) {
+      alert('Erro inesperado: ' + err.message);
+      saveBtn.disabled = false;
+      saveBtn.innerText = originalText;
+    }
+  });
+
+  // Listen for open event (suporta pré-preenchimento de data/hora pela Agenda)
+  window.addEventListener('open-new-appointment-modal', async (e: any) => {
+    await loadFormData(); 
+    modal?.classList.remove('hidden');
+
+    const { date, time, appointment } = e.detail || {};
+
+    selectedFiles = [];
+    existingReferences = [];
+    renderPreviews();
+
+    // Resetar botão de salvar ao abrir
+    const saveBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerText = 'Salvar Agendamento';
+    }
+
+    if (appointment) {
+      // MODO EDIÇÃO
+      const modalTitle = modal?.querySelector('h2');
+      if (modalTitle) modalTitle.innerText = 'Editar Agendamento';
+
+      (document.getElementById('editing-id') as HTMLInputElement).value = appointment.id;
+      
+      // Carregar referências existentes
+      const { data: refs } = await supabase.from('agendamento_referencias').select('*').eq('agendamento_id', appointment.id);
+      if (refs) {
+        existingReferences = refs;
+        renderPreviews();
+      }
+
+      // Preencher cliente e sincronizar dropdown customizado
+      if (appointment.cliente_id) {
+        const nativeSelect = document.getElementById('cliente') as HTMLSelectElement;
+        const trigger = document.getElementById('cliente-trigger');
+        const triggerText = trigger?.querySelector('.trigger-text');
+        const optionsList = document.getElementById('cliente-options');
+        
+        nativeSelect.value = appointment.cliente_id;
+        if (triggerText) {
+          triggerText.textContent = appointment.cliente?.nome || 'Cliente Selecionado';
+          trigger?.classList.remove('placeholder');
+        }
+        // Sincronizar visualmente as opções
+        if (optionsList) {
+          const options = optionsList.querySelectorAll('.custom-option');
+          options.forEach(opt => {
+            if ((opt as HTMLElement).dataset.value === appointment.cliente_id) {
+              opt.classList.add('selected');
+            } else {
+              opt.classList.remove('selected');
+            }
+          });
+        }
+      }
+
+      // Preencher tatuador e sincronizar dropdown customizado
+      if (appointment.tatuador_id) {
+        const nativeSelect = document.getElementById('tatuador') as HTMLSelectElement;
+        const trigger = document.getElementById('tatuador-trigger');
+        const triggerText = trigger?.querySelector('.trigger-text');
+        const optionsList = document.getElementById('tatuador-options');
+        
+        nativeSelect.value = appointment.tatuador_id;
+        if (triggerText) {
+          triggerText.textContent = appointment.tatuador?.nome || 'Tatuador Selecionado';
+          trigger?.classList.remove('placeholder');
+        }
+        // Sincronizar visualmente as opções
+        if (optionsList) {
+          const options = optionsList.querySelectorAll('.custom-option');
+          options.forEach(opt => {
+            if ((opt as HTMLElement).dataset.value === appointment.tatuador_id) {
+              opt.classList.add('selected');
+            } else {
+              opt.classList.remove('selected');
+            }
+          });
+        }
+      }
+
+      const dt = new Date(appointment.data_hora);
+      (document.getElementById('data') as HTMLInputElement).value = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      (document.getElementById('hora') as HTMLInputElement).value = String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
+      (document.getElementById('duracao') as HTMLInputElement).value = appointment.duracao_minutos || 60;
+      (document.getElementById('valor_total') as HTMLInputElement).value = appointment.valor_total || 0;
+      (document.getElementById('valor_sinal') as HTMLInputElement).value = appointment.valor_sinal || 0;
+      (document.getElementById('pago') as HTMLInputElement).checked = !!appointment.pago;
+      (document.getElementById('sinal_pago') as HTMLInputElement).checked = !!appointment.sinal_pago;
+      
+      const statuses = [
+        { id: 'Pendente', nome: 'Pendente' },
+        { id: 'Confirmado', nome: 'Confirmado' },
+        { id: 'Cancelado', nome: 'Cancelado' },
+        { id: 'Falta', nome: 'Falta' }
+      ];
+
+      // Preencher status
+      if (appointment.status) {
+        const nativeSelect = document.getElementById('status') as HTMLSelectElement;
+        const trigger = document.getElementById('status-trigger');
+        const triggerText = trigger?.querySelector('.trigger-text');
+        const optionsList = document.getElementById('status-options');
+        
+        nativeSelect.value = appointment.status;
+        if (triggerText) {
+          triggerText.textContent = appointment.status;
+          trigger?.classList.remove('placeholder');
+        }
+        if (optionsList) {
+          renderOptions(optionsList, statuses, appointment.status);
+        }
+      }
+    } else {
+      // MODO NOVO
+      const statusInfo = document.getElementById('whatsapp-status-info');
+      if (statusInfo) {
+        statusInfo.classList.add('hidden');
+        statusInfo.innerHTML = '';
+      }
+      
+      const modalTitle = modal?.querySelector('h2');
+      if (modalTitle) modalTitle.innerText = 'Novo Agendamento';
+      (document.getElementById('editing-id') as HTMLInputElement).value = '';
+
+      if (date) {
+        const dataEl = document.getElementById('data') as HTMLInputElement;
+        if (dataEl) dataEl.value = date;
+      }
+      if (time) {
+        const horaEl = document.getElementById('hora') as HTMLInputElement;
+        if (horaEl) { horaEl.value = time; }
+      }
+      
+      const statuses = [
+        { id: 'Pendente', nome: 'Pendente' },
+        { id: 'Confirmado', nome: 'Confirmado' },
+        { id: 'Cancelado', nome: 'Cancelado' },
+        { id: 'Falta', nome: 'Falta' }
+      ];
+      
+      const nativeSelect = document.getElementById('status') as HTMLSelectElement;
+      const trigger = document.getElementById('status-trigger');
+      const triggerText = trigger?.querySelector('.trigger-text');
+      const optionsList = document.getElementById('status-options');
+      
+      nativeSelect.value = 'Pendente';
+      if (triggerText) {
+        triggerText.textContent = 'Pendente';
+        trigger?.classList.remove('placeholder');
+      }
+      if (optionsList) {
+        renderOptions(optionsList, statuses, 'Pendente');
+      }
+    }
+    
+    // Atualizar horário final
+    updateEndTime();
+  });
+</script>

@@ -1,0 +1,827 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { supabase } from '../lib/supabase';
+
+// A página é protegida pelo AuthGuard no DashboardLayout
+---
+
+<DashboardLayout title="Configurações">
+  <div class="config-wrapper">
+    <header class="config-header">
+      <div class="header-titles">
+        <h1 class="page-title">CONFIGURAÇÕES</h1>
+        <p class="subtitle">Gerencie os dados e regras de negócio do seu estúdio</p>
+      </div>
+    </header>
+
+    <div class="config-grid">
+      <!-- SEÇÃO 1: DADOS DO ESTÚDIO -->
+      <section class="config-card" id="studio-section">
+        <div class="card-header">
+          <h2 class="card-title">Dados do Estúdio</h2>
+          <p class="card-description">Informações básicas e identidade visual</p>
+        </div>
+        <form id="form-studio" class="config-form">
+          <div class="logo-upload-container">
+            <div class="logo-preview-wrapper">
+              <img id="logo-preview" src="/imagens/inkbook-logo.png.png" alt="Logo Preview" />
+              <div class="logo-overlay">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <input type="file" id="logo-input" accept="image/*" class="hidden-input" />
+            </div>
+            <div class="logo-info">
+              <span class="logo-label">Logo do Estúdio</span>
+              <span class="logo-hint">Recomendado: 512x512px (PNG ou JPG)</span>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="studio-name">Nome do Estúdio</label>
+              <input type="text" id="studio-name" name="nome" placeholder="Ex: Ink Tattoo Studio" required />
+            </div>
+            <div class="input-group">
+              <label for="studio-whatsapp">WhatsApp Principal</label>
+              <input type="text" id="studio-whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required />
+            </div>
+            <div class="input-group">
+              <label for="studio-email">E-mail</label>
+              <input type="email" id="studio-email" name="email" placeholder="contato@estudio.com" />
+            </div>
+            <div class="input-group">
+              <label for="studio-cnpj">CNPJ (Opcional)</label>
+              <input type="text" id="studio-cnpj" name="cnpj" placeholder="00.000.000/0000-00" />
+            </div>
+            <div class="input-group full-width">
+              <label for="studio-address">Endereço</label>
+              <input type="text" id="studio-address" name="endereco" placeholder="Rua, número, complemento" />
+            </div>
+            <div class="input-group">
+              <label for="studio-city">Cidade</label>
+              <input type="text" id="studio-city" name="cidade" placeholder="Cidade" />
+            </div>
+            <div class="input-group row-flex">
+              <div style="flex: 1;">
+                <label for="studio-state">Estado</label>
+                <input type="text" id="studio-state" name="estado" placeholder="UF" maxlength="2" />
+              </div>
+              <div style="flex: 2;">
+                <label for="studio-cep">CEP</label>
+                <input type="text" id="studio-cep" name="cep" placeholder="00000-000" />
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-save">
+            <span class="btn-text">Salvar Alterações</span>
+            <div class="btn-loader hidden"><div class="spinner-mini"></div></div>
+          </button>
+        </form>
+      </section>
+
+      <!-- SEÇÃO 2: HORÁRIO DE FUNCIONAMENTO -->
+      <section class="config-card" id="hours-section">
+        <div class="card-header">
+          <h2 class="card-title">Horário de Funcionamento</h2>
+          <p class="card-description">Defina os limites de exibição da sua agenda</p>
+        </div>
+        <form id="form-hours" class="config-form">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="hour-start">Hora Inicial</label>
+              <input type="time" id="hour-start" name="hora_inicio" required />
+            </div>
+            <div class="input-group">
+              <label for="hour-end">Hora Final</label>
+              <input type="time" id="hour-end" name="hora_fim" required />
+            </div>
+          </div>
+          <p class="section-hint">Esse horário será utilizado para definir a exibição da agenda semanal e diária.</p>
+          <button type="submit" class="btn-save">
+            <span class="btn-text">Salvar Horário</span>
+            <div class="btn-loader hidden"><div class="spinner-mini"></div></div>
+          </button>
+        </form>
+      </section>
+
+      <!-- SEÇÃO 3: MODELO FINANCEIRO -->
+      <section class="config-card" id="finance-section">
+        <div class="card-header">
+          <h2 class="card-title">Modelo Financeiro Padrão</h2>
+          <p class="card-description">Defina como o estúdio calcula comissões e repasses</p>
+        </div>
+        <form id="form-finance" class="config-form">
+          <div class="input-group">
+            <label for="finance-model">Modelo de Pagamento</label>
+            <select id="finance-model" name="modelo_pagamento_padrao">
+              <option value="percentual">Percentual</option>
+              <option value="aluguel_fixo">Aluguel Fixo</option>
+              <option value="hibrido">Híbrido</option>
+            </select>
+          </div>
+
+          <div id="finance-dynamic-fields" class="form-grid">
+            <!-- Injetado via JS -->
+          </div>
+
+          <button type="submit" class="btn-save">
+            <span class="btn-text">Salvar Modelo Financeiro</span>
+            <div class="btn-loader hidden"><div class="spinner-mini"></div></div>
+          </button>
+        </form>
+      </section>
+
+      <!-- SEÇÃO 4: PLANO E ASSINATURA -->
+      <section class="config-card" id="subscription-section">
+        <div class="card-header">
+          <h2 class="card-title">Plano e Assinatura</h2>
+          <p class="card-description">Gerencie seu plano InkBook e métodos de pagamento</p>
+        </div>
+        
+        <div class="plan-management-card">
+          <div class="current-plan-info">
+            <div class="plan-badge">PLANO ATUAL</div>
+            <h3 class="active-plan-name">InkBook PRO</h3>
+            <p class="plan-benefit">Agendamentos ilimitados e automação ativa</p>
+          </div>
+          
+          <div class="plan-actions">
+            <div class="plan-price-display">
+              <span class="price">R$ 39,00</span>
+              <span class="period">/mês</span>
+            </div>
+            <a href="/assinatura" class="btn-upgrade-premium">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3Z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5Z"/><path d="m2 2 5 5"/><path d="m9.5 9.5 1 1"/></svg>
+              <span>Mudar de Plano</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <style is:global>
+    .config-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+    }
+
+    .config-header {
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--primary, #C9A24D);
+      letter-spacing: -2px;
+      margin: 0;
+      line-height: 1;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .subtitle {
+      color: var(--text-muted, #888);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .config-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .config-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+      color: var(--text-muted, #888);
+      font-size: 0.95rem;
+    }
+
+    /* FORM STYLES */
+    .config-form {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    .row-flex {
+      grid-column: span 1;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    input, select {
+      background: #0a0a0a;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary, #C9A24D);
+      background: #0f0f0f;
+      box-shadow: 0 0 0 4px rgba(201, 162, 77, 0.1);
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    select option {
+      background: #141414;
+      color: #fff;
+    }
+
+    .btn-save {
+      align-self: flex-start;
+      background: linear-gradient(135deg, var(--primary, #C9A24D) 0%, #e5c07b 100%);
+      color: #000;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(201, 162, 77, 0.3);
+      filter: brightness(1.1);
+    }
+
+    .btn-save:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      filter: grayscale(0.5);
+    }
+
+    /* LOGO UPLOAD */
+    .logo-upload-container {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .logo-preview-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      background: #0a0a0a;
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logo-preview-wrapper:hover {
+      border-color: var(--primary, #C9A24D);
+    }
+
+    #logo-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .logo-preview-wrapper:hover .logo-overlay {
+      opacity: 1;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    .logo-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .logo-label {
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .logo-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted, #888);
+    }
+
+    .section-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted, #888);
+      font-style: italic;
+    }
+
+    /* SEÇÃO DE PLANO E ASSINATURA */
+    .plan-management-card {
+      background: linear-gradient(135deg, #1A1A1A 0%, #141414 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .plan-management-card:hover {
+      border-color: rgba(201, 162, 77, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .current-plan-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .plan-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 1px;
+      background: rgba(201, 162, 77, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      align-self: flex-start;
+      margin-bottom: 0.25rem;
+    }
+
+    .active-plan-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .plan-benefit {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .plan-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    .plan-price-display {
+      text-align: right;
+    }
+
+    .plan-price-display .price {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .plan-price-display .period {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .btn-upgrade-premium {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-upgrade-premium:hover {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(201, 162, 77, 0.2);
+    }
+
+    /* UTILS */
+    .spinner-mini {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .config-wrapper { padding: 0.5rem; }
+      .config-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        text-align: center;
+      }
+      .page-title {
+        font-size: 2.2rem;
+      }
+      .config-card {
+        padding: 1.5rem;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .full-width {
+        grid-column: span 1;
+      }
+      .row-flex {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+      .btn-save {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo-upload-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+  </style>
+
+  <script>
+    import { supabase } from '../lib/supabase';
+
+    let studioId = '';
+    let currentLogoUrl = '';
+
+    const FINANCE_FIELDS = {
+      percentual: `
+        <div class="input-group">
+          <label>% Estúdio</label>
+          <input type="number" name="percentual_estudio_padrao" value="30" min="0" max="100" />
+        </div>
+        <div class="input-group">
+          <label>% Tatuador</label>
+          <input type="number" name="percentual_tatuador_padrao" value="70" min="0" max="100" />
+        </div>
+      `,
+      aluguel_fixo: `
+        <div class="input-group full-width">
+          <label>Valor do Aluguel Mensal Padrão</label>
+          <input type="number" name="aluguel_mensal_padrao" value="1500" min="0" step="0.01" />
+        </div>
+      `,
+      hibrido: `
+        <div class="input-group">
+          <label>% Estúdio</label>
+          <input type="number" name="percentual_estudio_padrao" value="10" min="0" max="100" />
+        </div>
+        <div class="input-group">
+          <label>% Tatuador</label>
+          <input type="number" name="percentual_tatuador_padrao" value="90" min="0" max="100" />
+        </div>
+        <div class="input-group full-width">
+          <label>Aluguel Base Mensal</label>
+          <input type="number" name="aluguel_mensal_padrao" value="500" min="0" step="0.01" />
+        </div>
+      `
+    };
+
+    async function init() {
+      // 1. Get Session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // 2. Get User's Studio ID
+      const { data: userProfile } = await supabase
+        .from('users')
+        .select('estudio_id')
+        .eq('id', session.user.id)
+        .single();
+
+      if (!userProfile?.estudio_id) return;
+      studioId = userProfile.estudio_id;
+
+      // 3. Load Data
+      await Promise.all([
+        loadStudioData(),
+        loadFinanceData()
+      ]);
+
+      setupListeners();
+    }
+
+    async function loadStudioData() {
+      const { data: studio } = await supabase
+        .from('estudios')
+        .select('*')
+        .eq('id', studioId)
+        .single();
+
+      if (studio) {
+        const form = document.getElementById('form-studio') as HTMLFormElement;
+        const formHours = document.getElementById('form-hours') as HTMLFormElement;
+
+        // Fill Form Data
+        const fields = ['nome', 'whatsapp', 'email', 'cnpj', 'endereco', 'cidade', 'estado', 'cep'];
+        fields.forEach(f => {
+          const el = form.elements.namedItem(f) as HTMLInputElement;
+          if (el) el.value = studio[f] || '';
+        });
+
+        // Fill Hours
+        const startEl = formHours.elements.namedItem('hora_inicio') as HTMLInputElement;
+        const endEl = formHours.elements.namedItem('hora_fim') as HTMLInputElement;
+        if (startEl) startEl.value = studio.hora_inicio?.substring(0, 5) || '09:00';
+        if (endEl) endEl.value = studio.hora_fim?.substring(0, 5) || '18:00';
+
+        // Logo
+        if (studio.logo_url) {
+          currentLogoUrl = studio.logo_url;
+          const preview = document.getElementById('logo-preview') as HTMLImageElement;
+          preview.src = studio.logo_url;
+        }
+      }
+    }
+
+    async function loadFinanceData() {
+      const { data: finance } = await supabase
+        .from('configuracoes_financeiras')
+        .select('*')
+        .eq('estudio_id', studioId)
+        .single();
+
+      const modelSelect = document.getElementById('finance-model') as HTMLSelectElement;
+      
+      if (finance) {
+        modelSelect.value = finance.modelo_pagamento_padrao || 'percentual';
+        updateDynamicFields(finance.modelo_pagamento_padrao, finance);
+      } else {
+        updateDynamicFields('percentual');
+      }
+    }
+
+    function updateDynamicFields(model: string, data: any = {}) {
+      const container = document.getElementById('finance-dynamic-fields');
+      if (!container) return;
+
+      container.innerHTML = FINANCE_FIELDS[model as keyof typeof FINANCE_FIELDS] || '';
+
+      // Fill values if exist
+      const fields = ['percentual_estudio_padrao', 'percentual_tatuador_padrao', 'aluguel_mensal_padrao'];
+      fields.forEach(f => {
+        const el = container.querySelector(`[name="${f}"]`) as HTMLInputElement;
+        if (el && data[f] !== undefined) {
+          el.value = data[f];
+        }
+      });
+    }
+
+    function setupListeners() {
+      // Finance Model Change
+      const modelSelect = document.getElementById('finance-model');
+      modelSelect?.addEventListener('change', (e) => {
+        updateDynamicFields((e.target as HTMLSelectElement).value);
+      });
+
+      // Form Studio Submit
+      document.getElementById('form-studio')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        setLoading(btn, true);
+
+        const formData = new FormData(e.target as HTMLFormElement);
+        const updateData = Object.fromEntries(formData);
+
+        const { error } = await supabase
+          .from('estudios')
+          .update(updateData)
+          .eq('id', studioId);
+
+        setLoading(btn, false);
+        if (error) window.showToast('Erro ao salvar: ' + error.message, 'error');
+        else window.showToast('Alterações salvas com sucesso!', 'success');
+      });
+
+      // Form Hours Submit
+      document.getElementById('form-hours')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const start = (document.getElementById('hour-start') as HTMLInputElement).value;
+        const end = (document.getElementById('hour-end') as HTMLInputElement).value;
+
+        if (end <= start) {
+          window.showToast('A hora final deve ser maior que a hora inicial.', 'error');
+          return;
+        }
+
+        setLoading(btn, true);
+        const { error } = await supabase
+          .from('estudios')
+          .update({ hora_inicio: start, hora_fim: end })
+          .eq('id', studioId);
+
+        setLoading(btn, false);
+        if (error) window.showToast('Erro ao salvar horários: ' + error.message, 'error');
+        else window.showToast('Horário de funcionamento atualizado!', 'success');
+      });
+
+      // Form Finance Submit
+      document.getElementById('form-finance')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        
+        const formData = new FormData(e.target as HTMLFormElement);
+        const data: any = Object.fromEntries(formData);
+
+        // Validation if percentual
+        if (data.modelo_pagamento_padrao !== 'aluguel_fixo') {
+          const estudio = Number(data.percentual_estudio_padrao);
+          const tatuador = Number(data.percentual_tatuador_padrao);
+          if (estudio + tatuador !== 100) {
+            window.showToast('A soma dos percentuais deve ser exatamente 100%.', 'error');
+            return;
+          }
+        }
+
+        setLoading(btn, true);
+
+        // Check if exists using studioId
+        const { data: existing } = await supabase
+          .from('configuracoes_financeiras')
+          .select('id')
+          .eq('estudio_id', studioId)
+          .single();
+
+        let error;
+        if (existing) {
+          ({ error } = await supabase
+            .from('configuracoes_financeiras')
+            .update(data)
+            .eq('id', existing.id));
+        } else {
+          ({ error } = await supabase
+            .from('configuracoes_financeiras')
+            .insert({ estudio_id: studioId, ...data }));
+        }
+
+        setLoading(btn, false);
+        if (error) window.showToast('Erro ao salvar financeiro: ' + error.message, 'error');
+        else window.showToast('Configurações financeiras salvas!', 'success');
+      });
+
+      // Logo Upload
+      const logoWrapper = document.querySelector('.logo-preview-wrapper');
+      const logoInput = document.getElementById('logo-input') as HTMLInputElement;
+      const logoPreview = document.getElementById('logo-preview') as HTMLImageElement;
+
+      logoWrapper?.addEventListener('click', () => logoInput?.click());
+
+      logoInput?.addEventListener('change', async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+
+        // Preview locally
+        const reader = new FileReader();
+        reader.onload = (re) => logoPreview.src = re.target?.result as string;
+        reader.readAsDataURL(file);
+
+        // Upload to Storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${studioId}/logo-${Math.random()}.${fileExt}`;
+        const filePath = `logos/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('branding')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          window.showToast('Erro no upload: ' + uploadError.message, 'error');
+          return;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('branding')
+          .getPublicUrl(filePath);
+
+        // Update estudio record
+        await supabase
+          .from('estudios')
+          .update({ logo_url: publicUrl })
+          .eq('id', studioId);
+        
+        window.showToast('Logo atualizada com sucesso!', 'success');
+      });
+    }
+
+    function setLoading(btn: HTMLButtonElement, loading: boolean) {
+      if (!btn) return;
+      btn.disabled = loading;
+      const text = btn.querySelector('.btn-text');
+      const loader = btn.querySelector('.btn-loader');
+      
+      if (loading) {
+        text?.classList.add('hidden');
+        loader?.classList.remove('hidden');
+      } else {
+        text?.classList.remove('hidden');
+        loader?.classList.add('hidden');
+      }
+    }
+
+    init();
+  </script>
+</DashboardLayout>

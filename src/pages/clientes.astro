@@ -1,0 +1,646 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import NewClientModal from '../components/NewClientModal.astro';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal.astro';
+import { supabase } from '../lib/supabase';
+
+// Cabeçalhos premium e estilos baseados no Dashboard
+---
+
+<DashboardLayout title="Clientes">
+  <div class="clientes-wrapper">
+    <!-- ═══ HEADER ═══ -->
+    <header class="clientes-header">
+      <div class="header-titles">
+        <h1 class="page-title">CLIENTES</h1>
+        <p class="subtitle">Gerenciamento completo da base de clientes</p>
+      </div>
+
+      <button id="btn-new-client" class="btn-premium-action">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Novo Cliente</span>
+      </button>
+    </header>
+
+    <!-- ═══ SEÇÃO PRINCIPAL ═══ -->
+    <section class="main-card">
+      <div class="card-header">
+        <div class="search-container">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Buscar cliente por nome ou telefone..." />
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Email</th>
+              <th class="text-center">Total Gasto</th>
+              <th class="text-center">Última Sessão</th>
+              <th class="text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="clients-tbody">
+            <!-- Injetado via JS -->
+            <tr>
+              <td colspan="6" class="loading-td">
+                <div class="spinner"></div>
+                <span>Carregando clientes...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="empty-state" class="empty-state hidden">
+        <p>Nenhum cliente encontrado.</p>
+      </div>
+    </section>
+  </div>
+
+  <NewClientModal />
+  <DeleteConfirmationModal />
+
+  <style is:global>
+    .clientes-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* HEADER */
+    .clientes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--primary, #C9A24D);
+      letter-spacing: -2px;
+      margin: 0;
+      line-height: 1;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .subtitle {
+      color: var(--text-muted, #888);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .btn-premium-action {
+      background: linear-gradient(135deg, var(--primary, #C9A24D) 0%, #e5c07b 100%);
+      color: #000;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 10px 30px -10px rgba(201, 162, 77, 0.5);
+    }
+
+    .btn-premium-action:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 20px 40px -15px rgba(201, 162, 77, 0.6);
+      filter: brightness(1.1);
+    }
+
+    /* MAIN CARD */
+    .main-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .main-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header {
+      padding: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* SEARCH */
+    .search-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+    }
+
+    #search-input {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 14px 12px 42px;
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+
+    #search-input:focus {
+      outline: none;
+      border-color: var(--primary, #C9A24D);
+      background: #111;
+      box-shadow: 0 0 0 4px rgba(201, 162, 77, 0.1);
+    }
+
+    #search-input::placeholder {
+      color: #555;
+    }
+
+    /* TABLE */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .premium-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .premium-table th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 1.5rem 2rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .premium-table td {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle;
+    }
+
+    .premium-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .premium-table tr {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .premium-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+      transform: scale(0.998) translateX(5px);
+    }
+
+    /* CUSTOM COLUMN STYLES */
+    .client-info-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .client-name-badge {
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.5px;
+    }
+
+    .client-social {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(201, 162, 77, 0.6);
+      font-weight: 600;
+    }
+
+    .client-whatsapp {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+    }
+
+    .email-badge {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.85rem;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .total-spent-badge {
+      background: rgba(201, 162, 77, 0.1);
+      color: var(--primary, #C9A24D);
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 1rem;
+      border: 1px solid rgba(201, 162, 77, 0.2);
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .session-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .session-date {
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .session-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 800;
+    }
+
+    /* WHATSAPP ACTION */
+    .phone-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-whatsapp-direct {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(37, 211, 102, 0.1);
+      color: #25D366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(37, 211, 102, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-whatsapp-direct:hover {
+      background: #25D366;
+      color: #000;
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+    }
+
+    /* ACTIONS */
+    .actions-cell {
+      text-align: right;
+    }
+
+    .actions-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-edit:hover {
+      background: var(--primary, #C9A24D);
+      color: #000;
+      border-color: var(--primary, #C9A24D);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(201, 162, 77, 0.3);
+    }
+
+    .btn-delete:hover {
+      background: #c0392b;
+      color: white;
+      border-color: #c0392b;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(192, 57, 43, 0.3);
+    }
+
+    /* ALIGNMENT UTILS */
+    .text-center { text-align: center !important; }
+    .text-right { text-align: right !important; }
+
+    /* STATES */
+    .loading-td {
+      text-align: center;
+      padding: 5rem 0 !important;
+      color: #666;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(201, 162, 77, 0.1);
+      border-top-color: var(--primary, #C9A24D);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      padding: 4rem;
+      text-align: center;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .hidden { display: none !important; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .clientes-wrapper { padding: 0.5rem; }
+      .clientes-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+      }
+      .header-titles {
+        text-align: center;
+      }
+      .page-title { font-size: 2.2rem; }
+      .btn-premium-action { width: 100%; justify-content: center; }
+
+      .premium-table thead { display: none; }
+      .premium-table td { 
+        display: block; 
+        text-align: right; 
+        padding: 1rem 1rem 1rem 45%; 
+        position: relative;
+        border: none;
+      }
+      .premium-table td::before { 
+        content: attr(data-label); 
+        position: absolute; 
+        left: 1rem; 
+        top: 1rem;
+        font-weight: 800; 
+        text-transform: uppercase; 
+        font-size: 0.7rem; 
+        color: #555;
+      }
+      .premium-table tr { 
+        display: block; 
+        padding: 0.5rem 0; 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .actions-cell { padding-left: 0; }
+      .actions-wrapper { justify-content: flex-end; }
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary, #C9A24D);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+
+  <script>
+    import { supabase } from '../lib/supabase';
+
+    let allClients = [];
+    let filteredClients = [];
+
+    function formatPhone(phone) {
+      if (!phone) return '—';
+      const cleaned = phone.replace(/\D/g, '');
+      
+      // Formato Brasil: (00) 00000-0000 ou (00) 0000-0000
+      // Se tiver 55 no início e mais que 10 dígitos, removemos o 55 para o formato local
+      let local = cleaned;
+      if (cleaned.startsWith('55') && cleaned.length > 10) {
+        local = cleaned.substring(2);
+      }
+
+      if (local.length === 11) {
+        return local.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      } else if (local.length === 10) {
+        return local.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+      }
+      
+      return phone; // Retorna original se não bater
+    }
+
+    async function loadClients() {
+      const tbody = document.getElementById('clients-tbody');
+      const emptyState = document.getElementById('empty-state');
+      
+      try {
+        // 1. Obter clientes
+        const { data: clients, error } = await supabase
+          .from('clientes')
+          .select(`
+            *,
+            agendamentos(valor_total, data_hora)
+          `)
+          .order('nome', { ascending: true });
+
+        if (error) throw error;
+
+        // 2. Processar agregações
+        allClients = clients.map(c => {
+          const appts = c.agendamentos || [];
+          const totalSpent = appts.reduce((acc, a) => acc + (Number(a.valor_total) || 0), 0);
+          
+          let lastSession = 'Nunca';
+          if (appts.length > 0) {
+            const sortedDates = appts.map(a => new Date(a.data_hora)).sort((a, b) => b.getTime() - a.getTime());
+            lastSession = sortedDates[0].toLocaleDateString('pt-BR');
+          }
+
+          return { ...c, totalSpent, lastSession };
+        });
+
+        filteredClients = [...allClients];
+        renderTable();
+
+      } catch (err: any) {
+        console.error('Erro ao listar clientes:', err);
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="color: #c0392b">Erro ao carregar dados.</td></tr>`;
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('clients-tbody');
+      const emptyState = document.getElementById('empty-state');
+      
+      if (!tbody) return;
+
+      if (filteredClients.length === 0) {
+        tbody.innerHTML = '';
+        emptyState?.classList.remove('hidden');
+        return;
+      }
+
+      emptyState?.classList.add('hidden');
+      tbody.innerHTML = filteredClients.map(c => `
+        <tr>
+          <td data-label="Nome">
+            <div class="client-info-cell">
+              <span class="client-name-badge">${c.nome}</span>
+              ${c.instagram ? `
+                <span class="client-social">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                  ${c.instagram.startsWith('@') ? c.instagram : '@' + c.instagram}
+                </span>
+              ` : ''}
+            </div>
+          </td>
+          <td data-label="Telefone">
+            <div class="phone-cell">
+              <span class="client-whatsapp">${formatPhone(c.whatsapp)}</span>
+              ${c.whatsapp ? `
+                <button class="btn-whatsapp-direct" onclick="openWhatsApp('${c.whatsapp}')" title="Abrir WhatsApp">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.166L2 22l4.934-1.42A9.956 9.956 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.96 7.96 0 0 1-4.164-1.17l-.297-.177-3.073.885.843-3.144-.194-.311A8 8 0 1 1 12 20z"/></svg>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+          <td data-label="Email">
+            <span class="email-badge" title="${c.email || ''}">${c.email || '—'}</span>
+          </td>
+          <td data-label="Total Gasto" class="text-center">
+            <span class="total-spent-badge">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.totalSpent)}</span>
+          </td>
+          <td data-label="Última Sessão" class="text-center">
+            <div class="session-badge">
+              <span class="session-date">${c.lastSession}</span>
+              <span class="session-label">${c.lastSession === 'Nunca' ? 'Sem registro' : 'Sessão'}</span>
+            </div>
+          </td>
+          <td class="actions-cell">
+            <div class="actions-wrapper">
+              <button class="btn-action btn-edit" onclick="editClient('${c.id}')" title="Editar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-action btn-delete" onclick="deleteClient('${c.id}', '${c.nome.replace(/'/g, "\\'")}')" title="Excluir">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // BUSCA EM TEMPO REAL
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      const term = (e.target as HTMLInputElement).value.toLowerCase();
+      
+      filteredClients = allClients.filter(c => 
+        c.nome.toLowerCase().includes(term) || 
+        (c.whatsapp && c.whatsapp.includes(term)) ||
+        (c.email && c.email.toLowerCase().includes(term))
+      );
+      
+      renderTable();
+    });
+
+    // OPEN WHATSAPP
+    window.openWhatsApp = function(phone) {
+      if (!phone) return;
+      const cleaned = phone.replace(/\D/g, '');
+      // Se não tiver DDI, assume 55
+      const finalPhone = cleaned.length <= 11 ? '55' + cleaned : cleaned;
+      window.open(`https://wa.me/${finalPhone}`, '_blank');
+    };
+
+    // GLOBAIS PARA EVENTOS ONCLICK
+    window.editClient = function(id) {
+      const client = allClients.find(c => c.id === id);
+      if (client) {
+        window.dispatchEvent(new CustomEvent('open-new-client-modal', { detail: { client } }));
+      }
+    };
+
+    window.deleteClient = function(id, nome) {
+      window.dispatchEvent(new CustomEvent('open-delete-client-modal', { detail: { id, nome } }));
+    };
+
+    // BOTÃO NOVO CLIENTE
+    document.getElementById('btn-new-client')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-new-client-modal'));
+    });
+
+    // LISTENERS DE ATUALIZAÇÃO
+    window.addEventListener('client-created', loadClients);
+    window.addEventListener('client-deleted', loadClients);
+
+    // INIT
+    loadClients();
+
+    // REALTIME SUBSCRIPTION
+    const channel = supabase
+      .channel('agendamentos-changes-clientes')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'agendamentos' 
+      }, () => {
+        console.log('Mudança detectada nos agendamentos (Clientes), recarregando...');
+        loadClients();
+      })
+      .subscribe();
+  </script>
+</DashboardLayout>

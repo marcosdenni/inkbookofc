@@ -1,0 +1,4 @@
+./src/components/NewAppointmentModal.astro:789:  const WEBHOOK_N8N = 'https://workflows-mvp.marcosdev.xyz/webhook-test/enviar-whatsapp-agendamento';
+./src/pages/mensagens.astro:1039:    const N8N_BASE = 'https://webhooks-mvp.marcosdev.xyz/webhook';
+./src/pages/mensagens.astro:1359:        await fetch("https://webhooks-mvp.marcosdev.xyz/webhook/disconnect-whatsapp", {
+./test-wa.js:27:  const N8N_BASE = 'https://webhooks-mvp.marcosdev.xyz/webhook';

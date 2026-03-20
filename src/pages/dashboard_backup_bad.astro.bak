@@ -1,0 +1,2 @@
+// Backup realizado antes da reversão solicitada pelo usuário (Step 214)
+// O dashboard.astro estava usando carregamento dinâmico mas estava visualmente pobre.

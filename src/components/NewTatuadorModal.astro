@@ -1,0 +1,494 @@
+---
+// NewTatuadorModal.astro
+---
+
+<div id="new-tatuador-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Novo Tatuador</h2>
+      <button id="close-tatuador-modal" class="close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <form id="tatuador-form" class="tatuador-form">
+      <input type="hidden" id="tatuador-id" name="id" />
+      
+      <div class="form-section">
+        <h3 class="section-title">Dados Básicos</h3>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="tatuador-nome">Nome do Tatuador</label>
+            <input type="text" id="tatuador-nome" name="nome" placeholder="Ex: João Tattoo" required />
+          </div>
+          <div class="form-group">
+            <label for="tatuador-whatsapp">WhatsApp</label>
+            <input type="text" id="tatuador-whatsapp" name="whatsapp" placeholder="(00) 00000-0000" />
+          </div>
+          <div class="form-group flex-row">
+            <label class="checkbox-label">
+              <input type="checkbox" name="ativo" id="tatuador-ativo" checked>
+              <span>Tatuador Ativo</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-header-flex">
+          <h3 class="section-title">Modelo Financeiro</h3>
+          <label class="toggle-label">
+            <input type="checkbox" id="usa-modelo-padrao" name="usa_modelo_padrao" checked>
+            <span class="toggle-custom"></span>
+            <span class="toggle-text">Usar padrão do estúdio</span>
+          </label>
+        </div>
+
+        <div id="config-financeira-custom" class="config-container hidden">
+          <div class="form-group full-width">
+            <label for="modelo-pagamento">Tipo de Modelo</label>
+            <select id="modelo-pagamento" name="modelo_pagamento">
+              <option value="percentual">Percentual (%)</option>
+              <option value="aluguel_fixo">Aluguel Fixo</option>
+              <option value="hibrido">Híbrido (Percentual + Aluguel)</option>
+            </select>
+          </div>
+
+          <div id="fields-percentual" class="form-grid finance-fields">
+            <div class="form-group">
+              <label for="percentual-estudio">% Estúdio</label>
+              <div class="input-with-suffix">
+                <input type="number" id="percentual-estudio" name="percentual_estudio" min="0" max="100" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="percentual-tatuador">% Tatuador</label>
+              <div class="input-with-suffix">
+                <input type="number" id="percentual-tatuador" name="percentual_tatuador" min="0" max="100" />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="fields-aluguel" class="form-grid finance-fields hidden">
+            <div class="form-group full-width">
+              <label for="aluguel-mensal">Valor do Aluguel Mensal (R$)</label>
+              <input type="number" id="aluguel-mensal" name="aluguel_mensal" step="0.01" min="0" placeholder="0,00" />
+            </div>
+          </div>
+        </div>
+        
+        <div id="config-financeira-padrao-info" class="info-box">
+          <p>Este tatuador seguirá as regras globais definidas nas configurações do estúdio.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="cancel-tatuador-btn" class="btn-secondary">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Tatuador</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hidden { display: none !important; }
+
+  .modal-content {
+    background: #121212;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2.5rem;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    transform: translateY(30px) scale(0.98);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-overlay:not(.hidden) .modal-content {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+  }
+
+  .close-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover {
+    background: rgba(192, 57, 43, 0.1);
+    color: #e74c3c;
+    border-color: rgba(192, 57, 43, 0.2);
+  }
+
+  .form-section {
+    margin-bottom: 2.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    opacity: 0.6;
+  }
+
+  .section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header-flex .section-title { margin-bottom: 0; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .full-width { grid-column: span 2; }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.9rem 1.2rem;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(201, 162, 77, 0.1);
+    background: #111;
+  }
+
+  .input-with-suffix {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-with-suffix input {
+    padding-right: 3rem;
+  }
+
+  .suffix {
+    position: absolute;
+    right: 1.25rem;
+    color: var(--text-muted);
+    font-weight: 800;
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .checkbox-label input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+  /* TOGGLE SWITCH */
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .toggle-label input { display: none; }
+
+  .toggle-custom {
+    width: 44px;
+    height: 24px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .toggle-custom::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  }
+
+  .toggle-label input:checked + .toggle-custom { background: var(--primary); }
+  .toggle-label input:checked + .toggle-custom::after { left: 24px; background: #000; }
+
+  .toggle-text { font-size: 0.85rem; font-weight: 700; color: var(--primary); }
+
+  .info-box {
+    background: rgba(201, 162, 77, 0.05);
+    border: 1px solid rgba(201, 162, 77, 0.1);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+  }
+
+  .info-box p {
+    font-size: 0.85rem;
+    color: var(--primary);
+    margin: 0;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #e5c07b 100%);
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 10px 20px -10px rgba(201, 162, 77, 0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -10px rgba(201, 162, 77, 0.5);
+    filter: brightness(1.1);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 1rem 2rem;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const modal = document.getElementById('new-tatuador-modal');
+  const closeBtn = document.getElementById('close-tatuador-modal');
+  const cancelBtn = document.getElementById('cancel-tatuador-btn');
+  const form = document.getElementById('tatuador-form') as HTMLFormElement;
+  const toggleModelo = document.getElementById('usa-modelo-padrao') as HTMLInputElement;
+  const configCustom = document.getElementById('config-financeira-custom');
+  const configPadraoInfo = document.getElementById('config-financeira-padrao-info');
+  const selectModelo = document.getElementById('modelo-pagamento') as HTMLSelectElement;
+  
+  const fieldsPercentual = document.getElementById('fields-percentual');
+  const fieldsAluguel = document.getElementById('fields-aluguel');
+
+  // Toggle logical components
+  toggleModelo?.addEventListener('change', () => {
+    if (toggleModelo.checked) {
+      configCustom?.classList.add('hidden');
+      configPadraoInfo?.classList.remove('hidden');
+    } else {
+      configCustom?.classList.remove('hidden');
+      configPadraoInfo?.classList.add('hidden');
+    }
+  });
+
+  selectModelo?.addEventListener('change', () => {
+    const modelo = selectModelo.value;
+    if (modelo === 'percentual') {
+      fieldsPercentual?.classList.remove('hidden');
+      fieldsAluguel?.classList.add('hidden');
+    } else if (modelo === 'aluguel_fixo') {
+      fieldsPercentual?.classList.add('hidden');
+      fieldsAluguel?.classList.remove('hidden');
+    } else if (modelo === 'hibrido') {
+      fieldsPercentual?.classList.remove('hidden');
+      fieldsAluguel?.classList.remove('hidden');
+    }
+  });
+
+  // Open/Close logic
+  window.addEventListener('open-tatuador-modal', ((e: CustomEvent) => {
+    const tatuador = e.detail?.tatuador;
+    
+    if (tatuador) {
+      document.getElementById('modal-title')!.textContent = 'Editar Tatuador';
+      (document.getElementById('tatuador-id') as HTMLInputElement).value = tatuador.id;
+      (document.getElementById('tatuador-nome') as HTMLInputElement).value = tatuador.nome;
+      (document.getElementById('tatuador-whatsapp') as HTMLInputElement).value = tatuador.whatsapp || '';
+      (document.getElementById('tatuador-ativo') as HTMLInputElement).checked = tatuador.ativo !== false;
+      
+      toggleModelo.checked = tatuador.usa_modelo_padrao !== false;
+      selectModelo.value = tatuador.modelo_pagamento || 'percentual';
+      (document.getElementById('percentual-estudio') as HTMLInputElement).value = tatuador.percentual_estudio || '';
+      (document.getElementById('percentual-tatuador') as HTMLInputElement).value = tatuador.percentual_tatuador || '';
+      (document.getElementById('aluguel-mensal') as HTMLInputElement).value = tatuador.aluguel_mensal || '0';
+      
+      // Trigger events to update UI
+      toggleModelo.dispatchEvent(new Event('change'));
+      selectModelo.dispatchEvent(new Event('change'));
+    } else {
+      document.getElementById('modal-title')!.textContent = 'Novo Tatuador';
+      form.reset();
+      (document.getElementById('tatuador-id') as HTMLInputElement).value = '';
+      toggleModelo.checked = true;
+      toggleModelo.dispatchEvent(new Event('change'));
+    }
+    
+    modal?.classList.remove('hidden');
+  }) as EventListener);
+
+  function closeModal() {
+    modal?.classList.add('hidden');
+  }
+
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    
+    const id = formData.get('id') as string;
+    const nome = formData.get('nome') as string;
+    const whatsapp = formData.get('whatsapp') as string;
+    const ativo = formData.get('ativo') === 'on';
+    const usa_modelo_padrao = formData.get('usa_modelo_padrao') === 'on';
+    const modelo_pagamento = formData.get('modelo_pagamento') as string;
+    const percentual_estudio = formData.get('percentual_estudio') ? Number(formData.get('percentual_estudio')) : null;
+    const percentual_tatuador = formData.get('percentual_tatuador') ? Number(formData.get('percentual_tatuador')) : null;
+    const aluguel_mensal = formData.get('aluguel_mensal') ? Number(formData.get('aluguel_mensal')) : 0;
+
+    try {
+      // Obter estudio_id do usuário logado
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { data: userData } = await supabase.from('users').select('estudio_id').eq('id', user.id).single();
+      if (!userData) throw new Error('Estúdio não encontrado para este usuário');
+
+      const payload = {
+        nome,
+        whatsapp,
+        ativo,
+        estudio_id: userData.estudio_id,
+        usa_modelo_padrao,
+        modelo_pagamento: usa_modelo_padrao ? 'percentual' : modelo_pagamento, // Fallback safe
+        percentual_estudio: usa_modelo_padrao ? null : percentual_estudio,
+        percentual_tatuador: usa_modelo_padrao ? null : percentual_tatuador,
+        aluguel_mensal: usa_modelo_padrao ? 0 : aluguel_mensal
+      };
+
+      let error;
+      if (id) {
+        const { error: updateError } = await supabase.from('tatuadores').update(payload).eq('id', id);
+        error = updateError;
+      } else {
+        const { error: insertError } = await supabase.from('tatuadores').insert(payload);
+        error = insertError;
+      }
+
+      if (error) throw error;
+
+      window.dispatchEvent(new CustomEvent('tatuador-updated'));
+      closeModal();
+    } catch (err: any) {
+      console.error('Erro ao salvar tatuador:', err.message);
+      window.showToast('Erro ao salvar dados. Verifique o console.', 'error');
+    }
+  });
+</script>

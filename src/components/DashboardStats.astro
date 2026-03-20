@@ -1,0 +1,207 @@
+---
+interface Props {
+  label: string;
+  value: string | number;
+  trend?: {
+    value: number;
+    isUp: boolean;
+  };
+  variant?: 'default' | 'active' | 'warning' | 'error' | 'success' | 'gold';
+  id?: string;
+  description?: string;
+  weight?: 1 | 2 | 3;
+  showProgress?: boolean;
+}
+
+const { 
+  label, 
+  value, 
+  trend, 
+  variant = 'default', 
+  id, 
+  description, 
+  weight = 3,
+  showProgress = false 
+} = Astro.props;
+
+const borderColors = {
+  default: 'var(--status-neutral)',
+  active: 'var(--primary)',
+  success: 'var(--status-confirmed)',
+  warning: 'var(--status-pending)',
+  error: 'var(--status-cancelled)',
+  gold: 'var(--primary)'
+};
+
+const borderColor = borderColors[variant] || borderColors.default;
+
+// Caso especial para "Faltas" que pode vir como variant default mas queremos roxo se o label for Faltas
+const finalBorderColor = label.toLowerCase().includes('falta') ? 'var(--status-missed)' : borderColor;
+---
+
+<div id={id} class={`stat-card ${variant} weight-${weight}`} style={`border-bottom-color: ${finalBorderColor};`}>
+  <div class="card-header">
+    <span class="stat-label">{label}</span>
+    {trend && (
+      <div class={`trend-indicator ${trend.isUp ? 'up' : 'down'}`}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          {trend.isUp ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+        </svg>
+        <span>{trend.value}%</span>
+      </div>
+    )}
+  </div>
+  
+  <div class="value-container">
+    <span class="stat-value">{value}</span>
+    {description && <span class="stat-description">{description}</span>}
+  </div>
+
+  {showProgress && (
+    <div class="stat-progress">
+      <div class="progress-track">
+        <div class="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .stat-card {
+    background-color: #1A1A1A;
+    padding: 1.25rem;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 3px solid transparent;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    background-color: #222;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* PESO 1 - DESTAQUE PRINCIPAL */
+  .stat-card.weight-1 {
+    grid-column: span 2;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(201, 162, 77, 0.15) 0%, rgba(20, 20, 20, 1) 100%);
+    border: 1px solid rgba(201, 162, 77, 0.3);
+  }
+
+  .stat-card.weight-1 .stat-value {
+    font-size: 3.5rem;
+    color: var(--primary);
+    text-shadow: 0 0 20px rgba(201, 162, 77, 0.2);
+  }
+
+  .stat-card.weight-1 .stat-label {
+    font-size: 1rem;
+    color: var(--primary);
+    opacity: 0.9;
+  }
+
+  /* PESO 2 - MÉDIO */
+  .stat-card.weight-2 {
+    grid-column: span 1.5;
+    padding: 1.5rem;
+  }
+
+  /* PESO 3 - DISCRETO */
+  .stat-card.weight-3 {
+    grid-column: span 1;
+    padding: 1.25rem;
+  }
+
+  .value-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .stat-description {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  .stat-progress {
+    margin-top: 0.5rem;
+  }
+
+  .progress-track {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, #E5C07B 100%);
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Variantes de cores */
+  .stat-card.success .stat-value { color: var(--status-confirmed); }
+  .stat-card.warning .stat-value { color: var(--status-pending); }
+  .stat-card.error .stat-value { color: var(--status-cancelled); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 1200px) {
+    .stat-card.weight-1, .stat-card.weight-2 {
+      grid-column: span 1;
+    }
+  }
+
+  .trend-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+  }
+
+  .trend-indicator.up {
+    color: var(--status-confirmed);
+    background-color: rgba(39, 174, 96, 0.1);
+  }
+
+  .trend-indicator.down {
+    color: var(--status-cancelled);
+    background-color: rgba(192, 57, 43, 0.1);
+  }
+</style>

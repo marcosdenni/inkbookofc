@@ -1,0 +1,181 @@
+---
+import Sidebar from '../components/Sidebar.astro';
+import AuthGuard from '../components/AuthGuard.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="pt-BR" style="color-scheme: dark;">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} | InkBook Tattoo</title>
+  </head>
+  <body>
+    <AuthGuard>
+      <div class="app-container">
+        <header class="mobile-header">
+           <button id="hamburger-menu" class="hamburger-btn">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+           </button>
+           <div class="header-logo">
+             <img src="/imagens/inkbook-logo.png.png" alt="Logo" class="mini-logo" />
+           </div>
+        </header>
+
+        <Sidebar />
+        
+        <main id="main-content" class="main-content">
+          <slot />
+        </main>
+      </div>
+    </AuthGuard>
+
+    <script>
+      const hamburger = document.getElementById('hamburger-menu');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      hamburger?.addEventListener('click', () => {
+        sidebar?.classList.add('mobile-open');
+        overlay?.classList.add('active');
+      });
+
+      // Ouvir evento de colapso da sidebar para ajustar margens se necessário
+      window.addEventListener('sidebar-toggle', (e: any) => {
+        const collapsed = e.detail.collapsed;
+        const main = document.getElementById('main-content');
+        if (main) {
+          main.style.marginLeft = collapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+        }
+      });
+      
+      // Ajuste inicial de margem baseado no estado salvo
+      const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+      const main = document.getElementById('main-content');
+      if (main && window.innerWidth >= 1024) {
+        main.style.marginLeft = isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+      }
+    </script>
+
+    <style>
+      .app-container {
+        display: flex;
+        min-height: 100vh;
+        background-color: var(--background);
+      }
+
+      .main-content {
+        flex: 1;
+        min-width: 0;
+        transition: margin-left var(--transition-normal);
+        padding: 2rem;
+        background-color: var(--background);
+      }
+
+      .mobile-header {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: var(--sidebar-bg);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        z-index: 500;
+        padding: 0 1rem;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .hamburger-btn {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+      }
+
+      .hamburger-btn:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .header-logo span {
+        font-family: var(--font-title);
+        font-size: 1.25rem;
+        color: var(--primary);
+      }
+
+      .mini-logo {
+        height: 48px;
+        width: 48px;
+        object-fit: contain;
+      }
+
+      @media (max-width: 1023px) {
+        .mobile-header {
+          display: flex;
+        }
+
+        .main-content {
+          margin-left: 0 !important;
+          padding-top: calc(60px + 2rem);
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .app-container {
+           /* Desktop specific if needed */
+        }
+      }
+    </style>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script is:inline>
+      // Global Toast System
+      window.showToast = (message, type = 'success') => {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        const icons = {
+          success: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+          error: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+          info: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+        };
+
+        toast.innerHTML = `
+          <div class="toast-icon">${icons[type]}</div>
+          <div class="toast-message">${message}</div>
+        `;
+
+        container.appendChild(toast);
+
+        // Auto remove
+        setTimeout(() => {
+          toast.classList.add('removing');
+          setTimeout(() => toast.remove(), 400);
+        }, 4000);
+      };
+    </script>
+  </body>
+</html>

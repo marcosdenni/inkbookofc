@@ -1,0 +1,376 @@
+---
+import SidebarItem from './SidebarItem.astro';
+
+const menuItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>' },
+  { href: '/agenda', label: 'Agenda', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>' },
+  { href: '/clientes', label: 'Clientes', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
+  { href: '/tatuadores', label: 'Tatuadores', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-tool"><path d="m12 19 7-7 3 3-7 7-3-3Z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5Z"/><path d="m2 2 5 2"/><path d="m11 4 7 7"/></svg>' },
+  { href: '/mensagens', label: 'Mensagens', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
+  { href: '/configuracoes', label: 'Configurações', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>' },
+];
+---
+
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <img src="/imagens/inkbook-logo.png.png" alt="InkBook Logo" class="logo" />
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    {menuItems.map(item => (
+      <SidebarItem {...item} />
+    ))}
+  </nav>
+
+  <div class="sidebar-profile">
+    <div class="user-info">
+      <div class="user-avatar" id="user-avatar-initial">?</div>
+      <div class="user-details">
+        <span class="user-name">Usuário</span>
+        <span class="user-email" id="sidebar-user-email">Carregando...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <button id="logout-btn" class="logout-btn" title="Sair do sistema">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      <span class="btn-text">Sair</span>
+    </button>
+    <button id="toggle-sidebar" class="toggle-btn" title="Recolher menu">
+      <svg id="toggle-icon-collapse" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+      <svg id="toggle-icon-expand" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right" style="display: none;"><path d="m9 18 6-6-9-6"/></svg>
+      <span class="toggle-text">Recolher</span>
+    </button>
+  </div>
+</aside>
+
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const sidebar = document.getElementById('sidebar');
+  const toggleBtn = document.getElementById('toggle-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  logoutBtn?.addEventListener('click', async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      window.location.href = '/login';
+    } else {
+      console.error('Erro ao sair:', error.message);
+    }
+  });
+
+  async function loadUserProfile() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const emailEl = document.getElementById('sidebar-user-email');
+      const avatarEl = document.getElementById('user-avatar-initial');
+      if (emailEl) emailEl.textContent = user.email || 'Usuário';
+      if (avatarEl && user.email) {
+        avatarEl.textContent = user.email.substring(0, 1).toUpperCase();
+      }
+    }
+  }
+
+  loadUserProfile();
+
+  // Recuperar estado do localStorage
+  const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+  if (isCollapsed && window.innerWidth >= 1024) {
+    sidebar?.classList.add('collapsed');
+    updateToggleIcons(true);
+  }
+
+  toggleBtn?.addEventListener('click', () => {
+    if (window.innerWidth < 1024) {
+      // No mobile, o botão pode ser usado para fechar se estiver aberto via hamburger (futuro)
+      // Mas aqui vamos focar no colapso desktop primeiro
+      sidebar?.classList.toggle('mobile-open');
+      overlay?.classList.toggle('active');
+    } else {
+      sidebar?.classList.toggle('collapsed');
+      const collapsed = sidebar?.classList.contains('collapsed');
+      localStorage.setItem('sidebar-collapsed', String(collapsed));
+      updateToggleIcons(collapsed || false);
+      
+      // Emitir evento customizado para outros componentes reagirem à mudança de largura
+      window.dispatchEvent(new CustomEvent('sidebar-toggle', { detail: { collapsed } }));
+    }
+  });
+
+  overlay?.addEventListener('click', () => {
+    sidebar?.classList.remove('mobile-open');
+    overlay?.classList.remove('active');
+  });
+
+  function updateToggleIcons(collapsed: boolean) {
+    const collapseIcon = document.getElementById('toggle-icon-collapse');
+    const expandIcon = document.getElementById('toggle-icon-expand');
+    const toggleText = document.querySelector('.toggle-text');
+    const logoutText = document.querySelector('.logout-btn .btn-text');
+    
+    if (collapsed) {
+      if (collapseIcon) collapseIcon.style.display = 'none';
+      if (expandIcon) expandIcon.style.display = 'block';
+      if (toggleText) (toggleText as HTMLElement).style.display = 'none';
+      if (logoutText) (logoutText as HTMLElement).style.display = 'none';
+      toggleBtn?.setAttribute('title', 'Expandir menu');
+    } else {
+      if (collapseIcon) collapseIcon.style.display = 'block';
+      if (expandIcon) expandIcon.style.display = 'none';
+      if (toggleText) (toggleText as HTMLElement).style.display = 'inline';
+      if (logoutText) (logoutText as HTMLElement).style.display = 'inline';
+      toggleBtn?.setAttribute('title', 'Recolher menu');
+    }
+    
+    // Atualizar itens internos
+    const items = document.querySelectorAll('.sidebar-item');
+    items.forEach(item => {
+      if (collapsed) item.classList.add('collapsed');
+      else item.classList.remove('collapsed');
+    });
+  }
+</script>
+
+<style>
+  .sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transition: width var(--transition-normal);
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+  }
+
+  .sidebar-header {
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: padding var(--transition-normal);
+  }
+
+  .sidebar.collapsed .sidebar-header {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: hidden;
+  }
+
+  .logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 20px rgba(201, 162, 77, 0.2));
+    transition: all var(--transition-normal);
+  }
+
+  .sidebar.collapsed .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 1.5rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    overflow-y: auto;
+  }
+
+  .sidebar-profile {
+    padding: 1.25rem 1rem;
+    margin: 0 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 1rem;
+    transition: all var(--transition-normal);
+  }
+
+  .sidebar.collapsed .sidebar-profile {
+    padding: 0.75rem;
+    margin: 0 0.5rem 1rem;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: hidden;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    color: #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    transition: opacity var(--transition-fast);
+  }
+
+  .sidebar.collapsed .user-details {
+    display: none;
+  }
+
+  .user-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .user-email {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 140px;
+  }
+
+  .sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .logout-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .sidebar.collapsed .logout-btn {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .toggle-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+  }
+
+  .toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+  }
+
+  .sidebar.collapsed .toggle-btn,
+  .sidebar.collapsed .logout-btn {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .toggle-text,
+  .btn-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: opacity var(--transition-fast);
+  }
+
+  .sidebar.collapsed .toggle-text,
+  .sidebar.collapsed .btn-text {
+    display: none;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 1023px) {
+    .sidebar {
+      transform: translateX(-100%);
+      width: 280px;
+    }
+
+    .sidebar.mobile-open {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+    
+    .sidebar.collapsed {
+        width: 280px; /* Reset width on mobile */
+    }
+    
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .toggle-btn {
+        display: none; /* Hide toggle on mobile, will use hamburger instead */
+    }
+  }
+</style>

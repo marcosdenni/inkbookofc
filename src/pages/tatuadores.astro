@@ -1,0 +1,468 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import NewTatuadorModal from '../components/NewTatuadorModal.astro';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal.astro';
+import { supabase } from '../lib/supabase';
+
+// Página de Gerenciamento de Tatuadores
+---
+
+<DashboardLayout title="Tatuadores">
+  <div class="tatuadores-wrapper">
+    <header class="tatuadores-header">
+      <div class="header-titles">
+        <h1 class="page-title">TATUADORES</h1>
+        <p class="subtitle">Equipe e configurações financeiras de repasse</p>
+      </div>
+
+      <button id="btn-new-tatuador" class="btn-premium-action">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Novo Tatuador</span>
+      </button>
+    </header>
+
+    <section class="main-card">
+      <div class="card-header">
+        <div class="search-container">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Pesquisar tatuador..." />
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th data-label="Status">Status</th>
+              <th data-label="Nome">Nome</th>
+              <th data-label="WhatsApp">WhatsApp</th>
+              <th data-label="Modelo Financeiro">Modelo Financeiro</th>
+              <th class="text-right" data-label="Ações">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tatuadores-tbody">
+            <tr>
+              <td colspan="5" class="loading-td">
+                <div class="spinner"></div>
+                <span>Carregando equipe...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="empty-state" class="empty-state hidden">
+        <p>Nenhum tatuador cadastrado.</p>
+      </div>
+    </section>
+  </div>
+
+  <NewTatuadorModal />
+  <DeleteConfirmationModal />
+
+  <style is:global>
+    .tatuadores-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tatuadores-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--primary, #C9A24D);
+      letter-spacing: -2px;
+      margin: 0;
+      line-height: 1;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .subtitle {
+      color: var(--text-muted, #888);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .btn-premium-action {
+      background: linear-gradient(135deg, var(--primary, #C9A24D) 0%, #e5c07b 100%);
+      color: #000;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 10px 30px -10px rgba(201, 162, 77, 0.5);
+    }
+
+    .btn-premium-action:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 20px 40px -15px rgba(201, 162, 77, 0.6);
+      filter: brightness(1.1);
+    }
+
+    .main-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .main-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .premium-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .premium-table th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 1.5rem 2rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .premium-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+      transform: scale(0.998) translateX(5px);
+    }
+
+    .premium-table thead tr:hover {
+      background: transparent;
+      transform: none;
+    }
+
+    .premium-table thead th:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* SEARCH */
+    .card-header {
+      padding: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .search-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+    }
+
+    #search-input {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 14px 12px 42px;
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+
+    #search-input:focus {
+      outline: none;
+      border-color: var(--primary, #C9A24D);
+      background: #111;
+      box-shadow: 0 0 0 4px rgba(201, 162, 77, 0.1);
+    }
+
+    #search-input::placeholder {
+      color: #555;
+    }
+
+    .premium-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+      transform: scale(0.998) translateX(5px);
+    }
+
+    .premium-table td {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-active { background: rgba(39, 174, 96, 0.1); color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.2); }
+    .status-inactive { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+    .artist-name { color: #fff; font-weight: 800; font-size: 1.1rem; }
+    
+    .finance-badge {
+      background: rgba(201, 162, 77, 0.05);
+      border: 1px solid rgba(201, 162, 77, 0.1);
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 600;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .actions-cell {
+      text-align: right;
+    }
+
+    .actions-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-edit:hover {
+      background: var(--primary, #C9A24D);
+      color: #000;
+      border-color: var(--primary, #C9A24D);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(201, 162, 77, 0.3);
+    }
+
+    .btn-delete:hover {
+      background: #c0392b;
+      color: white;
+      border-color: #c0392b;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(192, 57, 43, 0.3);
+    }
+
+    .empty-state {
+      padding: 4rem;
+      text-align: center;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .hidden { display: none !important; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+    @media (max-width: 900px) {
+      .tatuadores-wrapper { padding: 0.5rem; }
+      .tatuadores-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+      }
+
+      .header-titles {
+        text-align: center;
+      }
+
+      .page-title {
+        font-size: 2.2rem;
+      }
+
+      .header-actions {
+        width: 100%;
+        gap: 1rem;
+      }
+
+      .btn-premium-action {
+        width: 100%;
+        justify-content: center;
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .premium-table thead { display: none; }
+      .premium-table td { 
+        display: block; 
+        text-align: right; 
+        padding: 1rem 1rem 1rem 45%; 
+        position: relative;
+        border: none;
+      }
+      .premium-table td::before { 
+        content: attr(data-label); 
+        position: absolute; 
+        left: 1rem; 
+        top: 1rem;
+        font-weight: 800; 
+        text-transform: uppercase; 
+        font-size: 0.65rem; 
+        color: rgba(255, 255, 255, 0.3);
+      }
+      .premium-table tr { 
+        display: block; 
+        padding: 0.5rem 0; 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .actions-cell { padding-left: 0 !important; }
+      .actions-wrapper { justify-content: flex-end; }
+      
+      .finance-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+      }
+    }
+  </style>
+
+  <script>
+    import { supabase } from '../lib/supabase';
+
+    let allTatuadores = [];
+    let filteredTatuadores = [];
+
+    async function loadTatuadores() {
+      const tbody = document.getElementById('tatuadores-tbody');
+      
+      try {
+        const { data: tatuadores, error } = await supabase
+          .from('tatuadores')
+          .select('*')
+          .order('nome');
+
+        if (error) throw error;
+
+        allTatuadores = tatuadores || [];
+        filteredTatuadores = [...allTatuadores];
+        renderTable();
+      } catch (err) {
+        console.error('Erro ao carregar tatuadores:', err);
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tatuadores-tbody');
+      const emptyState = document.getElementById('empty-state');
+      if (!tbody) return;
+
+      if (filteredTatuadores.length === 0) {
+        tbody.innerHTML = '';
+        emptyState?.classList.remove('hidden');
+        return;
+      }
+
+      emptyState?.classList.add('hidden');
+      tbody.innerHTML = filteredTatuadores.map(t => {
+        let financeModelText = '';
+        if (t.usa_modelo_padrao) {
+          financeModelText = '<span class="finance-badge">Padrão do Estúdio</span>';
+        } else {
+          switch(t.modelo_pagamento) {
+            case 'percentual': financeModelText = `<span class="finance-badge">Percentual (${t.percentual_estudio}%/${t.percentual_tatuador}%)</span>`; break;
+            case 'aluguel_fixo': financeModelText = `<span class="finance-badge">Aluguel Fixo (R$ ${t.aluguel_mensal})</span>`; break;
+            case 'hibrido': financeModelText = `<span class="finance-badge">Híbrido (${t.percentual_estudio}% + R$ ${t.aluguel_mensal})</span>`; break;
+            default: financeModelText = '<span class="finance-badge">Percentual (0%/100%)</span>';
+          }
+        }
+
+        return `
+          <tr>
+            <td data-label="Status">
+              <span class="status-badge ${t.ativo !== false ? 'status-active' : 'status-inactive'}">
+                ${t.ativo !== false ? 'Ativo' : 'Inativo'}
+              </span>
+            </td>
+            <td data-label="Nome"><span class="artist-name">${t.nome}</span></td>
+            <td data-label="WhatsApp" style="color: #888; font-weight: 500;">${t.whatsapp || '—'}</td>
+            <td data-label="Modelo Financeiro">${financeModelText}</td>
+            <td data-label="Ações" class="actions-cell">
+              <div class="actions-wrapper">
+                <button class="btn-action btn-edit" onclick="editTatuador('${t.id}')" title="Editar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn-action btn-delete" onclick="deleteTatuador('${t.id}', '${t.nome.replace(/'/g, "\\'")}')" title="Excluir">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // BUSCA EM TEMPO REAL
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      const term = (e.target as HTMLInputElement).value.toLowerCase();
+      
+      filteredTatuadores = allTatuadores.filter(t => 
+        t.nome.toLowerCase().includes(term)
+      );
+      
+      renderTable();
+    });
+
+    window.editTatuador = function(id) {
+      const tatuador = allTatuadores.find(t => t.id === id);
+      window.dispatchEvent(new CustomEvent('open-tatuador-modal', { detail: { tatuador } }));
+    };
+
+    window.deleteTatuador = function(id, nome) {
+      window.dispatchEvent(new CustomEvent('open-delete-tatuador-modal', { detail: { id, nome } }));
+    };
+
+    document.getElementById('btn-new-tatuador')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-tatuador-modal'));
+    });
+
+    window.addEventListener('tatuador-updated', loadTatuadores);
+    
+    // Init
+    loadTatuadores();
+  </script>
+</DashboardLayout>

@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Urbanist:wght@300;400;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  --background: #0F0F0F;
+  --sidebar-bg: #0A0A0A;
+  --card: #1A1A1A;
+  --primary: #C9A24D;
+  --text: #F5F5F5;
+  --text-muted: #A0A0A0;
+  --success: #27AE60;
+  --error: #C0392B;
+  --active-bg: rgba(201, 162, 77, 0.1);
+
+  /* Status Colors */
+  --status-confirmed: #27AE60;
+  --status-pending: #C9A24D;
+  --status-cancelled: #C0392B;
+  --status-missed: #4C1D95;
+  /* Roxo escuro elegante */
+  --status-neutral: var(--text-muted);
+
+  --font-title: 'Bebas Neue', sans-serif;
+  --font-text: 'Urbanist', sans-serif;
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: var(--font-text);
+  min-height: 100vh;
+}
+
+body.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  letter-spacing: 1px;
+}
+
+input,
+button {
+  font-family: var(--font-text);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Toast System */
+#toast-container {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 300px;
+  max-width: 450px;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s ease;
+}
+
+.toast.removing {
+  animation: toastOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.toast-message {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.toast-success {
+  border-left: 4px solid var(--success);
+}
+.toast-success .toast-icon { color: var(--success); }
+
+.toast-error {
+  border-left: 4px solid var(--error);
+}
+.toast-error .toast-icon { color: var(--error); }
+
+.toast-info {
+  border-left: 4px solid var(--primary);
+}
+.toast-info .toast-icon { color: var(--primary); }
+
+@keyframes toastIn {
+  from {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toastOut {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+}

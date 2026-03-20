@@ -1,0 +1,1879 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { supabase } from '../lib/supabase';
+
+// Título: Mensagens
+---
+
+<DashboardLayout title="Mensagens">
+  <div class="mensagens-wrapper">
+    <!-- ═══ HEADER ═══ -->
+    <header class="mensagens-header">
+      <div class="header-titles">
+        <h1 class="page-title">MENSAGENS</h1>
+        <p class="subtitle">Personalize as mensagens automáticas e gerencie sua conexão</p>
+      </div>
+    </header>
+
+    <div class="mensagens-grid">
+      <!-- ═══ SEÇÃO 1: TEMPLATES ═══ -->
+      <section class="section-container">
+        <div class="section-header">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-template"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg>
+          </div>
+          <div class="header-text">
+            <h2>Templates de Mensagens</h2>
+            <p>Configure os textos enviados automaticamente aos clientes.</p>
+          </div>
+        </div>
+
+        <div class="variables-bar">
+          <span class="var-label">Variáveis disponíveis (clique para inserir):</span>
+          <div class="var-chips">
+            <button class="var-chip" data-var={"{cliente_nome}"}>{"{cliente_nome}"}</button>
+            <button class="var-chip" data-var={"{tatuador_nome}"}>{"{tatuador_nome}"}</button>
+            <button class="var-chip" data-var={"{data}"}>{"{data}"}</button>
+            <button class="var-chip" data-var={"{hora}"}>{"{hora}"}</button>
+            <button class="var-chip" data-var={"{valor}"}>{"{valor}"}</button>
+            <button class="var-chip" data-var={"{estudio_nome}"}>{"{estudio_nome}"}</button>
+          </div>
+        </div>
+
+        <div class="templates-list">
+          <!-- Template: Confirmação -->
+          <div class="template-card" data-tipo="agendamento_criado">
+            <div class="card-title">
+              <h3>Confirmação de Agendamento</h3>
+              <span class="char-count">0 / 500</span>
+            </div>
+            <textarea placeholder={"Ex: Olá {cliente_nome}, seu agendamento está confirmado..."}></textarea>
+            <div class="card-actions">
+              <button class="btn-ia-optimize">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                Otimizar com IA
+              </button>
+              <button class="btn-save-template">Salvar</button>
+            </div>
+          </div>
+
+          <!-- Template: Lembrete -->
+          <div class="template-card" data-tipo="lembrete_sessao">
+            <div class="card-title">
+              <h3>Lembrete de Sessão</h3>
+              <span class="char-count">0 / 500</span>
+            </div>
+            <textarea placeholder={"Ex: Olá {cliente_nome}, lembramos que sua sessão é amanhã..."}></textarea>
+            <div class="card-actions">
+              <button class="btn-ia-optimize">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                Otimizar com IA
+              </button>
+              <button class="btn-save-template">Salvar</button>
+            </div>
+          </div>
+
+          <!-- Template: Cancelamento -->
+          <div class="template-card" data-tipo="Cancelamento">
+            <div class="card-title">
+              <h3>Aviso de Cancelamento</h3>
+              <span class="char-count">0 / 500</span>
+            </div>
+            <textarea placeholder={"Ex: Olá {cliente_nome}, seu agendamento foi cancelado..."}></textarea>
+            <div class="card-actions">
+              <button class="btn-ia-optimize">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                Otimizar com IA
+              </button>
+              <button class="btn-save-template">Salvar</button>
+            </div>
+          </div>
+
+          <!-- Template: Resposta de Confirmação de Presença -->
+          <div class="template-card" data-tipo="confirmacao_presenca">
+            <div class="card-title">
+              <div class="card-title-text">
+                <h3>Confirmação de presença</h3>
+                <p style="font-size: 0.8rem; color: #666; font-weight: 500; margin-top: 0.25rem;">Mensagem enviada automaticamente quando o cliente confirma o horário respondendo no WhatsApp.</p>
+              </div>
+              <span class="char-count">0 / 500</span>
+            </div>
+            <textarea placeholder={"Perfeito, {cliente_nome}! 🙌\n\nSeu horário está confirmado no *{estudio_nome}*.\n\n📅 {data} às {hora}  \n🎨 Com {tatuador_nome}\n\nQualquer dúvida é só falar com a gente. Te esperamos no estúdio! 🔥"}></textarea>
+            <div class="card-actions">
+              <button class="btn-ia-optimize">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                Otimizar com IA
+              </button>
+              <button class="btn-save-template">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ SEÇÃO 2: WHATSAPP ═══ -->
+      <section class="section-container side-section">
+        <div class="section-header">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+          </div>
+          <div class="header-text">
+            <h2>Conexão WhatsApp</h2>
+            <p>Gerencie a integração com o WhatsApp Business.</p>
+          </div>
+        </div>
+
+        <div class="whatsapp-card card-premium">
+          <div class="status-indicator" id="whatsapp-status">
+            <div class="status-dot"></div>
+            <span class="status-text">Desconectado</span>
+          </div>
+
+          <div id="whatsapp-disconnected" class="whatsapp-action-area">
+            <div class="qr-placeholder">
+              <div class="qr-mock">
+                <!-- SVG de QR Code Mock -->
+                <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="200" height="200" rx="10" fill="#0d0d0d"/>
+                  <rect x="20" y="20" width="40" height="40" stroke="#333" stroke-width="4"/>
+                  <rect x="140" y="20" width="40" height="40" stroke="#333" stroke-width="4"/>
+                  <rect x="20" y="140" width="40" height="40" stroke="#333" stroke-width="4"/>
+                  <path d="M80 20H120V60H80V20Z" fill="#222"/>
+                  <path d="M20 80H60V120H20V80Z" fill="#222"/>
+                  <path d="M140 80H180V120H140V80Z" fill="#222"/>
+                  <path d="M80 140H120V180H80V140Z" fill="#222"/>
+                  <path d="M140 140H180V180H140V140Z" fill="#111"/>
+                  <path d="M80 80H120V120H80V80Z" fill="#333" fill-opacity="0.5"/>
+                </svg>
+                <div class="qr-overlay">Clique para gerar QR Code</div>
+              </div>
+              <p class="qr-hint">Escaneie o QR Code para conectar seu WhatsApp Business</p>
+            </div>
+            <button class="btn-premium-solid" id="btn-connect-wa">Conectar WhatsApp</button>
+            <button class="btn-premium-solid hidden" id="btn-reconnect-wa">Reconectar WhatsApp</button>
+          </div>
+
+          <div id="whatsapp-connected" class="whatsapp-action-area hidden">
+            <div class="connection-info">
+              <div class="connected-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.166L2 22l4.934-1.42A9.956 9.956 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.96 7.96 0 0 1-4.164-1.17l-.297-.177-3.073.885.843-3.144-.194-.311A8 8 0 1 1 12 20z"/></svg>
+              </div>
+              <h3>Pronto para enviar!</h3>
+            <button class="btn-danger-outline" id="btn-disconnect-wa" style="margin-top: 1.5rem;">Desconectar</button>
+          </div>
+        </div>
+      </section>
+      <!-- ═══ SEÇÃO 3: CONFIGURAÇÃO DE LEMBRETE ═══ -->
+      <section class="section-container side-section" style="margin-top: 1.5rem;">
+        <div class="section-header">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="header-text">
+            <h2>Configuração de Lembrete</h2>
+            <p>Defina quando o lembrete será enviado.</p>
+          </div>
+        </div>
+
+        <div class="reminders-card" style="background: #141414; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <label for="select-lembrete-tempo" style="font-size: 0.9rem; font-weight: 700; color: #eee; display: block;">Enviar lembrete antes da sessão</label>
+            <div class="select-wrapper" style="position: relative;">
+              <select id="select-lembrete-tempo" style="width: 100%; background: #0d0d0d; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0.85rem 1rem; color: #fff; font-size: 1rem; appearance: none; cursor: pointer; transition: all 0.2s ease;">
+                <option value="1440">24 horas</option>
+                <option value="720">12 horas</option>
+                <option value="360">6 horas</option>
+                <option value="180">3 horas</option>
+                <option value="120">2 horas</option>
+                <option value="60">1 hora</option>
+                <option value="30">30 minutos</option>
+              </select>
+              <div style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: #777;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <p class="config-hint" style="font-size: 0.8rem; color: #555; line-height: 1.4; margin: 0;">O sistema usará essa configuração para enviar automaticamente lembretes de agendamento ao cliente no WhatsApp antes da sessão.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- ═══ MODAL IA ═══ -->
+    <div id="modal-ia" class="modal-premium-overlay hidden">
+      <div class="modal-premium-card">
+        <header class="modal-header">
+          <div class="ia-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+          </div>
+          <div class="header-text">
+            <h2>Otimização com IA</h2>
+            <p>Compare as sugestões para tornar suas mensagens mais envolventes.</p>
+          </div>
+          <button class="modal-close-btn">&times;</button>
+        </header>
+        
+        <div class="modal-content">
+          <div class="comparison-grid">
+            <div class="comparison-card">
+              <span class="badge">ORIGINAL</span>
+              <div class="text-box" id="ia-original-text"></div>
+            </div>
+            <div class="comparison-card accent">
+              <span class="badge">SUGESTÃO IA ✨</span>
+              <div class="text-box" id="ia-suggested-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button class="btn-secondary modal-close-btn">Manter Original</button>
+          <button id="btn-use-suggestion" class="btn-primary-glow">
+            <span class="btn-text">Usar Sugestão</span>
+            <div class="btn-loader hidden">
+              <svg class="animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            </div>
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- ═══ MODAL CONFIRMAÇÃO DESCONECTAR ═══ -->
+    <div id="modal-disconnect-confirm" class="modal-overlay-delete hidden">
+      <div class="modal-content-delete sm">
+        <div class="modal-header-delete">
+          <h2 style="color: #ef4444;">Desconectar WhatsApp?</h2>
+        </div>
+        
+        <p style="margin: 1.5rem 0; color: #ccc; line-height: 1.5;">
+          Sua automação de mensagens será interrompida. O sistema deixará de enviar confirmações e lembretes automáticos.
+        </p>
+
+        <div class="alert-warning-delete">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Esta ação pode ser revertida conectando novamente o QR Code.</span>
+        </div>
+
+        <div class="modal-footer-delete">
+          <button class="btn-secondary-delete modal-close-disconnect">Cancelar</button>
+          <button id="btn-confirm-disconnect" class="btn-danger-full-delete">Sim, Desconectar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MODAL QR CODE ═══ -->
+    <div id="modal-qr" class="modal-premium-overlay hidden">
+      <div class="modal-qr-card">
+        <header class="modal-qr-header">
+          <div class="whatsapp-icon-modal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M5.282 3.021C4.1 4.255 3 6.21 3 8.5c0 1.55.388 3.006 1.073 4.28L3 21l8.38-1.052C12.74 20.608 14.118 21 15.5 21c5.247 0 9.5-4.253 9.5-9.5S20.747 2 15.5 2c-2.29 0-4.366.748-6.034 2H8a9.57 9.57 0 0 0-2.718 1.021z" opacity="0" />
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.166L2 22l4.934-1.42A9.956 9.956 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.96 7.96 0 0 1-4.164-1.17l-.297-.177-3.073.885.843-3.144-.194-.311A8 8 0 1 1 12 20z"/>
+            </svg>
+          </div>
+          <div class="modal-qr-title-block">
+            <h2>Conectar WhatsApp</h2>
+            <p>Escaneie o QR Code com seu WhatsApp para conectar.</p>
+          </div>
+          <button class="modal-close-btn" id="btn-close-qr-modal">&times;</button>
+        </header>
+
+        <div class="modal-qr-body">
+          <!-- Estado: Carregando -->
+          <div id="qr-loading" class="qr-state">
+            <div class="qr-spinner"></div>
+            <p>Gerando QR Code...</p>
+          </div>
+
+          <!-- Estado: QR Exibido -->
+          <div id="qr-display" class="qr-state hidden">
+            <div class="qr-image-wrapper">
+              <img id="qr-image" src="" alt="QR Code WhatsApp" />
+            </div>
+            <p class="qr-scan-hint">Abra o WhatsApp → Configurações → Aparelhos conectados → Conectar aparelho</p>
+          </div>
+
+          <!-- Estado: Expirado -->
+          <div id="qr-expired" class="qr-state hidden">
+            <div class="qr-expired-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <p class="qr-expired-text">QR expirado</p>
+            <button class="btn-premium-solid btn-renew-qr" id="btn-renew-qr">Gerar novo QR</button>
+          </div>
+        </div>
+
+        <div class="modal-qr-footer">
+          <span class="qr-timer" id="qr-timer"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style is:global>
+    .mensagens-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* HEADER */
+    .mensagens-header {
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--primary, #C9A24D);
+      letter-spacing: -2px;
+      margin: 0;
+      line-height: 1;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .subtitle {
+      color: var(--text-muted, #888);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    /* GRID */
+    .mensagens-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2.5rem;
+    }
+
+    @media (max-width: 1100px) {
+      .mensagens-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SECTION CONTAINER */
+    .section-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(201, 162, 77, 0.1);
+      border: 1px solid rgba(201, 162, 77, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary, #C9A24D);
+      flex-shrink: 0;
+    }
+
+    .header-text h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: #fff;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .header-text p {
+      color: #777;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* VARIABLES BAR */
+    .variables-bar {
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+
+    .var-label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #555;
+      margin-bottom: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    .var-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .var-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #aaa;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .var-chip:hover {
+      background: rgba(201, 162, 77, 0.1);
+      border-color: rgba(201, 162, 77, 0.3);
+      color: var(--primary, #C9A24D);
+      transform: translateY(-2px);
+    }
+
+    /* TEMPLATE CARDS */
+    .templates-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .template-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .template-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-title h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #eee;
+      margin: 0;
+    }
+
+    .char-count {
+      font-size: 0.75rem;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .template-card textarea {
+      width: 100%;
+      height: 120px;
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1rem;
+      color: #ccc;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      resize: vertical;
+      transition: all 0.2s ease;
+    }
+
+    .template-card textarea:focus {
+      outline: none;
+      border-color: var(--primary, #C9A24D);
+      background: #0f0f0f;
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(201, 162, 77, 0.05);
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      gap: 1rem;
+    }
+
+    .btn-ia-optimize {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #aaa;
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-ia-optimize:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+      color: #fff;
+      border-color: var(--primary, #C9A24D);
+      box-shadow: 0 4px 15px rgba(201, 162, 77, 0.2);
+    }
+
+    .btn-save-template {
+      background: var(--primary, #C9A24D);
+      color: #000;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-save-template:hover {
+      filter: brightness(1.1);
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(201, 162, 77, 0.3);
+    }
+
+    /* WHATSAPP CARD */
+    .whatsapp-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: sticky;
+      top: 2rem;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.75rem 1.25rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      width: fit-content;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
+      transition: all 0.3s ease;
+    }
+
+    .status-indicator.connected .status-dot {
+      background: #25D366;
+      box-shadow: 0 0 10px #25D366;
+    }
+
+    .status-text {
+      color: #888;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .whatsapp-action-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.5rem;
+    }
+
+    .qr-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .qr-mock {
+      position: relative;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 10px;
+      background: #0d0d0d;
+    }
+
+    .qr-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .qr-mock:hover .qr-overlay {
+      opacity: 1;
+    }
+
+    .qr-hint {
+      color: #666;
+      font-size: 0.85rem;
+      max-width: 200px;
+    }
+
+    .btn-premium-solid {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary, #C9A24D) 0%, #e5c07b 100%);
+      color: #000;
+      border: none;
+      padding: 1rem;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .connection-info h3 {
+      color: #fff;
+      font-size: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .connection-info p {
+      color: #888;
+      font-size: 0.95rem;
+    }
+
+    .btn-danger-outline {
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+      padding: 0.85rem;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger-outline:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+    }
+
+    /* MODAL */
+    .modal-premium-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 2rem;
+    }
+
+    .modal-premium-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 900px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      animation: modalScaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalScaleUp {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .ia-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary, #C9A24D) 0%, #8c6a2e 100%);
+      color: #000;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px rgba(201, 162, 77, 0.2);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .modal-close-btn:hover { color: #fff; }
+
+    .btn-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .animate-spin {
+      animation: spin 1s linear infinite;
+      width: 20px;
+      height: 20px;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ESTILOS MODAL DELETE (Replicados para consistência) */
+    .modal-overlay-delete {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay-delete:not(.hidden) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content-delete {
+      background: #121212;
+      width: 100%;
+      max-width: 450px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 2.5rem;
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
+      transform: scale(0.95);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay-delete:not(.hidden) .modal-content-delete {
+      transform: scale(1);
+    }
+
+    .modal-header-delete h2 {
+      font-size: 1.8rem;
+      font-family: 'Bebas Neue', sans-serif;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .alert-warning-delete {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      padding: 1rem;
+      border-radius: 12px;
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+    }
+
+    .modal-footer-delete {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-secondary-delete {
+      flex: 1;
+      background: transparent;
+      color: #888;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-secondary-delete:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .btn-danger-full-delete {
+      flex: 1.5;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-danger-full-delete:hover {
+      filter: brightness(1.2);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
+    }
+
+    @media (max-width: 700px) {
+      .comparison-grid { grid-template-columns: 1fr; }
+    }
+
+    .comparison-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .comparison-card .badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #555;
+      text-transform: uppercase;
+    }
+
+    .comparison-card.accent .badge { color: var(--primary, #C9A24D); }
+
+    .text-box {
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 1.5rem;
+      height: 250px;
+      overflow-y: auto;
+      color: #aaa;
+      font-size: 1rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .comparison-card.accent .text-box {
+      border-color: rgba(201, 162, 77, 0.2);
+      background: rgba(201, 162, 77, 0.02);
+      color: #eee;
+    }
+
+    .modal-footer {
+      padding: 1.5rem 2.5rem;
+      background: rgba(255, 255, 255, 0.015);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #888;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: #fff; color: #fff; }
+
+    .btn-primary-glow {
+      background: var(--primary, #C9A24D);
+      color: #000;
+      border: none;
+      padding: 0.85rem 2.5rem;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 30px rgba(201, 162, 77, 0.2);
+    }
+
+    .btn-primary-glow:hover {
+      box-shadow: 0 0 40px rgba(201, 162, 77, 0.4);
+      transform: scale(1.02);
+    }
+
+    .hidden { display: none !important; }
+
+    /* ═══ MODAL QR CODE ═══ */
+    .modal-qr-card {
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 460px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      animation: modalScaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-qr-header {
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .whatsapp-icon-modal {
+      width: 48px;
+      height: 48px;
+      background: rgba(37, 211, 102, 0.1);
+      border: 1px solid rgba(37, 211, 102, 0.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-qr-title-block h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: #fff;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .modal-qr-title-block p {
+      color: #777;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .modal-qr-body {
+      padding: 2.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .qr-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .qr-spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(37, 211, 102, 0.15);
+      border-top-color: #25D366;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .qr-state > p {
+      color: #777;
+      font-size: 0.9rem;
+    }
+
+    .qr-image-wrapper {
+      background: #fff;
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    #qr-image {
+      display: block;
+      width: 220px;
+      height: 220px;
+      border-radius: 6px;
+    }
+
+    .qr-scan-hint {
+      color: #666;
+      font-size: 0.8rem;
+      max-width: 280px;
+      line-height: 1.5;
+    }
+
+    .qr-expired-icon { opacity: 0.8; }
+
+    .qr-expired-text {
+      color: #ef4444;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .btn-renew-qr {
+      margin-top: 0.5rem;
+    }
+
+    .modal-qr-footer {
+      padding: 1rem 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      text-align: center;
+    }
+
+    .qr-timer {
+      font-size: 0.78rem;
+      color: #555;
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .mensagens-wrapper { padding: 10px; }
+      .mensagens-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .page-title { font-size: 2.2rem; }
+      .mensagens-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .whatsapp-card { position: static; padding: 1.5rem; }
+      .template-card { padding: 1.25rem; }
+      .card-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .btn-ia-optimize, .btn-save-template {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <script>
+    import { supabase } from '../lib/supabase';
+
+    let activeTextarea = null;
+    let activeCard = null;
+
+    // ══════════════════════════════════════
+    // WHATSAPP — CONSTANTES E ESTADO
+    // ══════════════════════════════════════
+    const N8N_BASE = 'https://webhooks-mvp.marcosdev.xyz/webhook';
+    let pollingInterval = null;
+    let pollingTimeout = null;
+    let pollingStartTime = null;
+    const QR_TIMEOUT_MS = 120000; // 2 minutos
+    const POLLING_INTERVAL_MS = 3000; // 3 segundos
+
+    // Cache do contexto do usuário (preenchido no init)
+    let cachedEstudioId = null;
+    let cachedInstanceName = null;
+
+    // ═══ SETUP INICIAL ═══ 
+    async function init() {
+      await loadTemplates();
+      await checkWhatsAppStatus();
+      await loadReminderConfig();
+      setupEventListeners();
+    }
+
+    // ═══ CARREGAR DADOS ═══
+    async function loadTemplates() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: estudio } = await supabase
+        .from('users')
+        .select('estudio_id')
+        .eq('id', user.id)
+        .single();
+      
+      if (!estudio) return;
+
+      const { data: templates } = await supabase
+        .from('template_mensagens')
+        .select('*')
+        .eq('estudio_id', estudio.estudio_id);
+
+      if (templates) {
+        templates.forEach(t => {
+          const card = document.querySelector(`.template-card[data-tipo="${t.tipo}"]`);
+          if (card) {
+            const textarea = card.querySelector('textarea');
+            textarea.value = t.conteudo;
+            updateCharCount(card, t.conteudo.length);
+          }
+        });
+      }
+    }
+
+    async function checkWhatsAppStatus() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: estudio } = await supabase
+        .from('users')
+        .select('estudio_id')
+        .eq('id', user.id)
+        .single();
+
+      if (!estudio) return;
+
+      cachedEstudioId = estudio.estudio_id;
+
+      const { data: conexao } = await supabase
+        .from('conexao_whatsapp')
+        .select('*')
+        .eq('estudio_id', estudio.estudio_id)
+        .single();
+
+      // Sem registro → mostrar botão Conectar (estado padrão)
+      if (!conexao) {
+        updateWhatsAppUI('disconnected');
+        return;
+      }
+
+      cachedInstanceName = conexao.instance_name || null;
+
+      if (conexao.status === 'connected') {
+        // Verificar se ainda está conectado na API
+        try {
+          const res = await fetch(`${N8N_BASE}/get-qr?instance=${conexao.instance_name}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'connected') {
+              updateWhatsAppUI('connected', conexao.numero_conectado || data.number);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Não foi possível verificar status da API, usando banco.');
+        }
+        // Usar banco como fallback
+        updateWhatsAppUI('connected', conexao.numero_conectado);
+      } else {
+        // waiting ou disconnected — mostrar botão Reconectar
+        updateWhatsAppUI('waiting_or_disconnected');
+      }
+    }
+
+    async function loadReminderConfig() {
+      if (!cachedEstudioId) return;
+
+      const { data, error } = await supabase
+        .from('estudios')
+        .select('lembrete_antes_minutos')
+        .eq('id', cachedEstudioId)
+        .single();
+
+      if (error) {
+        console.error('Erro ao carregar configuração de lembrete:', error);
+        return;
+      }
+
+      const select = document.getElementById('select-lembrete-tempo') as HTMLSelectElement;
+      if (select && data) {
+        select.value = (data.lembrete_antes_minutos || 1440).toString();
+      }
+    }
+
+    async function saveReminderConfig(minutes) {
+      if (!cachedEstudioId) return;
+
+      try {
+        const { error } = await supabase
+          .from('estudios')
+          .update({ lembrete_antes_minutos: parseInt(minutes) })
+          .eq('id', cachedEstudioId);
+
+        if (error) throw error;
+        showToast('Configuração de lembrete salva! ✓', 'success');
+      } catch (err) {
+        console.error('Erro ao salvar configuração de lembrete:', err);
+        showToast('Erro ao salvar configuração.', 'error');
+      }
+    }
+
+    // ═══ EVENT LISTENERS ═══
+    function setupEventListeners() {
+      // Textareas e Contadores
+      document.querySelectorAll('.template-card textarea').forEach(txt => {
+        txt.addEventListener('focus', () => {
+          activeTextarea = txt;
+          activeCard = txt.closest('.template-card');
+        });
+
+        txt.addEventListener('input', (e) => {
+          const card = (e.target as HTMLElement).closest('.template-card');
+          updateCharCount(card, (e.target as HTMLTextAreaElement).value.length);
+        });
+      });
+
+      // Lembrete
+      document.getElementById('select-lembrete-tempo')?.addEventListener('change', (e) => {
+        const val = (e.target as HTMLSelectElement).value;
+        saveReminderConfig(val);
+      });
+
+      // Clique nas Variáveis
+      document.querySelectorAll('.var-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          if (!activeTextarea) {
+            console.warn('Nenhum campo de texto selecionado.');
+            return;
+          }
+          const varName = chip.getAttribute('data-var');
+          insertAtCursor(activeTextarea, varName);
+          updateCharCount(activeCard, activeTextarea.value.length);
+        });
+      });
+
+      // Salvar Template
+      document.querySelectorAll('.btn-save-template').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const card = (btn as HTMLElement).closest('.template-card');
+          if (!card) return;
+
+          const tipo = card.getAttribute('data-tipo');
+          const textarea = card.querySelector('textarea');
+          if (!textarea) return;
+          const conteudo = textarea.value;
+          
+          const originalBtnText = btn.textContent;
+          btn.textContent = 'Salvando...';
+          (btn as HTMLButtonElement).disabled = true;
+
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Usuário não autenticado.');
+
+            const { data: estudio, error: estudioError } = await supabase
+              .from('users')
+              .select('estudio_id')
+              .eq('id', user.id)
+              .single();
+            
+            if (estudioError || !estudio?.estudio_id) {
+              throw new Error('Estúdio não encontrado para este usuário.');
+            }
+            
+            const { error } = await supabase
+              .from('template_mensagens')
+              .upsert({ 
+                estudio_id: estudio.estudio_id, 
+                tipo, 
+                conteudo,
+                updated_at: new Date().toISOString()
+              }, { onConflict: 'estudio_id,tipo' });
+
+            if (error) throw error;
+            
+            showToast('Template salvo com sucesso!', 'success');
+          } catch (err: any) {
+            console.error('Erro ao salvar template:', err);
+            showToast(`Erro ao salvar: ${err.message || 'Erro desconhecido'}`, 'error');
+          } finally {
+            btn.textContent = originalBtnText;
+            (btn as HTMLButtonElement).disabled = false;
+          }
+        });
+      });
+
+      // Otimizar IA (Mock)
+      document.querySelectorAll('.btn-ia-optimize').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('.template-card');
+          const original = card.querySelector('textarea').value;
+          
+          if (!original.trim()) {
+            showToast('Escreva algo para a IA otimizar.', 'info');
+            return;
+          }
+
+          openIAModal(original);
+        });
+      });
+
+      // ══════════════════════════════════════
+      // WHATSAPP — EVENT LISTENERS REAIS
+      // ══════════════════════════════════════
+
+      document.getElementById('btn-connect-wa')?.addEventListener('click', () => connectWhatsApp());
+
+      // Botão reconectar (mesmo elemento, comportamento igual)
+      document.getElementById('btn-reconnect-wa')?.addEventListener('click', () => connectWhatsApp());
+
+      // Fechar modal QR — para polling imediatamente
+      document.getElementById('btn-close-qr-modal')?.addEventListener('click', () => {
+        stopQrPolling();
+        document.getElementById('modal-qr')?.classList.add('hidden');
+      });
+
+      // Clicar fora do modal QR
+      document.getElementById('modal-qr')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('modal-qr')) {
+          stopQrPolling();
+          document.getElementById('modal-qr')?.classList.add('hidden');
+        }
+      });
+
+      // Gerar novo QR após expiração
+      document.getElementById('btn-renew-qr')?.addEventListener('click', () => {
+        setQrState('loading');
+        startQrPolling();
+      });
+
+      document.getElementById('btn-disconnect-wa')?.addEventListener('click', () => {
+        document.getElementById('modal-disconnect-confirm')?.classList.remove('hidden');
+      });
+
+      document.getElementById('btn-confirm-disconnect')?.addEventListener('click', async () => {
+        const btn = document.getElementById('btn-confirm-disconnect') as HTMLButtonElement;
+        
+        btn.textContent = 'Desconectando...';
+        btn.disabled = true;
+
+        try {
+          await disconnectWhatsApp();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          btn.textContent = 'Sim, Desconectar';
+          btn.disabled = false;
+        }
+      });
+
+      document.querySelector('.modal-close-disconnect')?.addEventListener('click', () => {
+        document.getElementById('modal-disconnect-confirm')?.classList.add('hidden');
+      });
+
+      // Modal IA Controls — apenas fechar modal-ia (EXCLUINDO btn-close-qr-modal)
+      document.querySelectorAll('.modal-close-btn:not(#btn-close-qr-modal)').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('modal-ia')?.classList.add('hidden');
+        });
+      });
+
+      // Modal Controls
+      // (Removido daqui pois foi integrado acima)
+
+      document.getElementById('btn-use-suggestion')?.addEventListener('click', async () => {
+        const btn = document.getElementById('btn-use-suggestion') as HTMLButtonElement;
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        const suggestion = document.getElementById('ia-suggested-text').textContent;
+        
+        if (activeTextarea) {
+          // Mostrar loading
+          btnText?.classList.add('hidden');
+          btnLoader?.classList.remove('hidden');
+          btn.disabled = true;
+
+          // Simular processamento/aplicação
+          setTimeout(async () => {
+            activeTextarea.value = suggestion;
+            updateCharCount(activeCard, suggestion.length);
+            
+            // Salvar registro de sugestão usada (silencioso)
+            try {
+              const { data: { user } } = await supabase.auth.getUser();
+              const { data: estudio } = await supabase.from('users').select('estudio_id').eq('id', user.id).single();
+              
+              await supabase.from('sugestao_mensagem_ia').insert({
+                estudio_id: estudio.estudio_id,
+                mensagem_original: document.getElementById('ia-original-text').textContent,
+                mensagem_sugerida: suggestion,
+                usada: true
+              });
+            } catch (e) {}
+
+            btnText?.classList.remove('hidden');
+            btnLoader?.classList.add('hidden');
+            btn.disabled = false;
+            document.getElementById('modal-ia').classList.add('hidden');
+          }, 600);
+        }
+      });
+    }
+
+    // ═══ AUXILIARES ═══
+    function updateCharCount(card, length) {
+      if (!card) return;
+      const counter = card.querySelector('.char-count');
+      if (counter) counter.textContent = `${length} / 500`;
+    }
+
+    function insertAtCursor(textarea, text) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const val = textarea.value;
+      textarea.value = val.substring(0, start) + text + val.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start + text.length;
+      textarea.focus();
+    }
+
+    // ══════════════════════════════════════
+    // WHATSAPP — FUNÇÕES PRINCIPAIS
+    // ══════════════════════════════════════
+
+    async function disconnectWhatsApp() {
+      stopQrPolling();
+
+      if (!cachedInstanceName) return;
+
+      try {
+        await fetch("https://webhooks-mvp.marcosdev.xyz/webhook/disconnect-whatsapp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            instance: cachedInstanceName
+          })
+        });
+
+        const { error } = await supabase
+          .from("conexao_whatsapp")
+          .update({
+            status: "disconnected",
+            numero_conectado: null,
+            connected_at: null,
+            updated_at: new Date().toISOString()
+          })
+          .eq("estudio_id", cachedEstudioId);
+
+        if (error) throw error;
+
+        updateWhatsAppUI("disconnected");
+        document.getElementById("modal-disconnect-confirm")?.classList.add("hidden");
+        showToast("WhatsApp desconectado com sucesso", "info");
+      } catch (err) {
+        console.error("Erro ao desconectar WhatsApp:", err);
+        showToast("Erro ao desconectar WhatsApp", "error");
+      }
+    }
+
+    async function connectWhatsApp() {
+      setConnectBtnState('loading');
+      try {
+        if (!cachedEstudioId) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) { setConnectBtnState('idle'); return; }
+          const { data: estudio } = await supabase.from('users').select('estudio_id').eq('id', user.id).single();
+          if (!estudio) { setConnectBtnState('idle'); return; }
+          cachedEstudioId = estudio.estudio_id;
+        }
+
+        // Verificar se instância já existe no banco
+        const { data: conexao } = await supabase
+          .from('conexao_whatsapp')
+          .select('instance_name, status')
+          .eq('estudio_id', cachedEstudioId)
+          .single();
+
+        if (!conexao || !conexao.instance_name) {
+          // Nunca existiu — criar instância via n8n
+          const instanceName = `inkbook_${cachedEstudioId}`;
+          console.log('[WA] Criando instância:', instanceName);
+
+          const res = await fetch(`${N8N_BASE}/create-instance`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ instance: instanceName })
+          });
+
+          if (!res.ok) throw new Error(`Erro ao criar instância: ${res.status} ${res.statusText}`);
+
+          // Salvar no banco
+          const { error: upsertErr } = await supabase.from('conexao_whatsapp').upsert({
+            estudio_id: cachedEstudioId,
+            instance_name: instanceName,
+            status: 'waiting',
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'estudio_id' });
+
+          if (upsertErr) throw upsertErr;
+
+          cachedInstanceName = instanceName;
+          console.log('[WA] Instância criada com sucesso:', instanceName);
+        } else {
+          // Instância já existe — NUNCA recriar
+          cachedInstanceName = conexao.instance_name;
+          console.log('[WA] Instância existente reutilizada:', cachedInstanceName);
+        }
+
+        setConnectBtnState('idle');
+        // Abrir modal e iniciar polling
+        openQrModal();
+      } catch (err: any) {
+        console.error('[WA] Erro em connectWhatsApp:', err);
+        setConnectBtnState('error');
+        // Restaurar botão após 3s
+        setTimeout(() => setConnectBtnState('idle'), 3000);
+      }
+    }
+
+    function openQrModal() {
+      const modal = document.getElementById('modal-qr');
+      modal?.classList.remove('hidden');
+      setQrState('loading');
+      startQrPolling();
+    }
+
+    function startQrPolling() {
+      stopQrPolling(); // Limpar qualquer polling anterior
+
+      pollingStartTime = Date.now();
+      updateQrTimer();
+
+      pollingInterval = setInterval(async () => {
+        // Verificar timeout
+        const elapsed = Date.now() - pollingStartTime;
+        if (elapsed >= QR_TIMEOUT_MS) {
+          stopQrPolling();
+          setQrState('expired');
+          return;
+        }
+
+        await pollQrCode();
+      }, POLLING_INTERVAL_MS) as any;
+
+      // Chamada imediata para não esperar 3s
+      pollQrCode();
+    }
+
+    async function pollQrCode() {
+      if (!cachedInstanceName) return;
+
+      try {
+        const res = await fetch(`${N8N_BASE}/get-qr?instance=${cachedInstanceName}`);
+        if (!res.ok) {
+          console.warn('[WA] get-qr retornou:', res.status);
+          return;
+        }
+
+        const data = await res.json();
+        // Log completo para facilitar debug
+        console.log('[WA] Resposta polling (raw):', JSON.stringify(data));
+
+        // ── Detectar QR Code em múltiplos formatos possíveis ──
+        // Evolution API pode retornar: data.base64, data.qrcode.base64,
+        // data.qr, data.code, ou um array no nível raiz
+        let qrBase64 = '';
+        const root = Array.isArray(data) ? data[0] : data;
+
+        if (root?.base64)             qrBase64 = root.base64;
+        else if (root?.qrcode?.base64) qrBase64 = root.qrcode.base64;
+        else if (root?.qr)             qrBase64 = root.qr;
+        else if (root?.code)           qrBase64 = root.code;
+
+        // Remove prefixo caso já venha como data URL
+        if (qrBase64.startsWith('data:')) {
+          qrBase64 = qrBase64; // usar como está
+        } else if (qrBase64) {
+          qrBase64 = `data:image/png;base64,${qrBase64}`;
+        }
+
+        // ── Detectar se já está conectado ──
+        const statusStr = (root?.status || root?.state || root?.instance?.state || '').toLowerCase();
+        const isConnected = statusStr === 'connected' || statusStr === 'open' || statusStr === 'confirmed';
+
+        if (isConnected) {
+          // Conectado!
+          stopQrPolling();
+          document.getElementById('modal-qr')?.classList.add('hidden');
+
+          let number = root?.number || root?.ownerJid || root?.owner || root?.instance?.owner || root?.instance?.ownerJid || root?.instance?.number || '';
+          
+          /* CÓDIGO ANTIGO (COMENTADO PARA BACKUP)
+          // Se a resposta nativa não trouxer o número (apenas confirmou que a instância conectou),
+          // buscamos rapidamente nos endpoints de evolução para não salvar vazio
+          if (!number) {
+            try {
+              const profileRes = await fetch(`${N8N_BASE}/get-profile?instance=${cachedInstanceName}`);
+              if (profileRes.ok) {
+                const profileData = await profileRes.json();
+                number = profileData?.id || profileData?.number || profileData?.ownerJid || '';
+              }
+            } catch (e) {
+              console.warn('[WA] Erro ao buscar profile extra:', e);
+            }
+          }
+          */
+
+          // NOVO FLUXO: Se não vier número, bate no webhook dedicado /pegar-numero
+          if (!number) {
+            try {
+              const numRes = await fetch(`${N8N_BASE}/pegar-numero?instance=${cachedInstanceName}`);
+              if (numRes.ok) {
+                const numData = await numRes.json();
+                // O n8n pode devolver o número em vários formatos, garantimos a leitura do root ou de props comuns
+                number = numData?.numero || numData?.number || numData?.id || numData?.ownerJid || (typeof numData === 'string' ? numData : '');
+                
+                // Trata caso o n8n devolva um array (comum no webhook do n8n)
+                if (Array.isArray(numData) && numData.length > 0) {
+                   const firstItem = numData[0];
+                   number = firstItem?.numero || firstItem?.number || firstItem?.id || firstItem?.ownerJid || '';
+                }
+              }
+            } catch (e) {
+              console.warn('[WA] Erro ao buscar numero via /pegar-numero:', e);
+            }
+          }
+
+          if (number && typeof number === 'string') {
+            number = number.split('@')[0].replace(/\D/g, ''); // Garante apenas os dígitos
+          }
+
+          if (!number) {
+             console.warn('[WA] Não foi possível extrair o número na resposta:', root);
+          }
+
+          if (cachedEstudioId) {
+            await supabase.from('conexao_whatsapp').update({
+              status: 'connected',
+              numero_conectado: number || null, // Se ainda for string vazia, salva nulo
+              connected_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }).eq('estudio_id', cachedEstudioId);
+          }
+
+          updateWhatsAppUI('connected', number);
+          showToast('WhatsApp conectado com sucesso! ✓', 'success');
+
+        } else if (qrBase64) {
+          // Exibir QR Code
+          const qrImg = document.getElementById('qr-image') as HTMLImageElement;
+          if (qrImg) qrImg.src = qrBase64;
+          setQrState('qr');
+
+          // Atualizar last_qr_at no banco
+          if (cachedEstudioId) {
+            await supabase.from('conexao_whatsapp').update({
+              last_qr_at: new Date().toISOString()
+            }).eq('estudio_id', cachedEstudioId);
+          }
+        } else {
+          console.log('[WA] Resposta sem QR nem status de conexão. Aguardando próximo ciclo.');
+        }
+      } catch (err) {
+        console.warn('[WA] Erro no polling:', err);
+      }
+    }
+
+    function stopQrPolling() {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+      }
+      if (pollingTimeout) {
+        clearTimeout(pollingTimeout);
+        pollingTimeout = null;
+      }
+      console.log('[WA] Polling parado.');
+    }
+
+    function setQrState(state: 'loading' | 'qr' | 'expired') {
+      document.getElementById('qr-loading')?.classList.toggle('hidden', state !== 'loading');
+      document.getElementById('qr-display')?.classList.toggle('hidden', state !== 'qr');
+      document.getElementById('qr-expired')?.classList.toggle('hidden', state !== 'expired');
+    }
+
+    function updateQrTimer() {
+      const timerEl = document.getElementById('qr-timer');
+      if (!timerEl || !pollingStartTime) return;
+
+      const update = () => {
+        if (!pollingStartTime) return;
+        const elapsed = Date.now() - pollingStartTime;
+        const remaining = Math.max(0, Math.ceil((QR_TIMEOUT_MS - elapsed) / 1000));
+        if (timerEl) timerEl.textContent = remaining > 0 ? `QR expira em ${remaining}s` : '';
+        if (remaining > 0 && pollingInterval !== null) requestAnimationFrame(update);
+      };
+      requestAnimationFrame(update);
+    }
+
+    function setConnectBtnState(state: 'loading' | 'idle' | 'error') {
+      const connectBtn = document.getElementById('btn-connect-wa') as HTMLButtonElement;
+      const reconnectBtn = document.getElementById('btn-reconnect-wa') as HTMLButtonElement;
+
+      if (state === 'loading') {
+        if (connectBtn) { connectBtn.textContent = 'Conectando...'; connectBtn.disabled = true; }
+        if (reconnectBtn) { reconnectBtn.textContent = 'Conectando...'; reconnectBtn.disabled = true; }
+      } else if (state === 'error') {
+        if (connectBtn) { connectBtn.textContent = 'Erro — Tentar novamente'; connectBtn.disabled = false; }
+        if (reconnectBtn) { reconnectBtn.textContent = 'Erro — Tentar novamente'; reconnectBtn.disabled = false; }
+      } else {
+        if (connectBtn) { connectBtn.textContent = 'Conectar WhatsApp'; connectBtn.disabled = false; }
+        if (reconnectBtn) { reconnectBtn.textContent = 'Reconectar WhatsApp'; reconnectBtn.disabled = false; }
+      }
+    }
+
+    function updateWhatsAppUI(state: 'connected' | 'disconnected' | 'waiting_or_disconnected', number = '') {
+      const statusInd = document.getElementById('whatsapp-status');
+      const statusText = statusInd?.querySelector('.status-text');
+      const disconnectedArea = document.getElementById('whatsapp-disconnected');
+      const connectedArea = document.getElementById('whatsapp-connected');
+      const numEl = document.getElementById('connected-number');
+      const connectBtn = document.getElementById('btn-connect-wa');
+      const reconnectBtn = document.getElementById('btn-reconnect-wa');
+
+      if (state === 'connected') {
+        statusInd?.classList.add('connected');
+        if (statusText) statusText.textContent = 'Conectado';
+        disconnectedArea?.classList.add('hidden');
+        connectedArea?.classList.remove('hidden');
+        const formatted = formatPhoneNumber(number);
+        if (numEl) {
+           numEl.textContent = formatted || number || '(Número desconhecido)';
+           if(!formatted && !number) {
+              numEl.style.opacity = '0.5';
+           } else {
+              numEl.style.opacity = '1';
+           }
+        }
+      } else if (state === 'waiting_or_disconnected') {
+        // Instância existe mas não conectada — mostrar Reconectar
+        statusInd?.classList.remove('connected');
+        if (statusText) statusText.textContent = 'Desconectado';
+        connectedArea?.classList.add('hidden');
+        disconnectedArea?.classList.remove('hidden');
+        connectBtn?.classList.add('hidden');
+        reconnectBtn?.classList.remove('hidden');
+      } else {
+        // disconnected — sem instância
+        statusInd?.classList.remove('connected');
+        if (statusText) statusText.textContent = 'Desconectado';
+        disconnectedArea?.classList.remove('hidden');
+        connectedArea?.classList.add('hidden');
+        connectBtn?.classList.remove('hidden');
+        reconnectBtn?.classList.add('hidden');
+      }
+    }
+
+    function formatPhoneNumber(num: string) {
+      if (!num) return '';
+      const digits = num.replace(/\D/g, '');
+      if (digits.length === 13) { // 55 + DDD + 9 dígitos
+        return `+${digits.slice(0,2)} (${digits.slice(2,4)}) ${digits.slice(4,9)}-${digits.slice(9)}`;
+      }
+      if (digits.length === 12) { // 55 + DDD + 8 dígitos
+        return `+${digits.slice(0,2)} (${digits.slice(2,4)}) ${digits.slice(4,8)}-${digits.slice(8)}`;
+      }
+      return num;
+    }
+
+    async function saveWhatsAppStatus(status, number = null) {
+      try {
+        if (!cachedEstudioId) {
+          const { data: { user } } = await supabase.auth.getUser();
+          const { data: estudio } = await supabase.from('users').select('estudio_id').eq('id', user.id).single();
+          cachedEstudioId = estudio?.estudio_id;
+        }
+
+        const updateData: any = {
+          status,
+          updated_at: new Date().toISOString()
+        };
+
+        if (status === 'disconnected') {
+          updateData.numero_conectado = null;
+          updateData.connected_at = null;
+        }
+
+        const { error } = await supabase
+          .from('conexao_whatsapp')
+          .update(updateData)
+          .eq('estudio_id', cachedEstudioId);
+
+        if (error) throw error;
+        updateWhatsAppUI(status === 'connected' ? 'connected' : 'disconnected', number);
+        showToast(status === 'connected' ? 'WhatsApp conectado!' : 'WhatsApp desconectado.', 'info');
+      } catch (err) {
+        showToast('Erro ao atualizar status do WhatsApp.', 'error');
+      }
+    }
+
+    function openIAModal(original) {
+      document.getElementById('ia-original-text').textContent = original;
+      
+      // Mock de geração
+      const suggestions = [
+        "Olá {cliente_nome}! ✨ Confirmando nossa sessão marcada com {tatuador_nome} para o dia {data} às {hora}. Mal posso esperar para ver o resultado! Responda SIM para confirmar.",
+        "Oi {cliente_nome}, tudo bem? Aqui é do {estudio_nome}. Passando para confirmar seu horário amanhã ({data}) às {hora}. Nos vemos em breve! 🔥",
+        "E aí {cliente_nome}! Seu horário com {tatuador_nome} está chegando! Dia {data}, às {hora}. Confirma sua presença? 🤘"
+      ];
+      
+      document.getElementById('ia-suggested-text').textContent = "Gerando sugestão...";
+      document.getElementById('modal-ia').classList.remove('hidden');
+      
+      setTimeout(() => {
+        document.getElementById('ia-suggested-text').textContent = suggestions[Math.floor(Math.random() * suggestions.length)];
+      }, 1200);
+    }
+
+    function showToast(msg, type = 'info') {
+      // Remoção de alertas nativos conforme pedido do usuário.
+      // Feedback opcional via console para debug.
+      console.log(`[Toast ${type}]: ${msg}`);
+    }
+
+    // INIT
+    init();
+  </script>
+</DashboardLayout>

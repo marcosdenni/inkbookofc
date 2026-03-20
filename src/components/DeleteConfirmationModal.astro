@@ -1,0 +1,218 @@
+<div id="modal-confirm-delete" class="modal-overlay-delete hidden">
+  <div class="modal-content-delete sm">
+    <div class="modal-header-delete">
+      <h2 style="color: #c0392b;">Confirmar Exclusão</h2>
+    </div>
+    <p style="margin: 1.5rem 0; color: #ccc; line-height: 1.5;">
+      Tem certeza que deseja excluir <span id="delete-item-type">este item</span> <strong id="delete-target-name" class="accent-gold">...</strong>?
+    </p>
+    <div id="delete-warning-box" class="alert-warning-delete">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span id="delete-warning-text">Esta ação não pode ser desfeita.</span>
+    </div>
+    <div class="modal-footer-delete">
+      <button id="btn-cancel-delete" class="btn-secondary-delete">Cancelar</button>
+      <button id="btn-confirm-delete" class="btn-danger-full-delete">Confirmar Exclusão</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-overlay-delete {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .modal-overlay-delete:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hidden { display: none !important; }
+
+  .modal-content-delete {
+    background: #121212;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
+    transform: scale(0.95);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-overlay-delete:not(.hidden) .modal-content-delete {
+    transform: scale(1);
+  }
+
+  .modal-header-delete h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .accent-gold {
+    color: #C9A24D;
+  }
+
+  .alert-warning-delete {
+    background: rgba(201, 162, 77, 0.1);
+    border: 1px solid rgba(201, 162, 77, 0.2);
+    color: #C9A24D;
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+  }
+
+  .modal-footer-delete {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn-secondary-delete {
+    flex: 1;
+    background: transparent;
+    color: #888;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.85rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn-secondary-delete:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
+
+  .btn-danger-full-delete {
+    flex: 1.5;
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn-danger-full-delete:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(192, 57, 43, 0.4);
+  }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const modal = document.getElementById('modal-confirm-delete');
+  const nameEl = document.getElementById('delete-target-name');
+  const typeEl = document.getElementById('delete-item-type');
+  const warningTextEl = document.getElementById('delete-warning-text');
+  const cancelBtn = document.getElementById('btn-cancel-delete');
+  const confirmBtn = document.getElementById('btn-confirm-delete') as HTMLButtonElement;
+
+  interface DeleteConfig {
+    id: string;
+    nome: string;
+    table: 'clientes' | 'tatuadores';
+    label: string;
+    warning: string;
+    successEvent: string;
+  }
+
+  let currentConfig: DeleteConfig | null = null;
+
+  function closeModal() {
+    modal?.classList.add('hidden');
+    currentConfig = null;
+  }
+
+  cancelBtn?.addEventListener('click', closeModal);
+
+  confirmBtn?.addEventListener('click', async () => {
+    if (!currentConfig) return;
+
+    const originalText = confirmBtn.innerText;
+    confirmBtn.disabled = true;
+    confirmBtn.innerText = 'Excluindo...';
+
+    try {
+      const { error } = await supabase
+        .from(currentConfig.table)
+        .delete()
+        .eq('id', currentConfig.id);
+
+      if (error) throw error;
+
+      window.dispatchEvent(new CustomEvent(currentConfig.successEvent, { detail: { id: currentConfig.id } }));
+      
+      // Também dispara um evento genérico se necessário
+      if (currentConfig.table === 'tatuadores') {
+          window.dispatchEvent(new CustomEvent('tatuador-updated')); // tatuadores.astro ouve este
+      }
+
+      closeModal();
+    } catch (err: any) {
+      // @ts-ignore
+      if (window.showToast) window.showToast('Erro ao excluir: ' + err.message, 'error');
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.innerText = originalText;
+    }
+  });
+
+  // Listener para Clientes
+  window.addEventListener('open-delete-client-modal', (e: any) => {
+    const { id, nome } = e.detail;
+    currentConfig = {
+      id,
+      nome,
+      table: 'clientes',
+      label: 'o cliente',
+      warning: 'Isso não apagará agendamentos antigos associados a este cliente.',
+      successEvent: 'client-deleted'
+    };
+    updateUI();
+  });
+
+  // Listener para Tatuadores
+  window.addEventListener('open-delete-tatuador-modal', (e: any) => {
+    const { id, nome } = e.detail;
+    currentConfig = {
+      id,
+      nome,
+      table: 'tatuadores',
+      label: 'o tatuador',
+      warning: 'Isso removerá o profissional da equipe. Agendamentos passados serão mantidos.',
+      successEvent: 'tatuador-deleted'
+    };
+    updateUI();
+  });
+
+  function updateUI() {
+    if (!currentConfig) return;
+    if (nameEl) nameEl.innerText = currentConfig.nome;
+    if (typeEl) typeEl.innerText = currentConfig.label;
+    if (warningTextEl) warningTextEl.innerText = currentConfig.warning;
+    modal?.classList.remove('hidden');
+  }
+</script>

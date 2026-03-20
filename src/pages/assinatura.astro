@@ -1,0 +1,464 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+
+// MOCK: Definição do plano atual do usuário
+const currentPlan = 'PRO'; // Ex: 'FREE', 'PRO', 'STUDIO'
+---
+
+<DashboardLayout title="Assinatura & Planos">
+  <div class="plans-wrapper">
+    <!-- HEADER -->
+    <header class="plans-header">
+      <h1 class="premium-title">PLANOS</h1>
+      <p class="premium-subtitle">Escolha o plano ideal para o seu estúdio</p>
+    </header>
+
+    <!-- GRID DE PLANOS -->
+    <div class="plans-grid">
+      <!-- PLANO FREE -->
+      <div class={`plan-card ${currentPlan === 'FREE' ? 'active' : ''}`}>
+        {currentPlan === 'FREE' && <div class="current-label">Plano atual</div>}
+        <div class="plan-content">
+          <h2 class="plan-name">FREE</h2>
+          <div class="plan-price">
+            <span class="currency">R$</span>
+            <span class="amount">0</span>
+          </div>
+          <p class="plan-description">Para quem está começando</p>
+          
+          <ul class="features-list">
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Até 30 agendamentos/mês</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>1 tatuador</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Agenda básica</span>
+            </li>
+            <li class="disabled">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <span>Sem automações</span>
+            </li>
+          </ul>
+
+          <button 
+            class="btn-plan outline" 
+            disabled={currentPlan === 'FREE'}
+            onclick="selectPlan('FREE')"
+          >
+            {currentPlan === 'FREE' ? 'Plano Ativo' : 'Começar grátis'}
+          </button>
+        </div>
+      </div>
+
+      <!-- PLANO PRO (DESTAQUE) -->
+      <div class={`plan-card featured ${currentPlan === 'PRO' ? 'active' : ''}`}>
+        <div class="popular-badge">Mais popular</div>
+        {currentPlan === 'PRO' && <div class="current-label">Plano atual</div>}
+        <div class="plan-content">
+          <h2 class="plan-name">PRO</h2>
+          <div class="plan-price">
+            <span class="currency">R$</span>
+            <span class="amount">39</span>
+            <span class="period">/mês</span>
+          </div>
+          <p class="plan-description">Otimize seu fluxo de trabalho</p>
+          
+          <ul class="features-list">
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Agendamentos ilimitados</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Até 3 tatuadores</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Automação WhatsApp</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Confirmação + Lembrete</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>IA para mensagens</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Dashboard completo</span>
+            </li>
+          </ul>
+
+          <button 
+            class="btn-plan solid" 
+            disabled={currentPlan === 'PRO'}
+            onclick="selectPlan('PRO')"
+          >
+            {currentPlan === 'PRO' ? 'Plano Ativo' : 'Assinar agora'}
+          </button>
+        </div>
+      </div>
+
+      <!-- PLANO STUDIO -->
+      <div class={`plan-card ${currentPlan === 'STUDIO' ? 'active' : ''}`}>
+        {currentPlan === 'STUDIO' && <div class="current-label">Plano atual</div>}
+        <div class="plan-content">
+          <h2 class="plan-name">STUDIO</h2>
+          <div class="plan-price">
+            <span class="currency">R$</span>
+            <span class="amount">79</span>
+            <span class="period">/mês</span>
+          </div>
+          <p class="plan-description">Escala total para o seu estúdio</p>
+          
+          <ul class="features-list">
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Tudo do PRO</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Tatuadores ilimitados</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Prioridade de envio</span>
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Analytics avançado</span>
+            </li>
+          </ul>
+
+          <button 
+            class="btn-plan outline" 
+            disabled={currentPlan === 'STUDIO'}
+            onclick="selectPlan('STUDIO')"
+          >
+            {currentPlan === 'STUDIO' ? 'Plano Ativo' : 'Assinar plano'}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+      <h2 class="faq-title">Perguntas Frequentes</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>Posso cancelar quando quiser?</h3>
+          <p>Sim, você pode cancelar sua assinatura Pro ou Studio a qualquer momento sem taxas de cancelamento.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Preciso de cartão no plano gratuito?</h3>
+          <p>Não. O plano gratuito é 100% grátis para sempre e não exige dados de pagamento para começar.</p>
+        </div>
+        <div class="faq-item">
+          <h3>O WhatsApp já está incluso?</h3>
+          <p>Sim, a integração e o motor de disparo de mensagens já estão inclusos nos planos PRO e STUDIO.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .plans-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem 5rem;
+      animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .plans-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .premium-title {
+      font-size: 5rem;
+      font-family: var(--font-title);
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .premium-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* GRID */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      align-items: stretch;
+      margin-bottom: 8rem;
+    }
+
+    /* CARDS */
+    .plan-card {
+      background-color: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      overflow: hidden;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: rgba(201, 162, 77, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(201, 162, 77, 0.05);
+    }
+
+    /* FEATURED CARD */
+    .plan-card.featured {
+      border: 2px solid var(--primary);
+      background: linear-gradient(180deg, #181818 0%, #141414 100%);
+      box-shadow: 0 0 30px rgba(201, 162, 77, 0.1);
+      z-index: 10;
+    }
+
+    .plan-card.featured:hover {
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(201, 162, 77, 0.15);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--primary);
+      color: #000;
+      padding: 0.4rem 1rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .current-label {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      color: var(--success);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .current-label::before {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        background: var(--success);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--success);
+    }
+
+    .plan-name {
+      font-family: var(--font-title);
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 0.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .currency {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .amount {
+      font-size: 4rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .period {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .plan-description {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* FEATURES */
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+      flex: 1;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      color: #e0e0e0;
+      font-weight: 500;
+    }
+
+    .features-list li svg {
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .features-list li.disabled {
+      color: #555;
+      text-decoration: line-through;
+    }
+
+    .features-list li.disabled svg {
+      color: #444;
+    }
+
+    /* BUTTONS */
+    .btn-plan {
+      width: 100%;
+      padding: 1.25rem;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-text);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-plan.outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .btn-plan.outline:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: #fff;
+    }
+
+    .btn-plan.solid {
+      background: var(--primary);
+      border: none;
+      color: #000;
+      box-shadow: 0 10px 20px rgba(201, 162, 77, 0.2);
+    }
+
+    .btn-plan.solid:hover:not(:disabled) {
+      transform: scale(1.02);
+      filter: brightness(1.1);
+      box-shadow: 0 15px 30px rgba(201, 162, 77, 0.3);
+    }
+
+    .btn-plan:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
+      color: #666;
+      box-shadow: none;
+    }
+
+    /* FAQ */
+    .faq-section {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 6rem;
+    }
+
+    .faq-title {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 4rem;
+      color: #fff;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+
+    .faq-item h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .faq-item p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* RESPONSIVITY */
+    @media (max-width: 1024px) {
+      .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .faq-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .premium-title { font-size: 3.5rem; }
+      .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .faq-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .plan-card {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    function selectPlan(plan) {
+      console.log(`Selecionou plano ${plan}`);
+      window.showToast?.(`Você selecionou o plano ${plan}! (Redirecionamento para pagamento em breve)`, 'info');
+    }
+  </script>
+</DashboardLayout>

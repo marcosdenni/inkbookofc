@@ -1,0 +1,92 @@
+---
+/**
+ * AuthGuard.astro
+ * Componente para proteger rotas privadas no lado do cliente.
+ */
+---
+
+<div id="auth-loading-screen" class="loading-screen">
+  <div class="loader-container">
+    <div class="ink-loader"></div>
+    <p>Validando acesso...</p>
+  </div>
+</div>
+
+<div id="protected-content" style="display: none;">
+  <slot />
+</div>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  async function checkAuth() {
+    const loadingScreen = document.getElementById('auth-loading-screen');
+    const protectedContent = document.getElementById('protected-content');
+
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error || !session) {
+        // Se não houver sessão, redireciona para o login
+        window.location.href = '/login';
+        return;
+      }
+
+      // Se autenticado, revela o conteúdo e remove o loading
+      if (protectedContent) protectedContent.style.display = 'block';
+      if (loadingScreen) loadingScreen.style.display = 'none';
+      
+    } catch (err) {
+      console.error('Erro na validação de sessão:', err);
+      window.location.href = '/login';
+    }
+  }
+
+  // Executa a verificação imediatamente ao carregar o script
+  checkAuth();
+</script>
+
+<style>
+  .loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0F0F0F;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .ink-loader {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(201, 162, 77, 0.1);
+    border-top: 3px solid #C9A24D;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: #C9A24D;
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

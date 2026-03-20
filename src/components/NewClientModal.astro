@@ -1,0 +1,333 @@
+---
+---
+
+<div id="new-client-modal" class="modal-overlay hidden">
+  <div class="modal-content client-modal">
+    <div class="modal-header">
+      <h2 id="client-modal-title">Novo Cliente</h2>
+      <button id="close-client-modal" class="close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <form id="client-form" class="client-form">
+      <input type="hidden" id="client_id" name="id" />
+      <div class="form-group">
+        <label for="client_nome">Nome Completo</label>
+        <input type="text" id="client_nome" name="nome" placeholder="Ex: João Silva" required />
+      </div>
+
+      <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="client_telefone">WhatsApp</label>
+          <input type="tel" id="client_telefone" name="whatsapp" placeholder="(00) 00000-0000" />
+        </div>
+
+        <div class="form-group">
+          <label for="client_email">Email</label>
+          <input type="email" id="client_email" name="email" placeholder="email@exemplo.com" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="client_instagram">Instagram</label>
+        <input type="text" id="client_instagram" name="instagram" placeholder="@usuario" />
+      </div>
+
+      <div class="form-group">
+        <label for="client_observacoes">Observações</label>
+        <textarea id="client_observacoes" name="observacoes" placeholder="Notas sobre o cliente..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="cancel-client-btn" class="btn-secondary">Cancelar</button>
+        <button type="submit" id="save-client-btn" class="btn-primary">Cadastrar Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000; /* Acima do modal de agendamento */
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hidden { display: none !important; }
+
+  .modal-content.client-modal {
+    background-color: #121212;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 24px;
+    border: 1px solid rgba(201, 162, 77, 0.3);
+    padding: 2rem;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
+    transform: scale(0.95) translateY(10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-overlay:not(.hidden) .modal-content.client-modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .modal-header h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary, #C9A24D);
+    margin: 0;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
+
+  .client-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input, textarea {
+    background-color: #1A1A1A;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary, #C9A24D);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(201, 162, 77, 0.2);
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .btn-primary {
+    background-color: var(--primary, #C9A24D);
+    color: #000;
+    border: none;
+    padding: 0.85rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(201, 162, 77, 0.4);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.85rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const modal = document.getElementById('new-client-modal');
+  const form = document.getElementById('client-form') as HTMLFormElement;
+  const closeBtn = document.getElementById('close-client-modal');
+  const cancelBtn = document.getElementById('cancel-client-btn');
+  const saveBtn = document.getElementById('save-client-btn') as HTMLButtonElement;
+
+  function closeModal() {
+    modal?.classList.add('hidden');
+    form?.reset();
+  }
+
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const originalText = saveBtn.innerText;
+    saveBtn.disabled = true;
+    saveBtn.innerText = 'Salvando...';
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('estudio_id')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) throw new Error('Perfil não encontrado');
+
+      const formData = new FormData(form);
+      const clientId = formData.get('id');
+      const clientData = {
+        nome: formData.get('nome'),
+        whatsapp: formData.get('whatsapp'),
+        email: formData.get('email'),
+        instagram: formData.get('instagram'),
+        observacoes: formData.get('observacoes'),
+        estudio_id: profile.estudio_id
+      };
+
+      let result;
+      let dbError;
+
+      if (clientId) {
+        const { data, error } = await supabase
+          .from('clientes')
+          .update(clientData)
+          .eq('id', clientId)
+          .select()
+          .single();
+        result = data;
+        dbError = error;
+      } else {
+        const { data, error } = await supabase
+          .from('clientes')
+          .insert([clientData])
+          .select()
+          .single();
+        result = data;
+        dbError = error;
+      }
+
+      if (dbError) throw dbError;
+
+      // Sucesso!
+      window.dispatchEvent(new CustomEvent('client-created', { detail: result }));
+      closeModal();
+    } catch (err: any) {
+      console.error('Erro detalhado:', err);
+      window.showToast('Erro ao salvar cliente: ' + (err.message || err.details || 'Erro desconhecido'), 'error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerText = originalText;
+    }
+  });
+
+  // Listener para abrir este modal (Novo ou Editar)
+  window.addEventListener('open-new-client-modal', (e: any) => {
+    const client = e.detail?.client;
+    const titleEl = document.getElementById('client-modal-title');
+    const saveBtnEl = document.getElementById('save-client-btn');
+    
+    if (client) {
+      if (titleEl) titleEl.innerText = 'Editar Cliente';
+      if (saveBtnEl) saveBtnEl.innerText = 'Salvar Alterações';
+      
+      (document.getElementById('client_id') as HTMLInputElement).value = client.id;
+      (document.getElementById('client_nome') as HTMLInputElement).value = client.nome || '';
+      (document.getElementById('client_telefone') as HTMLInputElement).value = client.whatsapp || '';
+      (document.getElementById('client_email') as HTMLInputElement).value = client.email || '';
+      (document.getElementById('client_instagram') as HTMLInputElement).value = client.instagram || '';
+      (document.getElementById('client_observacoes') as HTMLTextAreaElement).value = client.observacoes || '';
+    } else {
+      if (titleEl) titleEl.innerText = 'Novo Cliente';
+      if (saveBtnEl) saveBtnEl.innerText = 'Cadastrar Cliente';
+      form?.reset();
+      (document.getElementById('client_id') as HTMLInputElement).value = '';
+    }
+    
+    modal?.classList.remove('hidden');
+    document.getElementById('client_nome')?.focus();
+  });
+
+  // MÁSCARA DE TELEFONE EM TEMPO REAL
+  const phoneInput = document.getElementById('client_telefone') as HTMLInputElement;
+  phoneInput?.addEventListener('input', (e) => {
+    let value = (e.target as HTMLInputElement).value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    
+    if (value.length > 10) {
+      value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (value.length > 6) {
+      value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else if (value.length > 2) {
+      value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+    } else {
+      value = value.replace(/(\d*)/, '$1');
+    }
+    
+    phoneInput.value = value;
+  });
+</script>
