@@ -4,7 +4,7 @@ interface Appointment {
   data_hora: string;
   cliente: { nome: string };
   tatuador: { nome: string };
-  status: 'Pendente' | 'Confirmado' | 'Cancelado' | 'Falta';
+  status: 'Pendente' | 'Confirmado' | 'Cancelado' | 'Falta' | 'Realizado';
   agendamento_referencias?: { storage_path: string }[];
 }
 
@@ -24,6 +24,7 @@ const statusMap = {
   Confirmado: { label: 'Confirmado', class: 'status-confirmed' },
   Cancelado: { label: 'Cancelado', class: 'status-cancelled' },
   Falta: { label: 'Falta', class: 'status-missed' },
+  Realizado: { label: 'Realizado', class: 'status-realizado' },
 };
 ---
 
@@ -198,6 +199,12 @@ const statusMap = {
     background: rgba(109, 40, 217, 0.1);
     color: var(--status-missed);
     border-color: rgba(109, 40, 217, 0.2);
+  }
+
+  .status-realizado {
+    background: rgba(41, 128, 185, 0.1);
+    color: var(--status-realizado);
+    border-color: rgba(41, 128, 185, 0.2);
   }
 
   /* Lightbox Styles */

@@ -131,6 +131,7 @@ const { clientes, tatuadores } = Astro.props;
             <select id="status" name="status" required class="hidden-native-select">
               <option value="Pendente">Pendente</option>
               <option value="Confirmado">Confirmado</option>
+              <option value="Realizado">Realizado</option>
               <option value="Cancelado">Cancelado</option>
               <option value="Falta">Falta</option>
             </select>
@@ -933,6 +934,7 @@ const { clientes, tatuadores } = Astro.props;
     const statuses = [
       { id: 'Pendente', nome: 'Pendente' },
       { id: 'Confirmado', nome: 'Confirmado' },
+      { id: 'Realizado', nome: 'Realizado' },
       { id: 'Cancelado', nome: 'Cancelado' },
       { id: 'Falta', nome: 'Falta' }
     ];
@@ -1573,6 +1575,7 @@ const { clientes, tatuadores } = Astro.props;
       const statuses = [
         { id: 'Pendente', nome: 'Pendente' },
         { id: 'Confirmado', nome: 'Confirmado' },
+        { id: 'Realizado', nome: 'Realizado' },
         { id: 'Cancelado', nome: 'Cancelado' },
         { id: 'Falta', nome: 'Falta' }
       ];
