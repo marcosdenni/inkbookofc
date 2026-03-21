@@ -141,13 +141,13 @@ import { supabase } from '../lib/supabase';
         <div class="plan-management-card">
           <div class="current-plan-info">
             <div class="plan-badge">PLANO ATUAL</div>
-            <h3 class="active-plan-name">InkBook PRO</h3>
-            <p class="plan-benefit">Agendamentos ilimitados e automação ativa</p>
+            <h3 id="display-plan-name" class="active-plan-name">Carregando...</h3>
+            <p id="display-plan-benefit" class="plan-benefit">Buscando informações do plano...</p>
           </div>
           
           <div class="plan-actions">
             <div class="plan-price-display">
-              <span class="price">R$ 39,00</span>
+              <span id="display-plan-price" class="price">---</span>
               <span class="period">/mês</span>
             </div>
             <a href="/assinatura" class="btn-upgrade-premium">
@@ -607,7 +607,7 @@ import { supabase } from '../lib/supabase';
     async function loadStudioData() {
       const { data: studio } = await supabase
         .from('estudios')
-        .select('*')
+        .select('*, plano')
         .eq('id', studioId)
         .single();
 
@@ -633,6 +633,21 @@ import { supabase } from '../lib/supabase';
           currentLogoUrl = studio.logo_url;
           const preview = document.getElementById('logo-preview') as HTMLImageElement;
           preview.src = studio.logo_url;
+        }
+
+        // --- ATUALIZAR UI DO PLANO ---
+        const planNameEl = document.getElementById('display-plan-name');
+        const planBenefitEl = document.getElementById('display-plan-benefit');
+        const planPriceEl = document.getElementById('display-plan-price');
+
+        if (studio.plano === 'Pro') {
+          if (planNameEl) planNameEl.innerText = 'InkBook PRO';
+          if (planBenefitEl) planBenefitEl.innerText = 'Agendamentos ilimitados e automação ativa';
+          if (planPriceEl) planPriceEl.innerText = 'R$ 59,00';
+        } else {
+          if (planNameEl) planNameEl.innerText = 'GRATUITO';
+          if (planBenefitEl) planBenefitEl.innerText = 'Até 30 agendamentos/mês e recursos básicos';
+          if (planPriceEl) planPriceEl.innerText = 'R$ 0,00';
         }
       }
     }
