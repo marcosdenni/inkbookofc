@@ -152,21 +152,19 @@ const { clientes, tatuadores } = Astro.props;
       </div>
       </div>
 
-      <!-- LIGHTBOX PARA ZOOM -->
-      <div id="modal-zoom" class="modal-overlay hidden" style="z-index: 5000; background: rgba(0,0,0,0.95);">
-        <div class="zoom-content">
-          <img id="zoom-img" src="" alt="Zoom" />
-          <button type="button" id="close-zoom" class="close-zoom">&times;</button>
-        </div>
-      </div>
-
-
-
       <div class="modal-footer">
         <button type="button" id="cancel-btn" class="btn-secondary">Cancelar</button>
         <button type="submit" class="btn-primary">Salvar Agendamento</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- LIGHTBOX PARA ZOOM -->
+<div id="modal-zoom" class="modal-overlay hidden" style="z-index: 9999; background: rgba(0,0,0,0.95); position: fixed; inset: 0;">
+  <div class="zoom-content">
+    <img id="zoom-img" src="" alt="Zoom" />
+    <button type="button" id="close-zoom" class="close-zoom">&times;</button>
   </div>
 </div>
 
@@ -211,7 +209,6 @@ const { clientes, tatuadores } = Astro.props;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     transform: translateY(20px);
     transition: transform 0.3s ease;
-    /* Estilização da scrollbar para ser premium e discreta */
     scrollbar-width: thin;
     scrollbar-color: var(--primary) transparent;
   }
@@ -309,7 +306,6 @@ const { clientes, tatuadores } = Astro.props;
     box-shadow: 0 0 15px rgba(201, 162, 77, 0.15);
   }
 
-  /* Custom Select Component */
   .custom-select-container {
     position: relative;
     width: 100%;
@@ -358,7 +354,6 @@ const { clientes, tatuadores } = Astro.props;
     transform: rotate(180deg);
   }
 
-  /* Classes Globais para itens gerados dinamicamente via JS */
   :global(.custom-options) {
     position: absolute;
     top: calc(100% + 8px);
@@ -513,28 +508,6 @@ const { clientes, tatuadores } = Astro.props;
     cursor: pointer;
   }
 
-  .radio-group {
-    display: flex;
-    gap: 2rem;
-    padding: 0.5rem 0;
-  }
-
-  .radio-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    color: var(--text);
-    font-size: 0.875rem;
-  }
-
-  .radio-label input {
-    accent-color: var(--primary);
-    width: 18px;
-    height: 18px;
-  }
-
-  /* Novas Estilizações para Upload */
   .upload-container {
     border: 2px dashed rgba(201, 162, 77, 0.2);
     border-radius: 16px;
@@ -567,43 +540,6 @@ const { clientes, tatuadores } = Astro.props;
     opacity: 0.8;
   }
 
-  .upload-placeholder span {
-    font-size: 0.75rem;
-  }
-
-  .preview-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .preview-item {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    cursor: zoom-in;
-    transition: all 0.2s ease;
-    background: #1a1a1a;
-  }
-
-  .preview-item:hover {
-    transform: translateY(-4px);
-    border-color: var(--primary);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-  }
-
-  .preview-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* ZOOM MODAL STYLES */
   .zoom-content {
     position: relative;
     max-width: 90vw;
@@ -626,50 +562,6 @@ const { clientes, tatuadores } = Astro.props;
     color: white;
     font-size: 32px;
     cursor: pointer;
-  }
-
-  .remove-preview {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: #c0392b;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  }
-
-  .remove-preview:hover {
-    background: #e74c3c;
-    transform: scale(1.1);
-  }
-
-  .remove-preview svg {
-    width: 14px;
-    height: 14px;
-    pointer-events: none;
-    stroke: white;
-    stroke-width: 3;
-  }
-
-  .uploading-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
   }
 
   .modal-footer {
@@ -699,11 +591,6 @@ const { clientes, tatuadores } = Astro.props;
   .btn-primary:hover {
     filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(201, 162, 77, 0.3);
-  }
-
-  .btn-primary:active {
-    transform: translateY(0);
   }
 
   .btn-secondary {
@@ -716,19 +603,6 @@ const { clientes, tatuadores } = Astro.props;
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: var(--text);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  .form-group .label-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   .btn-text-action {
@@ -743,20 +617,6 @@ const { clientes, tatuadores } = Astro.props;
     align-items: center;
     gap: 4px;
     padding: 0;
-    transition: opacity 0.2s ease;
-  }
-
-  .btn-text-action:hover {
-    opacity: 0.8;
-  }
-
-  @media (max-width: 640px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
-    .full-width {
-      grid-column: span 1;
-    }
   }
 
   .whatsapp-status-info {
@@ -771,22 +631,13 @@ const { clientes, tatuadores } = Astro.props;
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  .whatsapp-status-info.status-enviado {
-    color: #2ecc71;
-    background: rgba(46, 204, 113, 0.1);
-    border-color: rgba(46, 204, 113, 0.2);
-  }
-
-  .whatsapp-status-info.status-erro {
-    color: #e74c3c;
-    background: rgba(231, 76, 60, 0.1);
-    border-color: rgba(231, 76, 60, 0.2);
-  }
-
-  .whatsapp-status-info svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
+  @media (max-width: 640px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .full-width {
+      grid-column: span 1;
+    }
   }
 </style>
 
@@ -804,63 +655,31 @@ const { clientes, tatuadores } = Astro.props;
 
   async function sendWhatsAppConfirmation(appointmentId: string, estudioId: string) {
     try {
-      console.log(`[n8n] Iniciando processo de notificação para agendamento: ${appointmentId}`);
-      
-      // 1. Buscar dados completos do agendamento com relações
       const { data: appt, error: apptError } = await supabase
         .from('agendamentos')
-        .select(`
-          *,
-          cliente:clientes(nome, whatsapp),
-          tatuador:tatuadores(nome),
-          estudio:estudios(nome)
-        `)
+        .select('*, cliente:clientes(nome, whatsapp), tatuador:tatuadores(nome), estudio:estudios(nome)')
         .eq('id', appointmentId)
         .single();
       
-      if (apptError || !appt) {
-        console.error('[n8n] Erro ao buscar dados do agendamento:', apptError);
-        return;
-      }
+      if (apptError || !appt) return;
 
-      // 2. Buscar template de confirmação (Valor exato do Enum: 'agendamento_criado')
-      const { data: template, error: tempError } = await supabase
+      const { data: template } = await supabase
         .from('template_mensagens')
         .select('conteudo')
         .eq('estudio_id', estudioId)
         .eq('tipo', 'agendamento_criado')
         .single();
       
-      if (tempError || !template) {
-        console.log('[n8n] Template de confirmação não encontrado ou erro na busca:', tempError);
-        return;
-      }
+      if (!template) return;
 
-      // 2.1 Buscar nome da instância e STATUS do WhatsApp
-      const { data: conexao, error: conError } = await supabase
+      const { data: conexao } = await supabase
         .from('conexao_whatsapp')
         .select('instance_name, status')
         .eq('estudio_id', estudioId)
         .single();
       
-      if (conError || !conexao) {
-        console.warn('[n8n] Instância do WhatsApp não encontrada para este estúdio:', conError);
-        // Popup informativo para o usuário
-        if (typeof window !== 'undefined' && (window as any).showToast) {
-          (window as any).showToast('WhatsApp não configurado. A mensagem de confirmação não será enviada.', 'info');
-        }
-        return;
-      }
+      if (!conexao || conexao.status !== 'connected') return;
 
-      if (conexao.status !== 'connected') {
-        console.warn('[n8n] WhatsApp desconectado. Status:', conexao.status);
-        if (typeof window !== 'undefined' && (window as any).showToast) {
-          (window as any).showToast('WhatsApp desconectado! Vá em "Mensagens" para reconectar e enviar confirmações.', 'error');
-        }
-        return;
-      }
-
-      // 3. Formatar variáveis para substituição
       const dt = new Date(appt.data_hora);
       const dataStr = dt.toLocaleDateString('pt-BR');
       const horaStr = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -874,23 +693,16 @@ const { clientes, tatuadores } = Astro.props;
         .replace(/{valor}/g, valorStr)
         .replace(/{estudio_nome}/g, appt.estudio?.nome || '');
 
-      // 4. Formatar telefone para padrão internacional (apenas dígitos, prefixo 55)
       let telefone = (appt.cliente?.whatsapp || '').replace(/\D/g, '');
-      if (telefone && !telefone.startsWith('55') && telefone.length >= 10) {
-        telefone = '55' + telefone;
-      }
+      if (telefone && !telefone.startsWith('55') && telefone.length >= 10) telefone = '55' + telefone;
 
-      if (!telefone) {
-        console.warn('[n8n] Cliente sem telefone válido para envio.');
-        return;
-      }
+      if (!telefone) return;
 
-      // 5. Montar payload e disparar webhook
       const payload = {
         agendamento_id: appointmentId,
         estudio_id: estudioId,
         tipo_mensagem: 'agendamento_criado',
-        instancia: conexao?.instance_name || '',
+        instancia: conexao.instance_name,
         cliente_nome: appt.cliente?.nome || '',
         telefone: telefone,
         tatuador_nome: appt.tatuador?.nome || '',
@@ -900,22 +712,15 @@ const { clientes, tatuadores } = Astro.props;
         mensagem: mensagem
       };
 
-      console.log('[n8n] Enviando payload para webhook:', payload);
-
       fetch(WEBHOOK_N8N, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        keepalive: true // Garante que a requisição continue mesmo se a página recarregar
-      })
-      .then(res => {
-        if (!res.ok) throw new Error(`Status HTTP: ${res.status}`);
-        console.log('[n8n] Webhook disparado com sucesso!');
-      })
-      .catch(err => console.error('[n8n] Erro na resposta do webhook:', err));
+        keepalive: true
+      });
 
     } catch (err) {
-      console.error('[n8n] Erro inesperado na integração WhatsApp:', err);
+      console.error('[n8n] Erro no envio do WhatsApp:', err);
     }
   }
 
@@ -923,13 +728,8 @@ const { clientes, tatuadores } = Astro.props;
     const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
     const { data: tatuadores } = await supabase.from('tatuadores').select('id, nome').order('nome');
 
-    if (clientes) {
-      updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
-    }
-
-    if (tatuadores) {
-      updateCustomDropdown('tatuador', tatuadores, 'Selecione um tatuador');
-    }
+    if (clientes) updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
+    if (tatuadores) updateCustomDropdown('tatuador', tatuadores, 'Selecione um tatuador');
 
     const statuses = [
       { id: 'Pendente', nome: 'Pendente' },
@@ -950,696 +750,269 @@ const { clientes, tatuadores } = Astro.props;
 
     if (!container || !trigger || !optionsList || !nativeSelect || !triggerText) return;
 
-    // 1. Sincronizar Select Nativo
     nativeSelect.innerHTML = `<option value="">${placeholder}</option>` + 
       items.map(item => `<option value="${item.id}">${item.nome}</option>`).join('');
 
-    // 2. Sincronizar UI do Trigger Inicial
     if (nativeSelect.value) {
       const selected = items.find(i => i.id === nativeSelect.value);
-      if (selected && triggerText) {
-        triggerText.textContent = selected.nome;
-        trigger.classList.remove('placeholder');
-      }
-    } else {
-      triggerText.textContent = placeholder;
-      trigger.classList.add('placeholder');
+      if (selected) triggerText.textContent = selected.nome;
     }
 
-    // 3. Renderizar Opções Customizadas
-    renderOptions(optionsList, items, nativeSelect.value);
+    optionsList.innerHTML = items.map(item => `
+      <div class="custom-option ${nativeSelect.value === item.id ? 'selected' : ''}" data-value="${item.id}">
+        ${item.nome}
+      </div>
+    `).join('');
 
-    // 4. Configurar Trigger (APENAS UMA VEZ)
     if (!trigger.dataset.initialized) {
       trigger.dataset.initialized = 'true';
-      trigger.addEventListener('click', (e: Event) => {
+      trigger.onclick = (e) => {
         e.stopPropagation();
         const isOpen = container.classList.contains('open');
         closeAllDropdowns();
         if (!isOpen) container.classList.add('open');
-      });
+      };
 
-      // 5. Lógica de Seleção (Delegação de Evento)
-      optionsList.addEventListener('click', (e: Event) => {
-        const target = e.target as HTMLElement;
-        const option = target.closest('.custom-option') as HTMLElement;
+      optionsList.onclick = (e) => {
+        const option = (e.target as HTMLElement).closest('.custom-option') as HTMLElement;
         if (!option) return;
-
         e.stopPropagation();
-        const value = option.dataset.value || '';
-        const name = option.textContent?.trim() || '';
-
-        // Atualizar Select Nativo
-        nativeSelect.value = value;
+        nativeSelect.value = option.dataset.value || '';
         nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-
-        // Atualizar UI do Trigger
-        triggerText.textContent = name;
+        triggerText.textContent = option.textContent?.trim() || '';
         trigger.classList.remove('placeholder');
-
-        // Marcar selecionado visualmente
-        const allOpts = optionsList.querySelectorAll('.custom-option');
-        allOpts.forEach(o => o.classList.remove('selected'));
-        option.classList.add('selected');
-
-        // Fechar
         container.classList.remove('open');
-      });
+      };
     }
-}
-
-  function renderOptions(optionsList: HTMLElement, items: any[], selectedValue: string) {
-    optionsList.innerHTML = items.map(item => `
-      <div class="custom-option ${selectedValue === item.id ? 'selected' : ''}" data-value="${item.id}">
-        ${item.nome}
-      </div>
-    `).join('');
   }
 
-  function closeAllDropdowns(exceptId?: string) {
-    document.querySelectorAll('.custom-select-container').forEach(container => {
-      if (exceptId && container.id === `${exceptId}-custom-container`) return;
-      container.classList.remove('open');
-    });
+  function closeAllDropdowns() {
+    document.querySelectorAll('.custom-select-container').forEach(c => c.classList.remove('open'));
   }
 
-  // Close dropdowns when clicking outside
   document.addEventListener('click', () => closeAllDropdowns());
 
   function closeModal() {
     modal?.classList.add('hidden');
     form?.reset();
     (document.getElementById('editing-id') as HTMLInputElement).value = '';
-    const modalTitle = modal?.querySelector('h2');
-    if (modalTitle) modalTitle.innerText = 'Novo Agendamento';
-    
-    // Resetar botão de salvar
     const saveBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
     if (saveBtn) {
       saveBtn.disabled = false;
       saveBtn.innerText = 'Salvar Agendamento';
     }
-
-    // Limpar status de WhatsApp
-    const statusInfo = document.getElementById('whatsapp-status-info');
-    if (statusInfo) {
-      statusInfo.classList.add('hidden');
-      statusInfo.innerHTML = '';
-    }
   }
 
-  closeBtn?.addEventListener('click', closeModal);
-  cancelBtn?.addEventListener('click', closeModal);
+  if (closeBtn) closeBtn.onclick = closeModal;
+  if (cancelBtn) cancelBtn.onclick = closeModal;
 
-  btnNewClient?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    window.dispatchEvent(new CustomEvent('open-new-client-modal'));
-  });
+  if (btnNewClient) {
+    btnNewClient.onclick = (e) => {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('open-new-client-modal'));
+    };
+  }
 
   window.addEventListener('client-created', async (e: any) => {
     const newClient = e.detail;
     if (newClient) {
-      // Recarregar dados para garantir que temos a lista mais recente
       const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
-      if (clientes) {
-        updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
-        
-        // Selecionar o cliente recém criado
-        const nativeSelect = document.getElementById('cliente') as HTMLSelectElement;
-        const trigger = document.getElementById('cliente-trigger');
-        const triggerText = trigger?.querySelector('.trigger-text');
-        const optionsList = document.getElementById('cliente-options');
-        
-        if (nativeSelect) nativeSelect.value = newClient.id;
-        if (triggerText) {
-          triggerText.textContent = newClient.nome;
-          trigger?.classList.remove('placeholder');
-        }
-        if (optionsList) {
-          renderOptions(optionsList, clientes, newClient.id);
-        }
-      }
+      if (clientes) updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
     }
   });
 
-  const dropzone = document.getElementById('upload-dropzone');
   const fileInput = document.getElementById('referencias-input') as HTMLInputElement;
   const previewContainer = document.getElementById('preview-container');
   let selectedFiles: File[] = [];
   let existingReferences: any[] = [];
 
-  // Dropzone events
-  dropzone?.addEventListener('click', () => fileInput.click());
+  document.getElementById('upload-dropzone')?.addEventListener('click', () => fileInput.click());
 
-  fileInput?.addEventListener('change', () => {
+  fileInput.onchange = () => {
     if (fileInput.files) {
-      handleFiles(Array.from(fileInput.files));
+      const files = Array.from(fileInput.files).filter(f => f.size <= 5 * 1024 * 1024);
+      selectedFiles = [...selectedFiles, ...files];
+      renderPreviews();
     }
-  });
-
-  function handleFiles(files: File[]) {
-    const validFiles = files.filter(file => {
-      if (!file.type.startsWith('image/')) {
-        alert(`${file.name} não é uma imagem válida.`);
-        return false;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`${file.name} excede o limite de 5MB.`);
-        return false;
-      }
-      return true;
-    });
-
-    selectedFiles = [...selectedFiles, ...validFiles];
-    renderPreviews();
-  }
+  };
 
   function renderPreviews() {
     if (!previewContainer) return;
     previewContainer.innerHTML = '';
-    
     const deleteIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>`;
 
-    // 1. Renderizar imagens já no servidor (se houver)
     existingReferences.forEach((ref) => {
       const { data } = supabase.storage.from('referencias').getPublicUrl(ref.storage_path);
-      const publicUrl = data.publicUrl;
       const div = document.createElement('div');
-      div.className = 'preview-item existing';
-      div.innerHTML = `
-        <img src="${publicUrl}" alt="Ref" />
-        <button type="button" class="remove-preview delete-existing" data-id="${ref.id}" data-path="${ref.storage_path}" title="Excluir Referência">${deleteIcon}</button>
-      `;
+      div.className = 'preview-item';
+      div.innerHTML = `<img src="${data.publicUrl}" /> <button type="button" class="remove-preview" data-id="${ref.id}" data-path="${ref.storage_path}">${deleteIcon}</button>`;
       div.onclick = (e) => {
-        if ((e.target as HTMLElement).closest('.remove-preview')) return;
-        openZoom(publicUrl);
+        if ((e.target as HTMLElement).closest('.remove-preview')) {
+          if (confirm('Excluir referência?')) {
+            supabase.from('agendamento_referencias').delete().eq('id', ref.id).then(() => {
+              existingReferences = existingReferences.filter(r => r.id !== ref.id);
+              renderPreviews();
+            });
+          }
+        } else {
+          openZoom(data.publicUrl);
+        }
       };
       previewContainer.appendChild(div);
     });
 
-    // 2. Renderizar novas imagens selecionadas
     selectedFiles.forEach((file, index) => {
       const url = URL.createObjectURL(file);
       const div = document.createElement('div');
       div.className = 'preview-item';
-      div.innerHTML = `
-        <img src="${url}" alt="Preview" />
-        <button type="button" class="remove-preview delete-new" data-index="${index}" title="Remover">${deleteIcon}</button>
-      `;
+      div.innerHTML = `<img src="${url}" /> <button type="button" class="remove-preview" data-index="${index}">${deleteIcon}</button>`;
       div.onclick = (e) => {
-        if ((e.target as HTMLElement).closest('.remove-preview')) return;
-        openZoom(url);
+        if ((e.target as HTMLElement).closest('.remove-preview')) {
+          selectedFiles.splice(index, 1);
+          renderPreviews();
+        } else {
+          openZoom(url);
+        }
       };
       previewContainer.appendChild(div);
-    });
-
-    // Listeners para novas imagens
-    document.querySelectorAll('.delete-new').forEach(btn => {
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        const index = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
-        selectedFiles.splice(index, 1);
-        renderPreviews();
-      };
-    });
-
-    // Listeners para imagens existentes
-    document.querySelectorAll('.delete-existing').forEach(btn => {
-        btn.onclick = async (e) => {
-            e.stopPropagation();
-            const btnEl = e.currentTarget as HTMLButtonElement;
-            const refId = btnEl.dataset.id;
-            const refPath = btnEl.dataset.path;
-            
-            if (!confirm('Deseja excluir permanentemente esta referência?')) return;
-
-            // 1. Deletar do banco
-            const { error: dbError } = await supabase.from('agendamento_referencias').delete().eq('id', refId);
-            if (dbError) { alert('Erro ao excluir do banco.'); return; }
-
-            // 2. Deletar do storage
-            if (refPath) {
-                await supabase.storage.from('referencias').remove([refPath]);
-            }
-
-            // 3. Atualizar localmente
-            existingReferences = existingReferences.filter(r => r.id !== refId);
-            renderPreviews();
-        };
     });
   }
 
   function openZoom(url: string) {
-    const zoomModal = document.getElementById('modal-zoom');
-    const zoomImg = document.getElementById('zoom-img') as HTMLImageElement;
-    if (zoomModal && zoomImg) {
-      zoomImg.src = url;
-      zoomModal.classList.remove('hidden');
-    }
+    const zImg = document.getElementById('zoom-img') as HTMLImageElement;
+    if (zImg) zImg.src = url;
+    document.getElementById('modal-zoom')?.classList.remove('hidden');
   }
 
-  document.getElementById('close-zoom')?.addEventListener('click', () => {
-    document.getElementById('modal-zoom')?.classList.add('hidden');
-  });
+  const closeZoomBtn = document.getElementById('close-zoom');
+  if (closeZoomBtn) {
+    closeZoomBtn.onclick = () => document.getElementById('modal-zoom')?.classList.add('hidden');
+  }
 
-  // Session calculation logic
-  const inputData = document.getElementById('data') as HTMLInputElement;
   const inputHora = document.getElementById('hora') as HTMLInputElement;
   const inputDuracao = document.getElementById('duracao') as HTMLInputElement;
   const inputHoraFim = document.getElementById('hora_fim') as HTMLInputElement;
-  const sessionSummary = document.getElementById('session-summary');
-  const summaryStart = document.getElementById('summary-start');
-  const summaryEnd = document.getElementById('summary-end');
-  const summaryDuration = document.getElementById('summary-duration');
 
   function updateEndTime() {
-    if (!inputHora.value || !inputDuracao.value) {
-      inputHoraFim.value = "";
-      sessionSummary?.classList.add('hidden');
-      return;
-    }
-
-    const [hours, minutes] = inputHora.value.split(':').map(Number);
-    const duracao = parseInt(inputDuracao.value);
-    
-    const startTime = new Date();
-    startTime.setHours(hours, minutes, 0);
-    
-    const endTime = new Date(startTime.getTime() + duracao * 60000);
-    
-    const endHours = String(endTime.getHours()).padStart(2, '0');
-    const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
-    
-    const formattedEndTime = `${endHours}:${endMinutes}`;
-    inputHoraFim.value = formattedEndTime;
-
-    // Update summary
-    if (sessionSummary && summaryStart && summaryEnd && summaryDuration) {
-      sessionSummary.classList.remove('hidden');
-      summaryStart.innerText = inputHora.value;
-      summaryEnd.innerText = formattedEndTime;
-      
-      const hoursCount = Math.floor(duracao / 60);
-      const minsCount = duracao % 60;
-      summaryDuration.innerText = `${hoursCount}h${minsCount > 0 ? ` ${minsCount}m` : ''}`;
-    }
+    if (!inputHora.value || !inputDuracao.value) return;
+    const [h, m] = inputHora.value.split(':').map(Number);
+    const end = new Date();
+    end.setHours(h, m + parseInt(inputDuracao.value));
+    inputHoraFim.value = `${String(end.getHours()).padStart(2, '0')}:${String(end.getMinutes()).padStart(2, '0')}`;
   }
 
-  inputHora?.addEventListener('input', updateEndTime);
-  inputDuracao?.addEventListener('input', updateEndTime);
+  inputHora.oninput = updateEndTime;
+  inputDuracao.oninput = updateEndTime;
 
-  // Financial validation
-  const inputTotal = document.getElementById('valor_total') as HTMLInputElement;
-  const inputSinal = document.getElementById('valor_sinal') as HTMLInputElement;
-
-  form?.addEventListener('submit', async (e) => {
+  form.onsubmit = async (e) => {
     e.preventDefault();
-
-    // Validations
-    const total = parseFloat(inputTotal.value || '0');
-    const sinal = parseFloat(inputSinal.value || '0');
-    const duracao = parseInt(inputDuracao.value || '0');
-
-    if (duracao <= 0) {
-      alert('A duração deve ser maior que 0 minutos.');
-      return;
-    }
-
-        if (sinal > total) {
-      alert('O valor do sinal não pode ser maior que o valor total.');
-      return;
-    }
-
     const saveBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-    const originalText = saveBtn.innerText;
-    
+    saveBtn.disabled = true;
+    saveBtn.innerText = 'Salvando...';
+
     try {
-      saveBtn.disabled = true;
-      saveBtn.innerText = 'Salvando...';
-
-      const formData = new FormData(form);
-      
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Usuário não autenticado');
-
-      const { data: profile } = await supabase
-        .from('users')
-        .select('estudio_id')
-        .eq('id', user.id)
-        .single();
-
-      if (!profile) throw new Error('Perfil não encontrado');
-
+      const { data: prof } = await supabase.from('users').select('estudio_id').eq('id', user?.id).single();
       const editingId = (document.getElementById('editing-id') as HTMLInputElement).value;
-      
-      // --- LÓGICA FINANCEIRA ---
-      const tatuador_id = formData.get('tatuador_id') as string;
-      const valor_total = parseFloat(formData.get('valor_total') as string || '0');
-      
-      let valor_estudio = 0;
-      let valor_tatuador = valor_total;
+      const formData = new FormData(form);
 
-      if (tatuador_id) {
-        // 1. Buscar dados do tatuador
-        const { data: tatuador } = await supabase
-          .from('tatuadores')
-          .select('*, estudio:estudios(id)')
-          .eq('id', tatuador_id)
-          .single();
-
-        if (tatuador) {
-          let configFinanceira;
-          
-          if (tatuador.usa_modelo_padrao) {
-            // 2. Buscar config padrão do estúdio
-            const { data: configPadrao } = await supabase
-              .from('configuracoes_financeiras')
-              .select('*')
-              .eq('estudio_id', profile.estudio_id)
-              .single();
-            
-            configFinanceira = configPadrao ? {
-              modelo: configPadrao.modelo_pagamento_padrao,
-              percent_estudio: configPadrao.percentual_estudio_padrao,
-              percent_tatuador: configPadrao.percentual_tatuador_padrao
-            } : null;
-          } else {
-            configFinanceira = {
-              modelo: tatuador.modelo_pagamento,
-              percent_estudio: tatuador.percentual_estudio,
-              percent_tatuador: tatuador.percentual_tatuador
-            };
-          }
-
-          // 3. Aplicar Cálculo
-          if (configFinanceira) {
-            const modelo = configFinanceira.modelo || 'percentual';
-            
-            if (modelo === 'percentual' || modelo === 'hibrido') {
-              const pEstudio = Number(configFinanceira.percent_estudio) || 0;
-              const pTatuador = Number(configFinanceira.percent_tatuador) || 100;
-              
-              valor_estudio = (valor_total * pEstudio) / 100;
-              valor_tatuador = (valor_total * pTatuador) / 100;
-            } else if (modelo === 'aluguel_fixo') {
-              valor_estudio = 0;
-              valor_tatuador = valor_total;
-            }
-          }
-        }
-      }
-
-      // 4. Salvar Agendamento
-      const dataStr = formData.get('data') as string;
-      const horaStr = formData.get('hora') as string;
-      
-      // Calcular data_hora_fim para o banco
-      const dur = parseInt(formData.get('duracao_minutos') as string);
-      const dInicio = new Date(`${dataStr}T${horaStr}:00`);
-      const dFim = new Date(dInicio.getTime() + dur * 60000);
-
-      const appointmentData = {
+      const apptData = {
         cliente_id: formData.get('cliente_id'),
         tatuador_id: formData.get('tatuador_id'),
-        data_hora: dInicio.toISOString(),
-        data_hora_fim: dFim.toISOString(),
-        duracao_minutos: dur,
-        valor_total: valor_total,
+        data_hora: new Date(`${formData.get('data')}T${formData.get('hora')}:00`).toISOString(),
+        duracao_minutos: parseInt(formData.get('duracao_minutos') as string),
+        valor_total: parseFloat(formData.get('valor_total') as string || '0'),
         valor_sinal: parseFloat(formData.get('valor_sinal') as string || '0'),
-        valor_estudio: valor_estudio,
-        valor_tatuador: valor_tatuador,
         pago: formData.get('pago') === 'on',
         sinal_pago: formData.get('sinal_pago') === 'on',
-        estudio_id: profile.estudio_id,
-        status: formData.get('status') || 'Pendente'
+        status: formData.get('status') || 'Pendente',
+        estudio_id: prof.estudio_id
       };
 
-      // --- VALIDAÇÃO DE SOBREPOSIÇÃO (MESMO TATUADOR) ---
-      if (appointmentData.tatuador_id) {
-        // Buscar agendamentos do mesmo tatuador no mesmo dia
-        const startOfDay = new Date(dataStr + 'T00:00:00Z').toISOString();
-        const endOfDay = new Date(dataStr + 'T23:59:59Z').toISOString();
-
-        let query = supabase
-          .from('agendamentos')
-          .select('id, data_hora, data_hora_fim, status')
-          .eq('tatuador_id', appointmentData.tatuador_id)
-          .neq('status', 'Cancelado') // Ignorar cancelados
-          .gte('data_hora', startOfDay)
-          .lte('data_hora', endOfDay);
-        
-        if (editingId) {
-          query = query.neq('id', editingId);
-        }
-
-        const { data: conflicts, error: conflictError } = await query;
-
-        if (conflictError) throw conflictError;
-
-        const hasOverlap = conflicts?.some(existing => {
-          const exStart = new Date(existing.data_hora).getTime();
-          const exEnd = new Date(existing.data_hora_fim).getTime();
-          const newStart = dInicio.getTime();
-          const newEnd = dFim.getTime();
-
-          return (newStart < exEnd) && (newEnd > exStart);
-        });
-
-        if (hasOverlap) {
-          alert('Conflito de Horário! Este tatuador já possui um agendamento que se sobrepõe ao horário selecionado.');
-          saveBtn.disabled = false;
-          saveBtn.innerText = originalText;
-          return;
-        }
-      }
-
-      let newAppointmentId = '';
-
+      let id = editingId;
       if (editingId) {
-        const { data: updatedAppt, error: appError } = await supabase
-          .from('agendamentos')
-          .update(appointmentData)
-          .eq('id', editingId)
-          .select()
-          .single();
-        
-        if (appError) throw appError;
-        newAppointmentId = editingId;
+        await supabase.from('agendamentos').update(apptData).eq('id', editingId);
       } else {
-        const { data: newAppointment, error: appError } = await supabase
-          .from('agendamentos')
-          .insert([appointmentData])
-          .select()
-          .single();
-
-        if (appError) throw appError;
-        newAppointmentId = newAppointment.id;
-        
-        // DISPARAR NOTIFICAÇÃO WHATSAPP (Aguardar disparo antes do reload)
-        await sendWhatsAppConfirmation(newAppointmentId, profile.estudio_id);
+        const { data } = await supabase.from('agendamentos').insert([apptData]).select().single();
+        id = data.id;
+        await sendWhatsAppConfirmation(id, prof.estudio_id);
       }
 
-      // 2. Upload das imagens
-      if (selectedFiles.length > 0) {
-        saveBtn.innerText = 'Enviando imagens...';
-        
-        for (const file of selectedFiles) {
-          const fileExt = file.name.split('.').pop() || 'jpg';
-          const fileName = `${crypto.randomUUID()}.${fileExt}`;
-          const storagePath = `${profile.estudio_id}/${newAppointmentId}/${fileName}`;
-
-          const { error: uploadError } = await supabase.storage
-            .from('referencias')
-            .upload(storagePath, file);
-
-          if (uploadError) {
-            console.error('Erro no upload:', uploadError);
-            continue;
-          }
-
-          // 3. Salvar referência no banco
-          await supabase
-            .from('agendamento_referencias')
-            .insert({
-              agendamento_id: newAppointmentId,
-              storage_path: storagePath
-            });
-        }
+      for (const file of selectedFiles) {
+        const path = `${prof.estudio_id}/${id}/${crypto.randomUUID()}`;
+        await supabase.storage.from('referencias').upload(path, file);
+        await supabase.from('agendamento_referencias').insert({ agendamento_id: id, storage_path: path });
       }
 
       closeModal();
       window.dispatchEvent(new CustomEvent('appointment-saved'));
-      // Só recarrega se não estiver na agenda (agenda usa event-driven)
-      if (!window.location.pathname.includes('/agenda')) {
-        window.location.reload();
-      }
-    } catch (err: any) {
-      alert('Erro inesperado: ' + err.message);
-      saveBtn.disabled = false;
-      saveBtn.innerText = originalText;
-    }
-  });
-
-  // Listen for open event (suporta pré-preenchimento de data/hora pela Agenda)
-  window.addEventListener('open-new-appointment-modal', async (e: any) => {
-    await loadFormData(); 
-    modal?.classList.remove('hidden');
-
-    const { date, time, appointment } = e.detail || {};
-
-    selectedFiles = [];
-    existingReferences = [];
-    renderPreviews();
-
-    // Resetar botão de salvar ao abrir
-    const saveBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
-    if (saveBtn) {
+    } catch (err) {
+      alert('Erro ao salvar');
+    } finally {
       saveBtn.disabled = false;
       saveBtn.innerText = 'Salvar Agendamento';
     }
+  };
 
-    if (appointment) {
-      // MODO EDIÇÃO
-      const modalTitle = modal?.querySelector('h2');
-      if (modalTitle) modalTitle.innerText = 'Editar Agendamento';
-
-      (document.getElementById('editing-id') as HTMLInputElement).value = appointment.id;
-      
-      // Carregar referências existentes
-      const { data: refs } = await supabase.from('agendamento_referencias').select('*').eq('agendamento_id', appointment.id);
-      if (refs) {
-        existingReferences = refs;
-        renderPreviews();
-      }
-
-      // Preencher cliente e sincronizar dropdown customizado
-      if (appointment.cliente_id) {
-        const nativeSelect = document.getElementById('cliente') as HTMLSelectElement;
-        const trigger = document.getElementById('cliente-trigger');
-        const triggerText = trigger?.querySelector('.trigger-text');
-        const optionsList = document.getElementById('cliente-options');
-        
-        nativeSelect.value = appointment.cliente_id;
-        if (triggerText) {
-          triggerText.textContent = appointment.cliente?.nome || 'Cliente Selecionado';
-          trigger?.classList.remove('placeholder');
-        }
-        // Sincronizar visualmente as opções
-        if (optionsList) {
-          const options = optionsList.querySelectorAll('.custom-option');
-          options.forEach(opt => {
-            if ((opt as HTMLElement).dataset.value === appointment.cliente_id) {
-              opt.classList.add('selected');
-            } else {
-              opt.classList.remove('selected');
-            }
-          });
-        }
-      }
-
-      // Preencher tatuador e sincronizar dropdown customizado
-      if (appointment.tatuador_id) {
-        const nativeSelect = document.getElementById('tatuador') as HTMLSelectElement;
-        const trigger = document.getElementById('tatuador-trigger');
-        const triggerText = trigger?.querySelector('.trigger-text');
-        const optionsList = document.getElementById('tatuador-options');
-        
-        nativeSelect.value = appointment.tatuador_id;
-        if (triggerText) {
-          triggerText.textContent = appointment.tatuador?.nome || 'Tatuador Selecionado';
-          trigger?.classList.remove('placeholder');
-        }
-        // Sincronizar visualmente as opções
-        if (optionsList) {
-          const options = optionsList.querySelectorAll('.custom-option');
-          options.forEach(opt => {
-            if ((opt as HTMLElement).dataset.value === appointment.tatuador_id) {
-              opt.classList.add('selected');
-            } else {
-              opt.classList.remove('selected');
-            }
-          });
-        }
-      }
-
-      const dt = new Date(appointment.data_hora);
-      (document.getElementById('data') as HTMLInputElement).value = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
-      (document.getElementById('hora') as HTMLInputElement).value = String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
-      (document.getElementById('duracao') as HTMLInputElement).value = appointment.duracao_minutos || 60;
-      (document.getElementById('valor_total') as HTMLInputElement).value = appointment.valor_total || 0;
-      (document.getElementById('valor_sinal') as HTMLInputElement).value = appointment.valor_sinal || 0;
-      (document.getElementById('pago') as HTMLInputElement).checked = !!appointment.pago;
-      (document.getElementById('sinal_pago') as HTMLInputElement).checked = !!appointment.sinal_pago;
-      
-      const statuses = [
-        { id: 'Pendente', nome: 'Pendente' },
-        { id: 'Confirmado', nome: 'Confirmado' },
-        { id: 'Realizado', nome: 'Realizado' },
-        { id: 'Cancelado', nome: 'Cancelado' },
-        { id: 'Falta', nome: 'Falta' }
-      ];
-
-      // Preencher status
-      if (appointment.status) {
-        const nativeSelect = document.getElementById('status') as HTMLSelectElement;
-        const trigger = document.getElementById('status-trigger');
-        const triggerText = trigger?.querySelector('.trigger-text');
-        const optionsList = document.getElementById('status-options');
-        
-        nativeSelect.value = appointment.status;
-        if (triggerText) {
-          triggerText.textContent = appointment.status;
-          trigger?.classList.remove('placeholder');
-        }
-        if (optionsList) {
-          renderOptions(optionsList, statuses, appointment.status);
-        }
-      }
-    } else {
-      // MODO NOVO
-      const statusInfo = document.getElementById('whatsapp-status-info');
-      if (statusInfo) {
-        statusInfo.classList.add('hidden');
-        statusInfo.innerHTML = '';
-      }
-      
-      const modalTitle = modal?.querySelector('h2');
-      if (modalTitle) modalTitle.innerText = 'Novo Agendamento';
-      (document.getElementById('editing-id') as HTMLInputElement).value = '';
-
-      if (date) {
-        const dataEl = document.getElementById('data') as HTMLInputElement;
-        if (dataEl) dataEl.value = date;
-      }
-      if (time) {
-        const horaEl = document.getElementById('hora') as HTMLInputElement;
-        if (horaEl) { horaEl.value = time; }
-      }
-      
-      const statuses = [
-        { id: 'Pendente', nome: 'Pendente' },
-        { id: 'Confirmado', nome: 'Confirmado' },
-        { id: 'Cancelado', nome: 'Cancelado' },
-        { id: 'Falta', nome: 'Falta' }
-      ];
-      
-      const nativeSelect = document.getElementById('status') as HTMLSelectElement;
-      const trigger = document.getElementById('status-trigger');
-      const triggerText = trigger?.querySelector('.trigger-text');
-      const optionsList = document.getElementById('status-options');
-      
-      nativeSelect.value = 'Pendente';
-      if (triggerText) {
-        triggerText.textContent = 'Pendente';
-        trigger?.classList.remove('placeholder');
-      }
-      if (optionsList) {
-        renderOptions(optionsList, statuses, 'Pendente');
-      }
-    }
+  window.addEventListener('open-new-appointment-modal', async (e: any) => {
+    await loadFormData();
+    const { appointment, date, time } = e.detail || {};
+    existingReferences = [];
+    selectedFiles = [];
     
-    // Atualizar horário final
-    updateEndTime();
+    if (appointment) {
+      (document.getElementById('editing-id') as HTMLInputElement).value = appointment.id;
+      const dt = new Date(appointment.data_hora);
+      (document.getElementById('data') as HTMLInputElement).value = dt.toISOString().split('T')[0];
+      (document.getElementById('hora') as HTMLInputElement).value = dt.toTimeString().slice(0, 5);
+      (document.getElementById('duracao') as HTMLInputElement).value = appointment.duracao_minutos;
+      (document.getElementById('valor_total') as HTMLInputElement).value = appointment.valor_total;
+      (document.getElementById('valor_sinal') as HTMLInputElement).value = appointment.valor_sinal;
+      (document.getElementById('status') as HTMLSelectElement).value = appointment.status;
+      
+      const { data: refs } = await supabase.from('agendamento_referencias').select('*').eq('agendamento_id', appointment.id);
+      if (refs) existingReferences = refs;
+    } else {
+      if (date) (document.getElementById('data') as HTMLInputElement).value = date;
+      if (time) (document.getElementById('hora') as HTMLInputElement).value = time;
+    }
+    renderPreviews();
+    modal?.classList.remove('hidden');
   });
 </script>
+
+<style is:global>
+  .preview-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, 80px) !important;
+    gap: 0.75rem !important;
+    margin-top: 1rem !important;
+  }
+  .preview-item {
+    position: relative !important;
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  .preview-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+  .remove-preview {
+    position: absolute !important;
+    top: 4px !important;
+    right: 4px !important;
+    background: #e74c3c !important;
+    color: white !important;
+    border-radius: 5px !important;
+    width: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+  }
+</style>

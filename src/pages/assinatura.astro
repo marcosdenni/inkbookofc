@@ -1,5 +1,6 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
+import CancelPlanModal from '../components/CancelPlanModal.astro';
 ---
 
 <DashboardLayout title="Assinatura & Planos">
@@ -122,6 +123,8 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
         </div>
       </div>
     </section>
+
+    <CancelPlanModal />
   </div>
 
   <style>
@@ -353,6 +356,18 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
       box-shadow: none;
     }
 
+    .btn-plan.cancel {
+      background: transparent;
+      border: 1px solid var(--error);
+      color: var(--error);
+      box-shadow: none;
+    }
+
+    .btn-plan.cancel:hover {
+      background: rgba(192, 57, 43, 0.1);
+      transform: translateY(-2px);
+    }
+
     /* FAQ */
     .faq-section {
       border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -422,6 +437,17 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
       if (plan === 'Pro') {
         const btn = document.getElementById('btn-Pro');
         if (!btn) return;
+
+        // Se o botão for de cancelamento, abre o modal
+        if (btn.classList.contains('cancel')) {
+          const expirationDate = btn.getAttribute('data-expiration');
+          const subscriptionId = btn.getAttribute('data-subscription');
+          window.dispatchEvent(new CustomEvent('open-cancel-plan-modal', { 
+            detail: { expirationDate, subscriptionId } 
+          }));
+          return;
+        }
+
         const originalText = btn.innerText;
         
         try {
@@ -502,20 +528,20 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
         // 2) Pegar o plano do estúdio
         const { data: studioData, error: studioError } = await supabase
           .from('estudios')
-          .select('plano')
+          .select('plano, data_vencimento, asaas_subscription_id')
           .eq('id', userData.estudio_id)
           .single();
 
         if (studioError || !studioData) return;
 
         const currentPlan = studioData.plano; // 'Gratuito' ou 'Pro'
-        updatePlanUI(currentPlan);
+        updatePlanUI(currentPlan, studioData.data_vencimento, studioData.asaas_subscription_id);
       } catch (err) {
         console.error('Erro ao carregar plano:', err);
       }
     }
 
-    function updatePlanUI(plan) {
+    function updatePlanUI(plan, expirationDate = null, subscriptionId = null) {
       const plans = ['Gratuito', 'Pro'];
       
       plans.forEach(p => {
@@ -528,12 +554,23 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
         if (p === plan) {
           card.classList.add('active');
           if (label) label.style.display = 'flex';
-          btn.disabled = true;
-          btn.innerText = 'Plano Ativo';
+          
+          if (p === 'Pro') {
+            btn.disabled = false;
+            btn.innerText = 'Cancelar Plano';
+            btn.classList.add('cancel');
+            if (expirationDate) btn.setAttribute('data-expiration', expirationDate);
+            if (subscriptionId) btn.setAttribute('data-subscription', subscriptionId);
+          } else {
+            btn.disabled = true;
+            btn.innerText = 'Plano Ativo';
+            btn.classList.remove('cancel');
+          }
         } else {
           card.classList.remove('active');
           if (label) label.style.display = 'none';
           btn.disabled = false;
+          btn.classList.remove('cancel');
           btn.innerText = p === 'Gratuito' ? 'Começar grátis' : 'Assinar agora';
         }
       });

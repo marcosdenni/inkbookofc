@@ -902,9 +902,14 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
       position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: 0.3s;
     }
     :global(.zoom-overlay-dash.active) { visibility: visible; opacity: 1; }
-    :global(.zoom-content-dash) { display: flex; flex-direction: column; align-items: center; gap: 20px; max-width: 90vw; }
-    :global(.zoom-img-dash) { max-height: 80vh; max-width: 100%; border-radius: 8px; }
-    :global(.close-zoom-dash) { border: none; background: var(--primary); color: #000; padding: 10px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    :global(.zoom-content-dash) { display: flex; flex-direction: column; align-items: center; gap: 20px; max-width: 90vw; position: relative; }
+    :global(.zoom-img-dash) { max-height: 80vh; max-width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    :global(.zoom-controls-dash) { display: flex; gap: 15px; align-items: center; }
+    :global(.nav-btn-dash) { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+    :global(.nav-btn-dash:hover) { background: var(--primary); color: black; }
+    :global(.zoom-counter-dash) { color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+    :global(.close-zoom-dash) { border: none; background: #333; color: white; padding: 10px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    :global(.close-zoom-dash:hover) { background: #444; }
 
     @media (max-width: 1400px) {
       .composite-grid {
@@ -1406,20 +1411,34 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
       // fetchChartData(); // Gráfico removido
     });
 
+    let dashboardRefs: any[] = [];
+    let currentDashboardRefIndex = 0;
+
     window.viewDashboardRefs = async function(appId) {
       const { data: refs } = await supabase.from('agendamento_referencias').select('*').eq('agendamento_id', appId);
       if (refs && refs.length > 0) {
-        const overlay = document.getElementById('zoom-overlay-dash');
-        const img = document.getElementById('zoom-img-dash') as HTMLImageElement;
-        
-        // Vamos mostrar apenas a primeira referência por simplicidade, ou abrir uma galeria
-        // Como o usuário pediu o modal com as referências, vamos pegar a primeira para o zoom inicial
-        const { data: { publicUrl } } = supabase.storage.from('referencias').getPublicUrl(refs[0].storage_path);
-        if (overlay && img) {
-          img.src = publicUrl;
-          overlay.classList.add('active');
-        }
+        dashboardRefs = refs;
+        currentDashboardRefIndex = 0;
+        updateDashboardZoom();
+        document.getElementById('zoom-overlay-dash')?.classList.add('active');
       }
+    };
+
+    function updateDashboardZoom() {
+      const img = document.getElementById('zoom-img-dash') as HTMLImageElement;
+      const counter = document.getElementById('zoom-counter-dash');
+      if (dashboardRefs[currentDashboardRefIndex]) {
+        const { data: { publicUrl } } = supabase.storage.from('referencias').getPublicUrl(dashboardRefs[currentDashboardRefIndex].storage_path);
+        if (img) img.src = publicUrl;
+        if (counter) counter.textContent = `${currentDashboardRefIndex + 1} / ${dashboardRefs.length}`;
+      }
+    }
+
+    window.navDashboardRef = function(dir) {
+      currentDashboardRefIndex += dir;
+      if (currentDashboardRefIndex < 0) currentDashboardRefIndex = dashboardRefs.length - 1;
+      if (currentDashboardRefIndex >= dashboardRefs.length) currentDashboardRefIndex = 0;
+      updateDashboardZoom();
     };
 
     document.getElementById('close-zoom-dash')?.addEventListener('click', () => {
@@ -1431,7 +1450,18 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
   <div id="zoom-overlay-dash" class="zoom-overlay-dash">
     <div class="zoom-content-dash">
       <img id="zoom-img-dash" src="" class="zoom-img-dash" />
-      <button id="close-zoom-dash" class="close-zoom-dash">Fechar Referências</button>
+      
+      <div class="zoom-controls-dash">
+        <button class="nav-btn-dash" onclick="navDashboardRef(-1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div id="zoom-counter-dash" class="zoom-counter-dash">1 / 1</div>
+        <button class="nav-btn-dash" onclick="navDashboardRef(1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <button id="close-zoom-dash" class="close-zoom-dash">Fechar</button>
     </div>
   </div>
 </DashboardLayout>

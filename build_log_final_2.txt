@@ -1,0 +1,61 @@
+
+> inkbook@0.0.1 build
+> astro build
+
+[2m16:45:04[22m [34m[content][39m Syncing content
+[2m16:45:04[22m [34m[content][39m Synced content
+[2m16:45:04[22m [34m[types][39m Generated [2m43ms[22m
+[2m16:45:04[22m [34m[build][39m output: [34m"static"[39m
+[2m16:45:04[22m [34m[build][39m mode: [34m"static"[39m
+[2m16:45:04[22m [34m[build][39m directory: [34mC:\Users\Micro\Desktop\Antigravity\inkbook\dist\[39m
+[2m16:45:04[22m [34m[build][39m Collecting build info...
+[2m16:45:04[22m [34m[build][39m [32m✓ Completed in 64ms.[39m
+[2m16:45:04[22m [34m[build][39m Building static entrypoints...
+[2m16:45:05[22m [34m[vite][39m [32m✓ built in 1.08s[39m
+[2m16:45:05[22m [34m[build][39m [32m✓ Completed in 1.11s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m16:45:05[22m [34m[vite][39m transforming...
+[2m16:45:05[22m [34m[vite][39m [32m✓[39m 54 modules transformed.
+[2m16:45:05[22m [34m[vite][39m rendering chunks...
+[2m16:45:06[22m [34m[vite][39m computing gzip size...
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/AuthGuard.astro_astro_type_script_index_0_lang.DYOZ1RH3.js                [39m[1m[2m  0.42 kB[22m[1m[22m[2m │ gzip:  0.29 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/DeleteConfirmationModal.astro_astro_type_script_index_0_lang.BvkVNUU0.js  [39m[1m[2m  1.54 kB[22m[1m[22m[2m │ gzip:  0.69 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/Sidebar.astro_astro_type_script_index_0_lang.DOiyzgMx.js                  [39m[1m[2m  1.87 kB[22m[1m[22m[2m │ gzip:  0.77 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/assinatura.astro_astro_type_script_index_0_lang.BcbDojYc.js               [39m[1m[2m  2.27 kB[22m[1m[22m[2m │ gzip:  1.09 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/NewClientModal.astro_astro_type_script_index_0_lang.C4Z4vo_O.js           [39m[1m[2m  2.58 kB[22m[1m[22m[2m │ gzip:  1.01 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/NewTatuadorModal.astro_astro_type_script_index_0_lang.D48nOtxs.js         [39m[1m[2m  3.27 kB[22m[1m[22m[2m │ gzip:  1.09 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/tatuadores.astro_astro_type_script_index_0_lang.7GjtPLe2.js               [39m[1m[2m  3.28 kB[22m[1m[22m[2m │ gzip:  1.33 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/login.astro_astro_type_script_index_0_lang.ClaEWZTN.js                    [39m[1m[2m  3.83 kB[22m[1m[22m[2m │ gzip:  1.13 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/configuracoes.astro_astro_type_script_index_0_lang.DiJn98ZY.js            [39m[1m[2m  5.92 kB[22m[1m[22m[2m │ gzip:  1.91 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/clientes.astro_astro_type_script_index_0_lang.DOxmArOS.js                 [39m[1m[2m  6.27 kB[22m[1m[22m[2m │ gzip:  2.53 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/NewAppointmentModal.astro_astro_type_script_index_0_lang.Ctx7x57S.js      [39m[1m[2m  8.06 kB[22m[1m[22m[2m │ gzip:  3.04 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/dashboard.astro_astro_type_script_index_0_lang.Doybs973.js                [39m[1m[2m 10.75 kB[22m[1m[22m[2m │ gzip:  3.91 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/mensagens.astro_astro_type_script_index_0_lang.Dt0NNNEF.js                [39m[1m[2m 13.01 kB[22m[1m[22m[2m │ gzip:  3.89 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/agenda.astro_astro_type_script_index_0_lang.CvkxDYJq.js                   [39m[1m[2m 14.44 kB[22m[1m[22m[2m │ gzip:  4.72 kB[22m
+[2m16:45:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/supabase.BbX9n9Gw.js                                                      [39m[1m[2m170.87 kB[22m[1m[22m[2m │ gzip: 45.52 kB[22m
+[2m16:45:06[22m [34m[vite][39m [32m✓ built in 540ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m16:45:06[22m [32m▶[39m src/pages/agenda.astro
+[2m16:45:06[22m   [34m└─[39m [2m/agenda/index.html[22m [2m(+9ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/assinatura.astro
+[2m16:45:06[22m   [34m└─[39m [2m/assinatura/index.html[22m [2m(+3ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/clientes.astro
+[2m16:45:06[22m   [34m└─[39m [2m/clientes/index.html[22m [2m(+2ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/configuracoes.astro
+[2m16:45:06[22m   [34m└─[39m [2m/configuracoes/index.html[22m [2m(+2ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/dashboard.astro
+[2m16:45:06[22m   [34m└─[39m [2m/dashboard/index.html[22m [2m(+3ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/login.astro
+[2m16:45:06[22m   [34m└─[39m [2m/login/index.html[22m [2m(+2ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/mensagens.astro
+[2m16:45:06[22m   [34m└─[39m [2m/mensagens/index.html[22m [2m(+2ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/tatuadores.astro
+[2m16:45:06[22m   [34m└─[39m [2m/tatuadores/index.html[22m [2m(+3ms)[22m 
+[2m16:45:06[22m [32m▶[39m src/pages/index.astro
+[2m16:45:06[22m   [34m└─[39m [2m/index.html[22m [2m(+2ms)[22m 
+[2m16:45:06[22m [32m✓ Completed in 60ms.
+[39m
+[2m16:45:06[22m [34m[build][39m 9 page(s) built in [1m1.81s[22m
+[2m16:45:06[22m [34m[build][39m [1mComplete![22m
