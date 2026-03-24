@@ -1,0 +1,123 @@
+---
+/* src/components/PremiumBanner.astro */
+---
+
+<div id="premium-banner" class="premium-banner hidden">
+  <div class="banner-content">
+    <div class="banner-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+    </div>
+    <p>Sua assinatura <strong>PRO</strong> foi cancelada. O acesso premium continuará até <strong id="banner-date">--/--/----</strong>. <a href="/assinatura" class="alert-link">Reativar agora</a></p>
+  </div>
+</div>
+
+<style>
+  .premium-banner {
+    background: linear-gradient(90deg, #1a1a1a 0%, #121212 100%);
+    border-bottom: 1px solid rgba(201, 162, 77, 0.2);
+    padding: 0.75rem 0;
+    width: 100%;
+    position: relative;
+    z-index: 900;
+    animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .banner-content {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0 20px;
+  }
+
+  .banner-icon {
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .premium-banner p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .premium-banner strong {
+    color: #fff;
+  }
+
+  .alert-link {
+    color: var(--primary);
+    text-decoration: underline;
+    font-weight: 700;
+    margin-left: 0.5rem;
+    transition: filter 0.2s;
+  }
+
+  .alert-link:hover {
+    filter: brightness(1.2);
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 768px) {
+    .banner-content { text-align: center; flex-direction: column; gap: 0.4rem; }
+    .alert-link { margin-left: 0; display: block; }
+  }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  async function checkBanner() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: userData } = await supabase
+        .from('users')
+        .select('estudio_id')
+        .eq('id', user.id)
+        .single();
+
+      if (!userData) return;
+
+      const { data: studioData } = await supabase
+        .from('estudios')
+        .select('plano, status_assinatura, data_vencimento')
+        .eq('id', userData.estudio_id)
+        .single();
+
+      if (studioData?.plano === 'Pro' && studioData?.status_assinatura === 'canceled') {
+        const banner = document.getElementById('premium-banner');
+        const dateEl = document.getElementById('banner-date');
+        
+        if (dateEl && studioData.data_vencimento) {
+          const [year, month, day] = studioData.data_vencimento.split('-');
+          dateEl.innerText = `${day}/${month}/${year}`;
+        }
+        
+        banner?.classList.remove('hidden');
+      }
+    } catch (err) {
+      console.error('Erro banner:', err);
+    }
+  }
+
+  checkBanner();
+</script>

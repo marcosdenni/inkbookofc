@@ -528,20 +528,20 @@ import CancelPlanModal from '../components/CancelPlanModal.astro';
         // 2) Pegar o plano do estúdio
         const { data: studioData, error: studioError } = await supabase
           .from('estudios')
-          .select('plano, data_vencimento, asaas_subscription_id')
+          .select('plano, data_vencimento, asaas_subscription_id, status_assinatura')
           .eq('id', userData.estudio_id)
           .single();
 
         if (studioError || !studioData) return;
 
         const currentPlan = studioData.plano; // 'Gratuito' ou 'Pro'
-        updatePlanUI(currentPlan, studioData.data_vencimento, studioData.asaas_subscription_id);
+        updatePlanUI(currentPlan, studioData.data_vencimento, studioData.asaas_subscription_id, studioData.status_assinatura);
       } catch (err) {
         console.error('Erro ao carregar plano:', err);
       }
     }
 
-    function updatePlanUI(plan, expirationDate = null, subscriptionId = null) {
+    function updatePlanUI(plan, expirationDate = null, subscriptionId = null, subscriptionStatus = null) {
       const plans = ['Gratuito', 'Pro'];
       
       plans.forEach(p => {
@@ -556,9 +556,17 @@ import CancelPlanModal from '../components/CancelPlanModal.astro';
           if (label) label.style.display = 'flex';
           
           if (p === 'Pro') {
-            btn.disabled = false;
-            btn.innerText = 'Cancelar Plano';
-            btn.classList.add('cancel');
+            if (subscriptionStatus === 'canceled') {
+              btn.disabled = false;
+              btn.innerText = 'Reativar Plano PRO';
+              btn.classList.remove('cancel');
+              btn.classList.add('solid');
+            } else {
+              btn.disabled = false;
+              btn.innerText = 'Cancelar Plano';
+              btn.classList.add('cancel');
+              btn.classList.remove('solid');
+            }
             if (expirationDate) btn.setAttribute('data-expiration', expirationDate);
             if (subscriptionId) btn.setAttribute('data-subscription', subscriptionId);
           } else {

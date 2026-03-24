@@ -10,13 +10,13 @@ const { clientes, tatuadores } = Astro.props;
 <div id="new-appointment-modal" class="modal-overlay hidden">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Novo Agendamento</h2>
+      <h2 id="modal-title">Novo Agendamento</h2>
       <button id="close-modal" class="close-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    <form id="appointment-form" class="appointment-form">
+    <form id="new-appointment-form" class="appointment-form">
       <input type="hidden" id="editing-id" name="id" />
       <div class="form-grid">
         <div class="form-group">
@@ -118,7 +118,7 @@ const { clientes, tatuadores } = Astro.props;
           </label>
         </div>
 
-        <div class="form-group">
+        <div class="form-group full-width">
           <label for="status">Status do Agendamento</label>
           <div class="custom-select-container" id="status-custom-container">
             <button type="button" class="custom-select-trigger" id="status-trigger">
@@ -275,11 +275,17 @@ const { clientes, tatuadores } = Astro.props;
   .flex-row {
     flex-direction: row;
     align-items: center;
-    padding-top: 1.5rem;
   }
 
   .full-width {
     grid-column: span 2;
+  }
+
+  .label-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
   label {
@@ -457,7 +463,7 @@ const { clientes, tatuadores } = Astro.props;
   .readonly-input {
     background-color: rgba(255, 255, 255, 0.01);
     border-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
+    color: var(--text);
     cursor: default;
   }
 
@@ -496,7 +502,7 @@ const { clientes, tatuadores } = Astro.props;
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
-    color: var(--text);
+    color: var(--text-muted);
     font-size: 0.875rem;
     user-select: none;
   }
@@ -631,6 +637,40 @@ const { clientes, tatuadores } = Astro.props;
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
+  :global(.preview-container) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 80px);
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  :global(.preview-item) {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+  }
+  :global(.preview-item img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  :global(.remove-preview) {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 5px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
   @media (max-width: 640px) {
     .form-grid {
       grid-template-columns: 1fr;
@@ -648,10 +688,97 @@ const { clientes, tatuadores } = Astro.props;
   const closeBtn = document.getElementById('close-modal');
   const cancelBtn = document.getElementById('cancel-btn');
   const btnNewClient = document.getElementById('btn-add-new-client');
-  const form = document.getElementById('appointment-form') as HTMLFormElement;
-  const clienteSelect = document.getElementById('cliente') as HTMLSelectElement;
-  const tatuadorSelect = document.getElementById('tatuador') as HTMLSelectElement;
+  const form = document.getElementById('new-appointment-form') as HTMLFormElement;
   const WEBHOOK_N8N = 'https://webhooks-mvp.marcosdev.xyz/webhook/enviar-whatsapp-agendamento';
+      
+  let clientsList: any[] = [];
+  let artistsList: any[] = [];
+  const statusList = [
+    { id: 'Pendente', nome: 'Pendente' },
+    { id: 'Confirmado', nome: 'Confirmado' },
+    { id: 'Realizado', nome: 'Realizado' },
+    { id: 'Cancelado', nome: 'Cancelado' },
+    { id: 'Falta', nome: 'Falta' }
+  ];
+
+  function syncDropdownUI(id: string, items: any[]) {
+    const container = document.getElementById(`${id}-custom-container`);
+    const trigger = document.getElementById(`${id}-trigger`);
+    const optionsList = document.getElementById(`${id}-options`);
+    const nativeSelect = document.getElementById(id) as HTMLSelectElement;
+    const triggerText = trigger?.querySelector('.trigger-text');
+
+    if (!container || !trigger || !optionsList || !nativeSelect || !triggerText) return;
+
+    if (nativeSelect.value) {
+      const selected = items.find(i => i.id === nativeSelect.value);
+      if (selected) triggerText.textContent = selected.nome;
+    } else {
+      const placeholder = nativeSelect.options[0]?.textContent || '';
+      triggerText.textContent = placeholder;
+    }
+
+    optionsList.innerHTML = items.map(item => `
+      <div class="custom-option ${nativeSelect.value === item.id ? 'selected' : ''}" data-value="${item.id}">
+        ${item.nome}
+      </div>
+    `).join('');
+  }
+
+  function updateCustomDropdown(id: string, items: any[], placeholder: string) {
+    const container = document.getElementById(`${id}-custom-container`);
+    const trigger = document.getElementById(`${id}-trigger`);
+    const optionsList = document.getElementById(`${id}-options`);
+    const nativeSelect = document.getElementById(id) as HTMLSelectElement;
+
+    if (!container || !trigger || !optionsList || !nativeSelect) return;
+
+    nativeSelect.innerHTML = `<option value="">${placeholder}</option>` + 
+      items.map(item => `<option value="${item.id}">${item.nome}</option>`).join('');
+
+    // Sincronizar valor padrão se necessário
+    if (!nativeSelect.value && items.some(i => i.id === placeholder)) {
+      nativeSelect.value = placeholder;
+    }
+
+    syncDropdownUI(id, items);
+
+    if (!trigger.dataset.initialized) {
+      trigger.dataset.initialized = 'true';
+      trigger.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = container.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) container.classList.add('open');
+      };
+
+      optionsList.onclick = (e) => {
+        const option = (e.target as HTMLElement).closest('.custom-option') as HTMLElement;
+        if (!option) return;
+        e.stopPropagation();
+        nativeSelect.value = option.dataset.value || '';
+        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        syncDropdownUI(id, items);
+        container.classList.remove('open');
+      };
+    }
+  }
+
+  async function loadFormData() {
+    try {
+      const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
+      const { data: tatuadores } = await supabase.from('tatuadores').select('id, nome').order('nome');
+
+      clientsList = clientes || [];
+      artistsList = tatuadores || [];
+
+      updateCustomDropdown('cliente', clientsList, 'Selecione um cliente');
+      updateCustomDropdown('tatuador', artistsList, 'Selecione um tatuador');
+      updateCustomDropdown('status', statusList, 'Pendente');
+    } catch (err) {
+      console.error('Erro ao carregar dados do formulário:', err);
+    }
+  }
 
   async function sendWhatsAppConfirmation(appointmentId: string, estudioId: string) {
     try {
@@ -721,68 +848,6 @@ const { clientes, tatuadores } = Astro.props;
 
     } catch (err) {
       console.error('[n8n] Erro no envio do WhatsApp:', err);
-    }
-  }
-
-  async function loadFormData() {
-    const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
-    const { data: tatuadores } = await supabase.from('tatuadores').select('id, nome').order('nome');
-
-    if (clientes) updateCustomDropdown('cliente', clientes, 'Selecione um cliente');
-    if (tatuadores) updateCustomDropdown('tatuador', tatuadores, 'Selecione um tatuador');
-
-    const statuses = [
-      { id: 'Pendente', nome: 'Pendente' },
-      { id: 'Confirmado', nome: 'Confirmado' },
-      { id: 'Realizado', nome: 'Realizado' },
-      { id: 'Cancelado', nome: 'Cancelado' },
-      { id: 'Falta', nome: 'Falta' }
-    ];
-    updateCustomDropdown('status', statuses, 'Pendente');
-  }
-
-  function updateCustomDropdown(id: string, items: any[], placeholder: string) {
-    const container = document.getElementById(`${id}-custom-container`);
-    const trigger = document.getElementById(`${id}-trigger`);
-    const optionsList = document.getElementById(`${id}-options`);
-    const nativeSelect = document.getElementById(id) as HTMLSelectElement;
-    const triggerText = trigger?.querySelector('.trigger-text');
-
-    if (!container || !trigger || !optionsList || !nativeSelect || !triggerText) return;
-
-    nativeSelect.innerHTML = `<option value="">${placeholder}</option>` + 
-      items.map(item => `<option value="${item.id}">${item.nome}</option>`).join('');
-
-    if (nativeSelect.value) {
-      const selected = items.find(i => i.id === nativeSelect.value);
-      if (selected) triggerText.textContent = selected.nome;
-    }
-
-    optionsList.innerHTML = items.map(item => `
-      <div class="custom-option ${nativeSelect.value === item.id ? 'selected' : ''}" data-value="${item.id}">
-        ${item.nome}
-      </div>
-    `).join('');
-
-    if (!trigger.dataset.initialized) {
-      trigger.dataset.initialized = 'true';
-      trigger.onclick = (e) => {
-        e.stopPropagation();
-        const isOpen = container.classList.contains('open');
-        closeAllDropdowns();
-        if (!isOpen) container.classList.add('open');
-      };
-
-      optionsList.onclick = (e) => {
-        const option = (e.target as HTMLElement).closest('.custom-option') as HTMLElement;
-        if (!option) return;
-        e.stopPropagation();
-        nativeSelect.value = option.dataset.value || '';
-        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-        triggerText.textContent = option.textContent?.trim() || '';
-        trigger.classList.remove('placeholder');
-        container.classList.remove('open');
-      };
     }
   }
 
@@ -894,6 +959,7 @@ const { clientes, tatuadores } = Astro.props;
   const inputHoraFim = document.getElementById('hora_fim') as HTMLInputElement;
 
   function updateEndTime() {
+    if (!inputHora || !inputDuracao || !inputHoraFim) return;
     if (!inputHora.value || !inputDuracao.value) return;
     const [h, m] = inputHora.value.split(':').map(Number);
     const end = new Date();
@@ -916,11 +982,19 @@ const { clientes, tatuadores } = Astro.props;
       const editingId = (document.getElementById('editing-id') as HTMLInputElement).value;
       const formData = new FormData(form);
 
+      const dataStr = formData.get('data') as string;
+      const horaStr = formData.get('hora') as string;
+      const duracaoMin = parseInt(formData.get('duracao_minutos') as string);
+      
+      const startDt = new Date(`${dataStr}T${horaStr}:00`);
+      const endDt = new Date(startDt.getTime() + (duracaoMin * 60000));
+
       const apptData = {
         cliente_id: formData.get('cliente_id'),
         tatuador_id: formData.get('tatuador_id'),
-        data_hora: new Date(`${formData.get('data')}T${formData.get('hora')}:00`).toISOString(),
-        duracao_minutos: parseInt(formData.get('duracao_minutos') as string),
+        data_hora: startDt.toISOString(),
+        duracao_minutos: duracaoMin,
+        data_hora_fim: endDt.toISOString(),
         valor_total: parseFloat(formData.get('valor_total') as string || '0'),
         valor_sinal: parseFloat(formData.get('valor_sinal') as string || '0'),
         pago: formData.get('pago') === 'on',
@@ -955,64 +1029,55 @@ const { clientes, tatuadores } = Astro.props;
   };
 
   window.addEventListener('open-new-appointment-modal', async (e: any) => {
-    await loadFormData();
     const { appointment, date, time } = e.detail || {};
+    const modal = document.getElementById('new-appointment-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const form = document.getElementById('new-appointment-form') as HTMLFormElement;
+    
+    form.reset();
     existingReferences = [];
     selectedFiles = [];
+    (document.getElementById('editing-id') as HTMLInputElement).value = '';
+    
+    await loadFormData();
     
     if (appointment) {
+      if (modalTitle) modalTitle.textContent = 'Editar Agendamento';
       (document.getElementById('editing-id') as HTMLInputElement).value = appointment.id;
+      
+      (document.getElementById('cliente') as HTMLSelectElement).value = appointment.cliente_id;
+      (document.getElementById('tatuador') as HTMLSelectElement).value = appointment.tatuador_id;
+      (document.getElementById('status') as HTMLSelectElement).value = appointment.status;
+      
       const dt = new Date(appointment.data_hora);
       (document.getElementById('data') as HTMLInputElement).value = dt.toISOString().split('T')[0];
       (document.getElementById('hora') as HTMLInputElement).value = dt.toTimeString().slice(0, 5);
       (document.getElementById('duracao') as HTMLInputElement).value = appointment.duracao_minutos;
       (document.getElementById('valor_total') as HTMLInputElement).value = appointment.valor_total;
       (document.getElementById('valor_sinal') as HTMLInputElement).value = appointment.valor_sinal;
-      (document.getElementById('status') as HTMLSelectElement).value = appointment.status;
+      (document.getElementById('pago') as HTMLInputElement).checked = appointment.pago;
+      (document.getElementById('sinal_pago') as HTMLInputElement).checked = appointment.sinal_pago;
       
+      // Sincronizar UI dos dropdowns customizados APÓS setar os valores nativos
+      syncDropdownUI('cliente', clientsList);
+      syncDropdownUI('tatuador', artistsList);
+      syncDropdownUI('status', statusList);
+
       const { data: refs } = await supabase.from('agendamento_referencias').select('*').eq('agendamento_id', appointment.id);
       if (refs) existingReferences = refs;
     } else {
+      if (modalTitle) modalTitle.textContent = 'Novo Agendamento';
       if (date) (document.getElementById('data') as HTMLInputElement).value = date;
       if (time) (document.getElementById('hora') as HTMLInputElement).value = time;
+      
+      // Sincronizar UI para o estado inicial (Pendente e placeholders)
+      syncDropdownUI('cliente', clientsList);
+      syncDropdownUI('tatuador', artistsList);
+      syncDropdownUI('status', statusList);
     }
+    updateEndTime();
     renderPreviews();
     modal?.classList.remove('hidden');
   });
 </script>
 
-<style is:global>
-  .preview-container {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, 80px) !important;
-    gap: 0.75rem !important;
-    margin-top: 1rem !important;
-  }
-  .preview-item {
-    position: relative !important;
-    width: 80px !important;
-    height: 80px !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
-    border: 2px solid rgba(255, 255, 255, 0.1) !important;
-  }
-  .preview-item img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-  }
-  .remove-preview {
-    position: absolute !important;
-    top: 4px !important;
-    right: 4px !important;
-    background: #e74c3c !important;
-    color: white !important;
-    border-radius: 5px !important;
-    width: 22px !important;
-    height: 22px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-  }
-</style>
