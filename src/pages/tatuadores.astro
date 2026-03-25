@@ -2,6 +2,7 @@
 import DashboardLayout from '../layouts/DashboardLayout.astro';
 import NewTatuadorModal from '../components/NewTatuadorModal.astro';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal.astro';
+import ProPlanModal from '../components/ProPlanModal.astro';
 import { supabase } from '../lib/supabase';
 
 // Página de Gerenciamento de Tatuadores
@@ -58,6 +59,7 @@ import { supabase } from '../lib/supabase';
 
   <NewTatuadorModal />
   <DeleteConfirmationModal />
+  <ProPlanModal />
 
   <style is:global>
     .tatuadores-wrapper {
@@ -271,12 +273,17 @@ import { supabase } from '../lib/supabase';
       color: rgba(255, 255, 255, 0.3);
     }
 
-    .btn-edit:hover {
+    .btn-edit:not(:disabled):hover {
       background: var(--primary, #C9A24D);
       color: #000;
       border-color: var(--primary, #C9A24D);
       transform: translateY(-3px);
       box-shadow: 0 10px 20px rgba(201, 162, 77, 0.3);
+    }
+
+    .btn-edit:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
 
     .btn-delete:hover {
@@ -365,19 +372,40 @@ import { supabase } from '../lib/supabase';
 
     let allTatuadores = [];
     let filteredTatuadores = [];
+    let isFreePlan = false;
 
     async function loadTatuadores() {
       const tbody = document.getElementById('tatuadores-tbody');
       
       try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: userData } = await supabase
+          .from('users')
+          .select('estudio:estudios(plano)')
+          .eq('id', user.id)
+          .single();
+        
+        isFreePlan = userData?.estudio?.plano === 'Gratuito';
+
         const { data: tatuadores, error } = await supabase
           .from('tatuadores')
           .select('*')
-          .order('nome');
+          .order('created_at', { ascending: true }); // A ordem de criação define o "1º cadastrado"
 
         if (error) throw error;
 
-        allTatuadores = tatuadores || [];
+        allTatuadores = (tatuadores || []).map((t, index) => {
+            if (isFreePlan && index > 0) {
+                t.ativo = false; // Apenas o primeiro fica ativo no Gratuito
+            }
+            return t;
+        });
+        
+        // Reordena alfabeticamente para exibir
+        allTatuadores.sort((a,b) => a.nome.localeCompare(b.nome));
+        
         filteredTatuadores = [...allTatuadores];
         renderTable();
       } catch (err) {
@@ -410,19 +438,21 @@ import { supabase } from '../lib/supabase';
           }
         }
 
+        const isInactive = t.ativo === false;
+        
         return `
           <tr>
             <td data-label="Status">
-              <span class="status-badge ${t.ativo !== false ? 'status-active' : 'status-inactive'}">
-                ${t.ativo !== false ? 'Ativo' : 'Inativo'}
+              <span class="status-badge ${!isInactive ? 'status-active' : 'status-inactive'}">
+                ${!isInactive ? 'Ativo' : 'Inativo'}
               </span>
             </td>
-            <td data-label="Nome"><span class="artist-name">${t.nome}</span></td>
+            <td data-label="Nome"><span class="artist-name ${isInactive ? 'opacity-50' : ''}">${t.nome}</span></td>
             <td data-label="WhatsApp" style="color: #888; font-weight: 500;">${t.whatsapp || '—'}</td>
             <td data-label="Modelo Financeiro">${financeModelText}</td>
             <td data-label="Ações" class="actions-cell">
               <div class="actions-wrapper">
-                <button class="btn-action btn-edit" onclick="editTatuador('${t.id}')" title="Editar">
+                <button class="btn-action btn-edit" onclick="editTatuador('${t.id}')" title="Editar" ${isInactive ? 'disabled' : ''}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
                 <button class="btn-action btn-delete" onclick="deleteTatuador('${t.id}', '${t.nome.replace(/'/g, "\\'")}')" title="Excluir">
@@ -456,6 +486,15 @@ import { supabase } from '../lib/supabase';
     };
 
     document.getElementById('btn-new-tatuador')?.addEventListener('click', () => {
+      if (isFreePlan && allTatuadores.length >= 1) {
+        window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+          detail: {
+            title: 'Limite de Equipe Atingido',
+            message: 'No Plano Gratuito você só pode cadastrar 1 tatuador. Assine o Plano Pro para adicionar tatuadores ilimitados e expandir seu estúdio!'
+          }
+        }));
+        return;
+      }
       window.dispatchEvent(new CustomEvent('open-tatuador-modal'));
     });
 

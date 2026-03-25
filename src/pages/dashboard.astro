@@ -5,6 +5,7 @@ import AppointmentList from '../components/AppointmentList.astro';
 import DashboardCharts from '../components/DashboardCharts.astro';
 import NewAppointmentModal from '../components/NewAppointmentModal.astro';
 import NewClientModal from '../components/NewClientModal.astro';
+import ProPlanModal from '../components/ProPlanModal.astro';
 import { supabase } from '../lib/supabase';
 
 // Saudação Baseada na Hora
@@ -118,7 +119,15 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
 
       <!-- 2) WHATSAPP / AUTOMAÇÃO -->
       <section class="large-card-container">
-        <div class="large-card">
+        <div class="large-card" id="card-automacao">
+          <div class="restricted-overlay-large">
+            <div class="lock-content">
+              <div class="lock-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <span class="restricted-text">Disponível no Plano PRO</span>
+            </div>
+          </div>
           <div class="large-card-header">
             <h2 class="card-title">Automação</h2>
             <a href="/mensagens" class="link-view-all">Configurar</a>
@@ -162,6 +171,7 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
 
   <NewAppointmentModal clientes={[]} tatuadores={[]} />
   <NewClientModal />
+  <ProPlanModal />
 
   <style>
     /* ═══ WHATSAPP STATUS CARD ═══ */
@@ -436,6 +446,80 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
     .scroll-vertical {
       overflow-y: auto;
       max-height: 500px;
+    }
+
+    /* RESTRIÇÃO CARD GRANDE */
+    .large-card.restricted {
+      cursor: pointer;
+      position: relative;
+    }
+
+    .large-card.restricted .large-card-header,
+    .large-card.restricted .large-card-body {
+      filter: blur(8px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .restricted-overlay-large {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: all 0.3s ease;
+      border-radius: 24px;
+      backdrop-filter: blur(4px);
+    }
+
+    .large-card.restricted .restricted-overlay-large {
+      display: flex;
+    }
+
+    .large-card.restricted:hover .restricted-overlay-large {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .lock-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .lock-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(201, 162, 77, 0.2);
+      border: 1px solid rgba(201, 162, 77, 0.4);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    .large-card.restricted:hover .lock-icon {
+      transform: scale(1.1) rotate(-5deg);
+      background: var(--primary);
+      color: #000;
+    }
+
+    .restricted-text {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.4);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
     }
 
     .link-view-all {
@@ -1005,10 +1089,45 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
 
       const user = session.user;
 
-      // 3. Studio Profile
-      const { data: profile } = await supabase.from('users').select('estudio:estudios(nome)').eq('id', user.id).single();
+      // 3. Studio Profile & Plan
+      const { data: profile } = await supabase
+        .from('users')
+        .select(`
+          estudio:estudios(
+            nome,
+            plano
+          )
+        `)
+        .eq('id', user.id)
+        .single();
+
       const studioDisplay = document.getElementById('studio-name-display');
       if (studioDisplay && profile?.estudio) studioDisplay.textContent = profile.estudio.nome;
+
+      // 3.1 Aplicar Restrições de Plano
+      if (profile?.estudio?.plano === 'Gratuito') {
+        const financialGrid = document.getElementById('finance-grid-root');
+        if (financialGrid) {
+            financialGrid.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.add('restricted');
+            });
+        }
+        
+        const automacaoCard = document.getElementById('card-automacao');
+        if (automacaoCard) {
+            automacaoCard.classList.add('restricted');
+            automacaoCard.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+                    detail: {
+                        title: 'Automação Pro',
+                        message: 'A integração com WhatsApp e Lembretes automáticos são recursos exclusivos do Plano Pro. Quer profissionalizar seu estúdio agora?'
+                    }
+                }));
+            });
+        }
+      }
 
       // 4. Listeners para Período (Global)
       document.querySelectorAll('.period-btn').forEach(btn => {

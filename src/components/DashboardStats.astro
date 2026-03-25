@@ -11,6 +11,7 @@ interface Props {
   description?: string;
   weight?: 1 | 2 | 3;
   showProgress?: boolean;
+  isRestricted?: boolean;
 }
 
 const { 
@@ -21,7 +22,8 @@ const {
   id, 
   description, 
   weight = 3,
-  showProgress = false 
+  showProgress = false,
+  isRestricted = false
 } = Astro.props;
 
 const borderColors = {
@@ -39,7 +41,19 @@ const borderColor = borderColors[variant] || borderColors.default;
 const finalBorderColor = label.toLowerCase().includes('falta') ? 'var(--status-missed)' : borderColor;
 ---
 
-<div id={id} class={`stat-card ${variant} weight-${weight}`} style={`border-bottom-color: ${finalBorderColor};`}>
+<div 
+  id={id} 
+  class={`stat-card ${variant} weight-${weight} ${isRestricted ? 'restricted' : ''}`} 
+  style={`border-bottom-color: ${finalBorderColor};`}
+>
+  <div class="restricted-overlay">
+    <div class="lock-content">
+      <div class="lock-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <span class="restricted-text">Disponível no Plano PRO</span>
+    </div>
+  </div>
   <div class="card-header">
     <span class="stat-label">{label}</span>
     {trend && (
@@ -66,6 +80,26 @@ const finalBorderColor = label.toLowerCase().includes('falta') ? 'var(--status-m
   )}
 </div>
 
+<script>
+  // Lógica para abrir o modal Pro quando clicar em um card restrito usando delegação de eventos
+  document.addEventListener('click', (e) => {
+    const card = (e.target as HTMLElement).closest('.stat-card.restricted');
+    if (card) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const label = card.querySelector('.stat-label')?.textContent || 'Funcionalidade';
+        
+        window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+            detail: {
+                title: 'Funcionalidade Pro',
+                message: `As métricas de "${label}" estão disponíveis apenas para assinantes do Plano Pro. Quer profissionalizar seu estúdio agora?`
+            }
+        }));
+    }
+  });
+</script>
+
 <style>
   .stat-card {
     background-color: #1A1A1A;
@@ -86,6 +120,81 @@ const finalBorderColor = label.toLowerCase().includes('falta') ? 'var(--status-m
     transform: translateY(-5px);
     background-color: #222;
     border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* ESTADO RESTRITO */
+  .stat-card.restricted {
+    cursor: pointer;
+    position: relative;
+  }
+
+  .stat-card.restricted .value-container,
+  .stat-card.restricted .stat-progress,
+  .stat-card.restricted .trend-indicator {
+    filter: blur(8px);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .restricted-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .stat-card.restricted .restricted-overlay {
+    display: flex;
+  }
+
+  .stat-card.restricted:hover .restricted-overlay {
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .lock-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .lock-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(201, 162, 77, 0.2);
+    border: 1px solid rgba(201, 162, 77, 0.4);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  }
+
+  .restricted-text {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.4);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .stat-card.restricted:hover .lock-icon {
+    transform: scale(1.1) rotate(-5deg);
+    background: var(--primary);
+    color: #000;
   }
 
   /* PESO 1 - DESTAQUE PRINCIPAL */

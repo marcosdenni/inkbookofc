@@ -764,10 +764,20 @@ const { clientes, tatuadores } = Astro.props;
     }
   }
 
-  async function loadFormData() {
+  async function loadFormData(currentTatuadorId?: string) {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: userData } = await supabase.from('users').select('estudio:estudios(plano)').eq('id', user?.id).single();
+      const isFree = userData?.estudio?.plano === 'Gratuito';
+
       const { data: clientes } = await supabase.from('clientes').select('id, nome').order('nome');
-      const { data: tatuadores } = await supabase.from('tatuadores').select('id, nome').order('nome');
+      let { data: tatuadores } = await supabase.from('tatuadores').select('id, nome, created_at').order('created_at', { ascending: true });
+
+      if (isFree && tatuadores && tatuadores.length > 0) {
+         tatuadores = tatuadores.filter((t, index) => index === 0 || t.id === currentTatuadorId);
+      }
+      
+      tatuadores?.sort((a,b) => a.nome.localeCompare(b.nome));
 
       clientsList = clientes || [];
       artistsList = tatuadores || [];
@@ -1039,7 +1049,7 @@ const { clientes, tatuadores } = Astro.props;
     selectedFiles = [];
     (document.getElementById('editing-id') as HTMLInputElement).value = '';
     
-    await loadFormData();
+    await loadFormData(appointment?.tatuador_id);
     
     if (appointment) {
       if (modalTitle) modalTitle.textContent = 'Editar Agendamento';
