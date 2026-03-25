@@ -475,12 +475,11 @@ import CancelPlanModal from '../components/CancelPlanModal.astro';
 
           if (studioError || !studioData) throw new Error('Erro ao buscar dados do estúdio');
 
-          // 3) Requisição Webhook
-          const response = await fetch('https://workflows-mvp.marcosdev.xyz/webhook/checkout-assinatura', {
+          // 3) Requisição para o nosso Endpoint Interno
+          const response = await fetch('/api/checkout-subscription', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'X-Api-Key': 'inkbook_secret_2026'
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               estudio_id: studioData.id,

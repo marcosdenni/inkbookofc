@@ -767,9 +767,9 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
     }
 
     .status-badge-premium.status-falta {
-      background: rgba(109, 40, 217, 0.1);
+      background: rgba(159, 103, 255, 0.1);
       color: var(--status-missed);
-      border: 1px solid rgba(109, 40, 217, 0.2);
+      border: 1px solid var(--status-missed);
     }
 
     /* Adições para Grid da Tabela Re-Injetada via :global */
@@ -859,7 +859,7 @@ const emptyStats = { total: 0, confirmados: 0, pendentes: 0, cancelados: 0 };
     :global(.status-pill.status-confirmed) { background: rgba(39, 174, 96, 0.1); color: var(--status-confirmed); border-color: rgba(39, 174, 96, 0.2); }
     :global(.status-pill.status-pending) { background: rgba(201, 162, 77, 0.1); color: var(--status-pending); border-color: rgba(201, 162, 77, 0.2); }
     :global(.status-pill.status-cancelled) { background: rgba(192, 57, 43, 0.1); color: var(--status-cancelled); border-color: rgba(192, 57, 43, 0.2); }
-    :global(.status-pill.status-missed) { background: rgba(109, 40, 217, 0.1); color: var(--status-missed); border-color: rgba(109, 40, 217, 0.2); }
+    :global(.status-pill.status-missed) { background: rgba(159, 103, 255, 0.1); color: var(--status-missed); border-color: var(--status-missed); }
 
     :global(.empty-state-card) {
       padding: 3rem;

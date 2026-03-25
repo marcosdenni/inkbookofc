@@ -16,7 +16,7 @@
   --status-confirmed: #27AE60;
   --status-pending: #C9A24D;
   --status-cancelled: #C0392B;
-  --status-missed: #4C1D95;
+  --status-missed: #9F67FF;
   --status-realizado: #2980B9;
   /* Roxo escuro elegante */
   --status-neutral: var(--text-muted);

@@ -247,8 +247,8 @@
         .eq('id', userData.estudio_id)
         .single();
 
-      // 2) Chamar o Webhook de cancelamento
-      const response = await fetch('https://webhooks-mvp.marcosdev.xyz/webhook/cancelar-assinatura', {
+      // 2) Chamar o Endpoint Interno de cancelamento
+      const response = await fetch('/api/cancel-subscription', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
