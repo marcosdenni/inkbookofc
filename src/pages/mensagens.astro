@@ -1,5 +1,6 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
+import ProPlanModal from '../components/ProPlanModal.astro';
 import { supabase } from '../lib/supabase';
 
 // Título: Mensagens
@@ -305,9 +306,75 @@ import { supabase } from '../lib/supabase';
         </div>
       </div>
     </div>
+    
+    <ProPlanModal />
   </div>
 
   <style is:global>
+    /* RESTRIÇÕES PLANO GRATUITO */
+    .whatsapp-card.restricted, .reminders-card.restricted {
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+    .whatsapp-card.restricted > *:not(.restricted-overlay-large),
+    .reminders-card.restricted > *:not(.restricted-overlay-large) {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .restricted-overlay-large {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: all 0.3s ease;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .whatsapp-card.restricted:hover .restricted-overlay-large {
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .lock-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .lock-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(201, 162, 77, 0.2);
+      border: 1px solid rgba(201, 162, 77, 0.4);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .whatsapp-card.restricted:hover .lock-icon {
+      transform: scale(1.1) rotate(-5deg);
+      background: var(--primary);
+      color: #000;
+    }
+    .restricted-text {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.6);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+    }
+
     .mensagens-wrapper {
       max-width: 1400px;
       margin: 0 auto;
@@ -1160,13 +1227,88 @@ import { supabase } from '../lib/supabase';
     // Cache do contexto do usuário (preenchido no init)
     let cachedEstudioId = null;
     let cachedInstanceName = null;
+    let userPlan = null;
 
     // ═══ SETUP INICIAL ═══ 
     async function init() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('estudio_id, estudio:estudios(plano)')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile) {
+            cachedEstudioId = profile.estudio_id;
+            userPlan = profile.estudio?.plano || 'Gratuito';
+            
+            if (userPlan === 'Gratuito') {
+               applyFreePlanRestrictions();
+            }
+        }
+      }
+
       await loadTemplates();
       await checkWhatsAppStatus();
       await loadReminderConfig();
       setupEventListeners();
+    }
+
+    function applyFreePlanRestrictions() {
+        const waCard = document.querySelector('.whatsapp-card');
+        if (waCard) {
+            waCard.classList.add('restricted');
+            const overlayHtml = `
+              <div class="restricted-overlay-large">
+                <div class="lock-content">
+                  <div class="lock-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <span class="restricted-text">Disponível no Plano PRO</span>
+                </div>
+              </div>
+            `;
+            waCard.insertAdjacentHTML('afterbegin', overlayHtml);
+            
+            waCard.querySelector('.restricted-overlay-large').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+                    detail: {
+                        title: 'Automação Pro',
+                        message: 'A integração com WhatsApp para envio automático de mensagens é um recurso exclusivo do Plano Pro.'
+                    }
+                }));
+            });
+        }
+
+        const remindersCard = document.querySelector('.reminders-card');
+        if (remindersCard) {
+            remindersCard.classList.add('restricted');
+            const overlayHtmlReminders = `
+              <div class="restricted-overlay-large">
+                <div class="lock-content">
+                  <div class="lock-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <span class="restricted-text">Disponível no Plano PRO</span>
+                </div>
+              </div>
+            `;
+            remindersCard.insertAdjacentHTML('afterbegin', overlayHtmlReminders);
+            
+            remindersCard.querySelector('.restricted-overlay-large').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+                    detail: {
+                        title: 'Lembretes Automáticos',
+                        message: 'A configuração de lembretes automáticos para clientes é um recurso exclusivo do Plano Pro.'
+                    }
+                }));
+            });
+        }
     }
 
     // ═══ CARREGAR DADOS ═══
@@ -1325,7 +1467,17 @@ import { supabase } from '../lib/supabase';
 
       // Salvar Template
       document.querySelectorAll('.btn-save-template').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+          if (userPlan === 'Gratuito') {
+             e.preventDefault();
+             window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+                 detail: {
+                     title: 'Personalização de Mensagens',
+                     message: 'A edição e personalização dos templates de mensagens é exclusiva do Plano Pro.'
+                 }
+             }));
+             return;
+          }
           const card = (btn as HTMLElement).closest('.template-card');
           if (!card) return;
 
@@ -1376,7 +1528,18 @@ import { supabase } from '../lib/supabase';
 
       // Otimizar com IA
       document.querySelectorAll('.btn-ia-optimize').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          if (userPlan === 'Gratuito') {
+             e.preventDefault();
+             window.dispatchEvent(new CustomEvent('open-pro-plan-modal', {
+                 detail: {
+                     title: 'Otimização com IA Pro',
+                     message: 'A otimização de mensagens com Inteligência Artificial é um recurso incrível disponível apenas no Plano Pro.'
+                 }
+             }));
+             return;
+          }
+          
           const card = btn.closest('.template-card');
           activeCard = card;
           activeTextarea = card.querySelector('textarea');
