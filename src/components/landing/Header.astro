@@ -1,0 +1,96 @@
+---
+---
+<header class="hdr">
+  <div class="hdr__inner">
+    <a href="/" class="hdr__logo">
+      <img src="/imagens/inkbook-logo.png.png" alt="InkBook" class="hdr__logo-img" />
+    </a>
+    <nav class="hdr__nav">
+      <a href="/login" class="hdr__link">Entrar</a>
+      <a href="/login" class="hdr__cta">
+        Começar agora
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: fixed;
+    top: 1rem; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 1280px;
+    height: 70px;
+    z-index: 200;
+    background: rgba(15,15,15,0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+  }
+  .hdr__inner {
+    width: 100%;
+    height: 100%;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  @media (max-width: 768px) {
+    .hdr {
+      top: 0;
+      left: 0;
+      transform: none;
+      width: 100%;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+    .hdr__inner { padding: 0 1.5rem; }
+  }
+  .hdr__logo { display: flex; align-items: center; text-decoration: none; }
+  .hdr__logo-img {
+    height: 56px;
+    width: auto;
+    filter: brightness(1.05);
+    transition: opacity 0.2s;
+  }
+  .hdr__logo-img:hover { opacity: 0.85; }
+
+  .hdr__nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .hdr__link {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .hdr__link:hover { color: #fff; }
+  .hdr__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #C9A24D;
+    color: #000;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.65rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.25s;
+    box-shadow: 0 4px 16px rgba(201,162,77,0.25);
+  }
+  .hdr__cta:hover {
+    background: #E8CC7A;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201,162,77,0.35);
+  }
+</style>

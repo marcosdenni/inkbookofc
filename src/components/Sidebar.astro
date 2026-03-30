@@ -60,7 +60,7 @@ const menuItems = [
   logoutBtn?.addEventListener('click', async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
-      window.location.href = '/login';
+      window.location.href = '/';
     } else {
       console.error('Erro ao sair:', error.message);
     }

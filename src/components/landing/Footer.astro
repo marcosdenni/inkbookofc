@@ -1,0 +1,213 @@
+---
+---
+<footer class="ftr">
+  <div class="container">
+
+    <!-- CTA Section -->
+    <div class="ftr__cta reveal">
+      <div class="ftr__cta-badge">Comece hoje</div>
+
+      <h2 class="ftr__h2">
+        Pronto para<br/>profissionalizar<br/>
+        <span class="gold-text">sua arte?</span>
+      </h2>
+
+      <p class="ftr__sub">
+        Tatuadores que usam o InkBook pararam de perder horários e passaram a receber antes mesmo de sentar a agulha.
+      </p>
+
+      <div class="ftr__actions">
+        <a href="/login" class="ftr__btn-primary">
+          Criar minha conta grátis
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <span class="ftr__hint">Sem cartão de crédito · Setup em 2 minutos</span>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="ftr__bar">
+      <div class="ftr__brand">
+        <img src="/imagens/inkbook-logo.png.png" alt="InkBook" class="ftr__logo" />
+        <span class="ftr__brand-tagline">Gestão Premium para Tatuadores</span>
+      </div>
+
+      <nav class="ftr__links">
+        <a href="/login">Entrar</a>
+        <a href="/login">Cadastrar</a>
+      </nav>
+
+      <p class="ftr__copy">&copy; 2026 InkBook. Todos os direitos reservados.</p>
+    </div>
+
+  </div>
+</footer>
+
+<style>
+  :global(.ftr .container) {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+  @media (max-width: 1024px) {
+    :global(.ftr .container) { padding: 0 2.5rem; }
+  }
+  @media (max-width: 768px) {
+    :global(.ftr .container) { padding: 0 1.5rem; }
+  }
+
+  .ftr {
+    background: #080808;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    padding: 10rem 0 4rem;
+  }
+  @media (max-width: 768px) {
+    .ftr { padding: 6rem 0 3rem; }
+  }
+
+  /* CTA */
+  .ftr__cta {
+    max-width: 720px;
+    margin: 0 auto 8rem;
+    text-align: center;
+    position: relative;
+  }
+  .ftr__cta::before {
+    content: '';
+    position: absolute;
+    top: -5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(201,162,77,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .ftr__cta-badge {
+    display: inline-block;
+    background: rgba(201,162,77,0.08);
+    border: 1px solid rgba(201,162,77,0.2);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #C9A24D;
+    margin-bottom: 2rem;
+  }
+
+  .ftr__h2 {
+    font-family: var(--font-title);
+    font-size: clamp(2.8rem, 7vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: 0.5px;
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+
+  .ftr__sub {
+    font-size: 1.15rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 3rem;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ftr__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .ftr__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #C9A24D;
+    color: #000;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 1.25rem 3rem;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 12px 32px rgba(201,162,77,0.3);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ftr__btn-primary:hover {
+    background: #E8CC7A;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 48px rgba(201,162,77,0.4);
+  }
+
+  .ftr__hint {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.2);
+    font-weight: 500;
+  }
+
+  /* Bottom bar */
+  .ftr__bar {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .ftr__brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .ftr__logo {
+    height: 44px;
+    width: auto;
+    filter: brightness(0.8);
+  }
+  .ftr__brand-tagline {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.2);
+    font-weight: 500;
+  }
+
+  .ftr__links {
+    display: flex;
+    gap: 2rem;
+  }
+  .ftr__links a {
+    color: rgba(255,255,255,0.25);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .ftr__links a:hover { color: rgba(255,255,255,0.6); }
+
+  .ftr__copy {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.15);
+  }
+
+  @media (max-width: 768px) {
+    .ftr__bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+    .ftr__btn-primary {
+      width: 100%;
+      justify-content: center;
+      padding: 1.1rem 2rem;
+      font-size: 1.05rem;
+    }
+    .ftr__cta { margin-bottom: 5rem; }
+    .ftr__copy { font-size: 0.78rem; }
+  }
+</style>

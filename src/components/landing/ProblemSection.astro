@@ -1,0 +1,285 @@
+---
+---
+<section class="prob" id="problemas">
+  <div class="container">
+
+    <!-- Headline -->
+    <div class="prob__head reveal">
+      <p class="prob__eyebrow">O problema</p>
+      <h2 class="prob__h2">
+        O WhatsApp não foi feito<br/>
+        para <span class="gold-text">gerir estúdios.</span>
+      </h2>
+      <p class="prob__sub">A improvisação custa caro. Cada mensagem perdida é um cliente que vai embora.</p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="prob__grid" data-stagger>
+      <div class="prob__card reveal delay-100">
+        <div class="prob__card-num">01</div>
+        <div class="prob__card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m9 10 2 2 4-4"/></svg>
+        </div>
+        <h3>Conversas <span class="gold-text">perdidas</span><br/>e horários esquecidos.</h3>
+        <p>Misturar vida pessoal com agendamentos em chat gera caos. Clientes somem porque a mensagem afundou no fluxo.</p>
+      </div>
+
+      <div class="prob__card reveal delay-200">
+        <div class="prob__card-num">02</div>
+        <div class="prob__card-icon prob__card-icon--red">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/></svg>
+        </div>
+        <h3><span class="gold-text">Prejuízo</span> com<br/>'No-Shows'.</h3>
+        <p>O tempo é seu ativo mais valioso. Um horário vazio por no-show é dinheiro que nunca mais volta — e dói.</p>
+      </div>
+
+      <div class="prob__card reveal delay-300">
+        <div class="prob__card-num">03</div>
+        <div class="prob__card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <h3>Horas <span class="gold-text">gastas</span> digitando<br/>as mesmas coisas.</h3>
+        <p>Orientações de preparo, cuidados pós-tattoo, confirmação de horário — copiar e colar todos os dias é desperdício.</p>
+      </div>
+    </div>
+
+    <!-- Dashboard screenshot proof -->
+    <div class="prob__proof reveal delay-200">
+      <div class="prob__proof-label">
+        <span class="proof-dot"></span>
+        Dashboard InkBook — ao vivo
+      </div>
+      <div class="prob__screen-wrap">
+        <div class="prob__screen-frame">
+          <img src="/imagens/Captura de Tela (852).png" alt="Dashboard InkBook com métricas financeiras" class="prob__screen-img" loading="lazy" />
+        </div>
+        <!-- Floating metrics -->
+        <div class="prob__metric prob__metric--left">
+          <span class="metric-val">R$ 1.250</span>
+          <span class="metric-label">Receita hoje</span>
+        </div>
+        <div class="prob__metric prob__metric--right">
+          <span class="metric-val">4</span>
+          <span class="metric-label">Sessões confirmadas</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Garante alinhamento global consistente nesta seção */
+  :global(.prob .container) {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+  @media (max-width: 1024px) {
+    :global(.prob .container) { padding: 0 2.5rem; }
+  }
+  @media (max-width: 768px) {
+    :global(.prob .container) { padding: 0 1.5rem; }
+  }
+
+  .prob {
+    background: #060606;
+    padding: 10rem 0 8rem;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+  @media (max-width: 768px) {
+    .prob { padding: 6rem 0; }
+  }
+
+  /* Headline */
+  .prob__head {
+    max-width: 720px;
+    margin: 0 auto 6rem;
+    text-align: center;
+  }
+  .prob__eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #C9A24D;
+    margin-bottom: 1.5rem;
+  }
+  .prob__h2 {
+    font-family: var(--font-title);
+    font-size: clamp(2.8rem, 4.5vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: 0.5px;
+    margin-bottom: 1.5rem;
+    color: #fff;
+  }
+  .prob__sub {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* Cards */
+  .prob__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 6rem;
+  }
+  @media (max-width: 992px) {
+    .prob__grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .prob__grid {
+      grid-template-columns: 1fr;
+      border-radius: 16px;
+    }
+    .prob__card { padding: 2.5rem 1.75rem; }
+    .prob__head { margin-bottom: 3.5rem; }
+  }
+
+  .prob__card {
+    background: #0c0c0c;
+    padding: 3.5rem 3rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .prob__card:hover {
+    background: #111;
+  }
+
+  .prob__card-num {
+    font-family: var(--font-title);
+    font-size: 4rem;
+    color: rgba(255,255,255,0.04);
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .prob__card-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: rgba(201,162,77,0.08);
+    border: 1px solid rgba(201,162,77,0.15);
+    display: flex; align-items: center; justify-content: center;
+    color: #C9A24D;
+    margin-bottom: 2rem;
+  }
+  .prob__card-icon--red {
+    background: rgba(192,57,43,0.08);
+    border-color: rgba(192,57,43,0.2);
+    color: #e74c3c;
+  }
+
+  .prob__card h3 {
+    font-family: var(--font-title);
+    font-size: 1.9rem;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 1rem;
+    letter-spacing: 0.3px;
+  }
+  .prob__card p {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* Screenshot proof */
+  .prob__proof-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 2.5rem;
+  }
+  .proof-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #27AE60;
+    box-shadow: 0 0 8px rgba(39,174,96,0.6);
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .prob__screen-wrap {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .prob__screen-frame {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .prob__screen-frame:hover {
+    transform: perspective(1200px) translateY(-10px);
+    border-color: rgba(201,162,77,0.3);
+    box-shadow: 0 60px 100px rgba(0,0,0,0.8), 0 0 40px rgba(201,162,77,0.1);
+  }
+  .prob__screen-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .prob__metric {
+    position: absolute;
+    background: rgba(12,12,12,0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(201,162,77,0.2);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    animation: floatMetric 4s ease-in-out infinite alternate;
+  }
+  .prob__metric--left { bottom: -1rem; left: -2rem; }
+  .prob__metric--right {
+    top: -1rem; right: -2rem;
+    animation-delay: 2s;
+  }
+  @keyframes floatMetric {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-6px); }
+  }
+  @media (max-width: 768px) {
+    .prob__metric--left { left: 0.5rem; bottom: auto; top: -0.5rem; }
+    .prob__metric--right { right: 0.5rem; top: auto; bottom: -0.5rem; }
+    .prob__metric { padding: 0.75rem 1rem; }
+    .metric-val { font-size: 1.4rem; }
+  }
+  @media (max-width: 480px) {
+    .prob__metric { display: none; }
+  }
+
+  .metric-val {
+    display: block;
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    color: #C9A24D;
+    line-height: 1;
+  }
+  .metric-label {
+    display: block;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 0.3rem;
+    font-weight: 500;
+  }
+</style>
